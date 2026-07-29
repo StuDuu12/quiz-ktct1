@@ -46,6 +46,7 @@ const migrationPaths = [
   path.resolve("supabase/migrations/202607290004_practice_sessions.sql"),
   path.resolve("supabase/migrations/202607290005_harden_practice_sessions.sql"),
   path.resolve("supabase/migrations/202607290006_preserve_practice_snapshot_scope.sql"),
+  path.resolve("supabase/migrations/202607290007_balanced_mock_exams.sql"),
 ];
 
 describe("database security behavior", () => {
@@ -625,13 +626,14 @@ describe("database security behavior", () => {
           jsonb_array_length(started.question_order)::integer as snapshot_count
         from public.start_attempt(
           '${ids.assignedCourse}',
-          '${ids.examConfig}'
+          null,
+          '${ids.assignedChapter}'
         ) started
       `);
 
       expect(started.rows[0]).toMatchObject({
-        duration_seconds: 1800,
-        snapshot_count: 1,
+        duration_seconds: 3600,
+        snapshot_count: 2,
       });
       expect(started.rows[0]?.attempt_id).toMatch(
         /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
@@ -677,12 +679,21 @@ describe("database security behavior", () => {
         from public.attempt_questions aq
         where aq.attempt_id = '${started.rows[0]?.attempt_id}'
       `);
-      expect(snapshot.rows).toHaveLength(1);
-      expect(snapshot.rows[0]).toMatchObject({
-        snapshot_matches_published_question: true,
-        snapshot_options_match_question: true,
-        exposes_correctness: false,
-      });
+      expect(snapshot.rows).toHaveLength(2);
+      expect(snapshot.rows).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            snapshot_matches_published_question: true,
+            snapshot_options_match_question: true,
+            exposes_correctness: false,
+          }),
+          expect.objectContaining({
+            snapshot_matches_published_question: true,
+            snapshot_options_match_question: true,
+            exposes_correctness: false,
+          }),
+        ]),
+      );
     } finally {
       await resetIdentity();
     }

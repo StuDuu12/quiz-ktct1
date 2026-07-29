@@ -10,10 +10,12 @@ const migrationPaths = [
   path.resolve("supabase/migrations/202607290004_practice_sessions.sql"),
   path.resolve("supabase/migrations/202607290005_harden_practice_sessions.sql"),
   path.resolve("supabase/migrations/202607290006_preserve_practice_snapshot_scope.sql"),
+  path.resolve("supabase/migrations/202607290007_balanced_mock_exams.sql"),
 ];
 
 const expectedTables = [
   "attempt_answers",
+  "attempt_question_secrets",
   "attempt_questions",
   "attempts",
   "audit_logs",

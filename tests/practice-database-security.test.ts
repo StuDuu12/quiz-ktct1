@@ -25,6 +25,9 @@ const migrationPaths = [
 const snapshotScopeMigrationPath = path.resolve(
   "supabase/migrations/202607290006_preserve_practice_snapshot_scope.sql",
 );
+const balancedMockExamMigrationPath = path.resolve(
+  "supabase/migrations/202607290007_balanced_mock_exams.sql",
+);
 
 describe("secure chapter practice persistence", () => {
   let database: PGlite;
@@ -150,6 +153,7 @@ describe("secure chapter practice persistence", () => {
     attemptQuestionId = snapshot.rows[0]!.id;
     await resetIdentity();
     await database.exec(await readFile(snapshotScopeMigrationPath, "utf8"));
+    await database.exec(await readFile(balancedMockExamMigrationPath, "utf8"));
   }, 30_000);
 
   afterAll(async () => {

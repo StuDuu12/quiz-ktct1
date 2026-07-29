@@ -15,6 +15,7 @@ describe("generated Supabase database types", () => {
       | "exam_configs"
       | "attempts"
       | "attempt_questions"
+      | "attempt_question_secrets"
       | "attempt_answers"
       | "import_jobs"
       | "audit_logs"

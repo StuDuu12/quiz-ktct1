@@ -428,6 +428,39 @@ export type Database = {
           },
         ];
       };
+      attempt_question_secrets: {
+        Row: {
+          attempt_question_id: string;
+          correct_option_id: string;
+          explanation: string;
+        };
+        Insert: {
+          attempt_question_id: string;
+          correct_option_id: string;
+          explanation: string;
+        };
+        Update: {
+          attempt_question_id?: string;
+          correct_option_id?: string;
+          explanation?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "attempt_question_secrets_attempt_question_id_fkey";
+            columns: ["attempt_question_id"];
+            isOneToOne: true;
+            referencedRelation: "attempt_questions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "attempt_question_secrets_correct_option_id_fkey";
+            columns: ["correct_option_id"];
+            isOneToOne: false;
+            referencedRelation: "question_options";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       attempt_answers: {
         Row: {
           id: string;
