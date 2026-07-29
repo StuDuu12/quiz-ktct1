@@ -99,6 +99,28 @@ describe("production configuration", () => {
     );
   });
 
+  it("keeps a clean-build regression for the generated Worker secret contract", () => {
+    const packageJson = JSON.parse(
+      readFileSync(path.join(projectRoot, "package.json"), "utf8"),
+    );
+    const verifier = readFileSync(
+      path.join(
+        projectRoot,
+        "scripts",
+        "production",
+        "verify-generated-wrangler.mjs",
+      ),
+      "utf8",
+    );
+
+    expect(packageJson.scripts["test:generated-config"]).toBe(
+      "node scripts/production/verify-generated-wrangler.mjs",
+    );
+    expect(verifier).toContain('await rm(distDirectory, { recursive: true, force: true })');
+    expect(verifier).toContain('"SUPABASE_SERVICE_ROLE_KEY"');
+    expect(verifier).not.toContain("service_role_key=");
+  });
+
   it("inlines SSR route chunks so free-tier requests do not compile them lazily", () => {
     const viteConfig = readFileSync(
       path.join(projectRoot, "vite.config.ts"),
