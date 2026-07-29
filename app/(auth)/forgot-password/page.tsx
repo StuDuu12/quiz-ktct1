@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
 import {
@@ -13,7 +13,9 @@ export default function ForgotPasswordPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     setIsSubmitting(true);
     setMessage(null);
     const { error } = await requestPasswordReset(
@@ -35,7 +37,7 @@ export default function ForgotPasswordPage() {
       description="Nhập email tài khoản. Chúng tôi sẽ gửi cho bạn một liên kết bảo mật."
       footer={<p><Link href="/login">← Quay lại đăng nhập</Link></p>}
     >
-      <form action={onSubmit} className="auth-form" noValidate>
+      <form onSubmit={onSubmit} className="auth-form" noValidate>
         <label>
           <span>Email</span>
           <input required name="email" type="email" autoComplete="email" placeholder="ban@example.com" />

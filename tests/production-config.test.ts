@@ -75,6 +75,30 @@ describe("production configuration", () => {
     ]);
   });
 
+  it("injects public Supabase settings into the browser build", () => {
+    const viteConfig = readFileSync(
+      path.join(projectRoot, "vite.config.ts"),
+      "utf8",
+    );
+    const publicEnvSource = readFileSync(
+      path.join(projectRoot, "src", "lib", "env.ts"),
+      "utf8",
+    );
+
+    expect(viteConfig).toContain(
+      '"process.env.NEXT_PUBLIC_SUPABASE_URL": JSON.stringify(',
+    );
+    expect(viteConfig).toContain(
+      '"process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY": JSON.stringify(',
+    );
+    expect(publicEnvSource).toMatch(
+      /NEXT_PUBLIC_SUPABASE_URL:\s*process\.env\.NEXT_PUBLIC_SUPABASE_URL/,
+    );
+    expect(publicEnvSource).toMatch(
+      /NEXT_PUBLIC_SUPABASE_ANON_KEY:\s*process\.env\.NEXT_PUBLIC_SUPABASE_ANON_KEY/,
+    );
+  });
+
   it("discovers every SQL migration in strict filename order", () => {
     const migrations = discoverMigrationFiles(projectRoot);
 

@@ -51,6 +51,15 @@ export default defineConfig(async ({ command }) => {
       "process.env.E2E_TEST_SERVER": JSON.stringify(
         e2eTestServer ? "1" : "0",
       ),
+      "process.env.NEXT_PUBLIC_SITE_URL": JSON.stringify(
+        process.env.NEXT_PUBLIC_SITE_URL ?? "",
+      ),
+      "process.env.NEXT_PUBLIC_SUPABASE_URL": JSON.stringify(
+        process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+      ),
+      "process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY": JSON.stringify(
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+      ),
       "process.env.NEXT_PUBLIC_E2E_MODE": JSON.stringify(
         e2eTestServer ? "1" : "0",
       ),

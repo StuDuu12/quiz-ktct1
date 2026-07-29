@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
 import {
@@ -20,7 +20,9 @@ export default function ResetPasswordPage() {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     const password = String(formData.get("password") ?? "");
     if (password !== String(formData.get("confirmPassword") ?? "")) {
       setMessage("Xác nhận mật khẩu chưa khớp.");
@@ -47,7 +49,7 @@ export default function ResetPasswordPage() {
       description="Dùng ít nhất 8 ký tự và tránh sử dụng lại mật khẩu cũ."
       footer={<p><Link href="/forgot-password">Yêu cầu liên kết mới</Link></p>}
     >
-      <form action={onSubmit} className="auth-form" noValidate>
+      <form onSubmit={onSubmit} className="auth-form" noValidate>
         <label>
           <span>Mật khẩu mới</span>
           <input

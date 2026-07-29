@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
 import {
@@ -14,7 +14,9 @@ export default function RegisterPage() {
   const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     const password = String(formData.get("password") ?? "");
     const confirmPassword = String(formData.get("confirmPassword") ?? "");
     if (password !== confirmPassword) {
@@ -53,7 +55,7 @@ export default function RegisterPage() {
       description="Tạo tài khoản để lưu tiến độ, lịch sử và kết quả của bạn."
       footer={<p>Đã có tài khoản? <Link href="/login">Đăng nhập</Link></p>}
     >
-      <form action={onSubmit} className="auth-form" noValidate>
+      <form onSubmit={onSubmit} className="auth-form" noValidate>
         <label>
           <span>Họ và tên</span>
           <input required name="fullName" autoComplete="name" placeholder="Nguyễn Văn A" />

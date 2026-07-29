@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
 import { getAuthErrorMessage, signIn } from "@/src/lib/supabase/browser";
@@ -12,7 +12,9 @@ export default function LoginPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     setIsSubmitting(true);
     setMessage(null);
     const { error } = await signIn(
@@ -37,7 +39,7 @@ export default function LoginPage() {
         <p>Chưa có tài khoản? <Link href="/register">Đăng ký học viên</Link></p>
       }
     >
-      <form action={onSubmit} className="auth-form" noValidate>
+      <form onSubmit={onSubmit} className="auth-form" noValidate>
         <label>
           <span>Email</span>
           <input required name="email" type="email" autoComplete="email" placeholder="ban@example.com" />
@@ -54,7 +56,7 @@ export default function LoginPage() {
         </label>
         <div className="auth-form-meta">
           <span />
-          <Link href="/forgot-password">Quên mật khẩu?</Link>
+          <a href="/forgot-password">Quên mật khẩu?</a>
         </div>
         {message && <p className="auth-message auth-message-error" role="alert">{message}</p>}
         <button className="auth-submit" disabled={isSubmitting} type="submit">
