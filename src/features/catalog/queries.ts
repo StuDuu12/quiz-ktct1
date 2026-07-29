@@ -30,6 +30,7 @@ export type CourseDashboard = {
   recentAttempts: RecentAttempt[];
   overallProgress: number | null;
   questionCount: number;
+  mockExamAvailable: boolean;
 };
 
 type DashboardResult = { data: CourseDashboard | null; error: string | null };
@@ -60,7 +61,11 @@ export async function getCourseDashboard(
     if (courseError) return { data: null, error: "Không thể tải học phần lúc này." };
     if (!course) return { data: null, error: null };
 
-    const [{ data: chapters, error: chaptersError }, { data: attempts, error: attemptsError }] =
+    const [
+      { data: chapters, error: chaptersError },
+      { data: attempts, error: attemptsError },
+      { data: mockExamConfigs, error: mockExamConfigError },
+    ] =
       await Promise.all([
         supabase
           .from("chapters")
@@ -75,9 +80,16 @@ export async function getCourseDashboard(
           .eq("course_id", course.id)
           .eq("user_id", viewer.id)
           .order("started_at", { ascending: false }),
+        supabase
+          .from("exam_configs")
+          .select("id, question_count, duration_seconds")
+          .eq("course_id", course.id)
+          .eq("kind", "mock_exam")
+          .eq("is_active", true)
+          .limit(2),
       ]);
 
-    if (chaptersError || attemptsError) {
+    if (chaptersError || attemptsError || mockExamConfigError) {
       return { data: null, error: "Không thể tải tiến độ học tập lúc này." };
     }
 
@@ -185,6 +197,10 @@ export async function getCourseDashboard(
         })),
         overallProgress,
         questionCount: chapterSummaries.reduce((sum, chapter) => sum + chapter.questionCount, 0),
+        mockExamAvailable:
+          mockExamConfigs?.length === 1 &&
+          mockExamConfigs[0]?.question_count === 40 &&
+          mockExamConfigs[0]?.duration_seconds === 3_600,
       },
       error: null,
     };

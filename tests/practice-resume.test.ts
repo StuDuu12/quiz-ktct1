@@ -52,6 +52,17 @@ function orderedQuery(data: unknown[]) {
   return query;
 }
 
+function limitedQuery(data: unknown[]) {
+  const query = {
+    select: vi.fn(),
+    eq: vi.fn(),
+    limit: vi.fn().mockResolvedValue({ data, error: null }),
+  };
+  query.select.mockReturnValue(query);
+  query.eq.mockReturnValue(query);
+  return query;
+}
+
 describe("practice resume dashboard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -104,6 +115,15 @@ describe("practice resume dashboard", () => {
         if (table === "courses") return singleQuery(course);
         if (table === "chapters") return orderedQuery(chapters);
         if (table === "attempts") return orderedQuery(attempts);
+        if (table === "exam_configs") {
+          return limitedQuery([
+            {
+              id: "exam-config-1",
+              question_count: 40,
+              duration_seconds: 3600,
+            },
+          ]);
+        }
         throw new Error(`Unexpected table: ${table}`);
       },
       rpc: vi.fn().mockResolvedValue({ data: [], error: null }),
@@ -114,6 +134,7 @@ describe("practice resume dashboard", () => {
       course.slug,
     );
     expect(result.data?.chapters[0]?.activeAttemptId).toBe(activeAttemptId);
+    expect(result.data?.mockExamAvailable).toBe(true);
 
     const markup = renderToStaticMarkup(
       createElement(ChapterRow, {

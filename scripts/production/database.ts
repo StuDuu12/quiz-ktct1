@@ -22,11 +22,12 @@ const CHAPTER_TITLES = [
   "Công nghiệp hóa, hiện đại hóa và hội nhập kinh tế quốc tế",
 ] as const;
 
-type ProductionCounts = {
+export type ProductionCounts = {
   courses: number;
   chapters: number;
   questions: number;
   publishedQuestionOptions: number;
+  activeMockExamConfigs: number;
 };
 
 function operationFailed(
@@ -113,28 +114,51 @@ export function createProductionClient(environment: ProductionEnvironment) {
 export async function verifyProductionCounts(
   client: SupabaseClient,
 ): Promise<ProductionCounts> {
-  const [courses, chapters, questions, publishedQuestionOptions] =
+  const [
+    courses,
+    chapters,
+    questions,
+    publishedQuestionOptions,
+    activeMockExamConfigRows,
+  ] =
     await Promise.all([
       exactCount(client, "courses"),
       exactCount(client, "chapters"),
       exactCount(client, "questions"),
       publishedQuestionOptionCount(client),
+      client
+        .from("exam_configs")
+        .select("id,question_count,duration_seconds")
+        .eq("kind", "mock_exam")
+        .eq("is_active", true),
     ]);
 
+  if (activeMockExamConfigRows.error) {
+    operationFailed(
+      "Read active mock exam configurations",
+      activeMockExamConfigRows.error,
+    );
+  }
+  const activeMockExamConfigs = activeMockExamConfigRows.data.length;
+  const mockExamConfig = activeMockExamConfigRows.data[0];
   const counts = {
     courses,
     chapters,
     questions,
     publishedQuestionOptions,
+    activeMockExamConfigs,
   };
   if (
     Object.entries(EXPECTED_PRODUCTION_COUNTS).some(
       ([key, expected]) =>
         counts[key as keyof ProductionCounts] !== expected,
-    )
+    ) ||
+    activeMockExamConfigs !== 1 ||
+    mockExamConfig?.question_count !== 40 ||
+    mockExamConfig?.duration_seconds !== 3_600
   ) {
     throw new Error(
-      `Production count verification failed: courses=${courses}, chapters=${chapters}, questions=${questions}, published_question_options=${publishedQuestionOptions}`,
+      `Production count verification failed: courses=${courses}, chapters=${chapters}, questions=${questions}, published_question_options=${publishedQuestionOptions}, active_mock_exam_configs=${activeMockExamConfigs}, mock_exam_question_count=${mockExamConfig?.question_count ?? "none"}, mock_exam_duration_seconds=${mockExamConfig?.duration_seconds ?? "none"}`,
     );
   }
   return counts;
@@ -321,6 +345,25 @@ export async function seedProduction(
     chapterResult.data.map(({ id, position }) => [Number(position), String(id)]),
   );
   if (chapterIds.size !== 6) throw new Error("Production chapter setup failed");
+
+  const mockExamConfig = await client
+    .from("exam_configs")
+    .upsert(
+      {
+        id: stableUuid(`ktct:${COURSE_SLUG}:mock-exam`),
+        course_id: courseId,
+        title: "Thi thử tổng hợp",
+        kind: "mock_exam",
+        question_count: 40,
+        duration_seconds: 3_600,
+        is_active: true,
+        created_by: adminId,
+      },
+      { onConflict: "id" },
+    );
+  if (mockExamConfig.error) {
+    operationFailed("Create production mock exam configuration", mockExamConfig.error);
+  }
 
   const seed = readAndValidateSeed(projectRoot);
   const rows = buildQuestionRows(seed, chapterIds, adminId);

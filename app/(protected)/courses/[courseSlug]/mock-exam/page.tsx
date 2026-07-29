@@ -5,7 +5,6 @@ import {
   ShieldCheck,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 import {
   getMockExamLaunch,
@@ -20,7 +19,23 @@ type PageProps = {
 export default async function MockExamLaunchPage({ params }: PageProps) {
   const { courseSlug } = await params;
   const launch = await getMockExamLaunch(courseSlug).catch(() => null);
-  if (!launch) notFound();
+  if (!launch) {
+    return (
+      <main className="exam-launch-shell">
+        <section aria-labelledby="exam-unavailable-title">
+          <p className="exam-kicker">THI THỬ TỔNG HỢP</p>
+          <h1 id="exam-unavailable-title">Thi thử chưa được cấu hình</h1>
+          <p>
+            Đề thi thử hiện chưa sẵn sàng. Vui lòng quay lại sau khi quản trị
+            viên hoàn tất cấu hình.
+          </p>
+          <Link href={`/courses/${courseSlug}`} className="primary-action">
+            <ArrowLeft size={18} /> Quay lại tổng quan
+          </Link>
+        </section>
+      </main>
+    );
+  }
   const startAction = startMockExamForCourse.bind(null, courseSlug);
 
   return (

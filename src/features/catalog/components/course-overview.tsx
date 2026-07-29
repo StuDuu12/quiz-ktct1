@@ -18,7 +18,14 @@ export function CourseOverview({
   dashboard: CourseDashboard;
   viewerRole: AppRole;
 }) {
-  const { course, chapters, overallProgress, questionCount, recentAttempts } = dashboard;
+  const {
+    course,
+    chapters,
+    overallProgress,
+    questionCount,
+    recentAttempts,
+    mockExamAvailable,
+  } = dashboard;
   return (
     <main className="learner-shell">
       <header className="learner-header">
@@ -56,7 +63,11 @@ export function CourseOverview({
             <h2 id="mock-title">Sẵn sàng kiểm tra kiến thức?</h2>
             <p>Đề gồm 40 câu, phân bổ giữa các chương. Đồng hồ sẽ bắt đầu khi bạn vào đề.</p>
             <div className="exam-meta"><span><ClipboardText size={17} /> 40 câu</span><span><Clock size={17} /> 60 phút</span></div>
-            <Link className="primary-action" href={`/courses/${course.slug}/mock-exam`}>Bắt đầu thi thử <ArrowRight size={17} /></Link>
+            {mockExamAvailable ? (
+              <Link className="primary-action" href={`/courses/${course.slug}/mock-exam`}>Bắt đầu thi thử <ArrowRight size={17} /></Link>
+            ) : (
+              <p className="primary-action" aria-disabled="true">Thi thử chưa được cấu hình</p>
+            )}
           </section>
           <section className="tip-card"><TrendUp size={22} weight="duotone" /><div><strong>Mẹo ôn tập</strong><p>Làm lại chương có độ chính xác thấp trước khi vào đề thi thử.</p></div></section>
         </aside>

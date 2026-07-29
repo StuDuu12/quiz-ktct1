@@ -188,6 +188,7 @@ export function getE2ECourseDashboard(
       (total, chapter) => total + chapter.questionCount,
       0,
     ),
+    mockExamAvailable: true,
   };
 }
 

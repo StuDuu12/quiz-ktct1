@@ -20,6 +20,7 @@ const dashboard: CourseDashboard = {
   recentAttempts: [],
   overallProgress: null,
   questionCount: 0,
+  mockExamAvailable: true,
 };
 
 describe("CourseOverview", () => {
@@ -37,5 +38,35 @@ describe("CourseOverview", () => {
     expect(
       screen.queryByRole("link", { name: "Trang quản trị" }),
     ).toBeNull();
+  });
+
+  it("shows an active mock-exam launch link only when a valid config exists", () => {
+    const { rerender } = render(
+      <CourseOverview
+        dashboard={{ ...dashboard, mockExamAvailable: false }}
+        viewerRole="student"
+      />,
+    );
+
+    expect(
+      screen.queryByRole("link", { name: /bắt đầu thi thử/i }),
+    ).toBeNull();
+    expect(
+      screen.getByText("Thi thử chưa được cấu hình"),
+    ).toBeVisible();
+
+    rerender(
+      <CourseOverview
+        dashboard={{ ...dashboard, mockExamAvailable: true }}
+        viewerRole="student"
+      />,
+    );
+
+    expect(
+      screen.getByRole("link", { name: /bắt đầu thi thử/i }),
+    ).toHaveAttribute(
+      "href",
+      "/courses/kinh-te-chinh-tri-mac-lenin/mock-exam",
+    );
   });
 });

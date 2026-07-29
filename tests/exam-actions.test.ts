@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
 
 const { createServerSupabaseClient, requireViewer, revalidatePath } =
   vi.hoisted(() => ({
@@ -20,6 +21,7 @@ import {
   submitAttempt,
   toggleFlag,
 } from "@/src/features/exam/actions";
+import MockExamLaunchPage from "@/app/(protected)/courses/[courseSlug]/mock-exam/page";
 
 const viewer = {
   id: "00000000-0000-0000-0000-000000000021",
@@ -243,6 +245,35 @@ describe("exam actions", () => {
       "EXAM_SUBMIT_FAILED",
     );
   });
+
+  it("renders an explicit unavailable state instead of a 404 when config is missing", async () => {
+    const courseQuery = chainSingle({
+      id: "course-1",
+      slug: "kinh-te-chinh-tri-mac-lenin",
+      title: "Kinh tế chính trị Mác - Lênin",
+      description: "",
+    });
+    const configQuery = chainLimit([]);
+    createServerSupabaseClient.mockResolvedValue({
+      from: (table: string) => {
+        if (table === "courses") return courseQuery;
+        if (table === "exam_configs") return configQuery;
+        throw new Error(`Unexpected table ${table}`);
+      },
+    });
+
+    const markup = renderToStaticMarkup(
+      await MockExamLaunchPage({
+        params: Promise.resolve({
+          courseSlug: "kinh-te-chinh-tri-mac-lenin",
+        }),
+      }),
+    );
+
+    expect(markup).toContain("Thi thử chưa được cấu hình");
+    expect(markup).toContain("Quay lại tổng quan");
+    expect(markup).toContain('href="/courses/kinh-te-chinh-tri-mac-lenin"');
+  });
 });
 
 function chainSingle(data: unknown) {
@@ -273,5 +304,18 @@ function chainIn(data: unknown[]) {
     in: vi.fn().mockResolvedValue({ data, error: null }),
   };
   query.select.mockReturnValue(query);
+  return query;
+}
+
+function chainLimit(data: unknown[]) {
+  const query = {
+    select: vi.fn(),
+    eq: vi.fn(),
+    order: vi.fn(),
+    limit: vi.fn().mockResolvedValue({ data, error: null }),
+  };
+  query.select.mockReturnValue(query);
+  query.eq.mockReturnValue(query);
+  query.order.mockReturnValue(query);
   return query;
 }
