@@ -461,6 +461,29 @@ export type Database = {
           },
         ];
       };
+      attempt_answer_revisions: {
+        Row: {
+          attempt_id: string;
+          revision: number;
+        };
+        Insert: {
+          attempt_id: string;
+          revision?: number;
+        };
+        Update: {
+          attempt_id?: string;
+          revision?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "attempt_answer_revisions_attempt_id_fkey";
+            columns: ["attempt_id"];
+            isOneToOne: true;
+            referencedRelation: "attempts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       attempt_answers: {
         Row: {
           id: string;
@@ -722,8 +745,20 @@ export type Database = {
         Returns: undefined;
       };
       submit_mock_exam_attempt: {
-        Args: { target_attempt_id: string };
+        Args: {
+          target_attempt_id: string;
+          expected_answer_revision?: number;
+        };
         Returns: Database["public"]["Tables"]["attempts"]["Row"];
+      };
+      get_mock_exam_review: {
+        Args: { target_attempt_id: string };
+        Returns: {
+          attempt_question_id: string;
+          selected_option_id: string | null;
+          is_flagged: boolean;
+          answer_revision: number;
+        }[];
       };
       sync_mock_exam_attempt: {
         Args: { target_attempt_id: string };

@@ -22,10 +22,12 @@ import type { MouseEvent as ReactMouseEvent } from "react";
 
 import { QuestionNavigator } from "@/src/features/exam/components/question-navigator";
 import { ReviewDialog } from "@/src/features/exam/components/review-dialog";
+import { useModalFocus } from "@/src/features/exam/components/use-modal-focus";
 import { buildReviewSummary } from "@/src/features/exam/review";
 import { remainingSeconds } from "@/src/features/exam/timer";
 import type {
   ExamSessionState,
+  LoadExamReview,
   SaveExamAnswer,
   SubmitExam,
   ToggleExamFlag,
@@ -35,6 +37,7 @@ type ExamSessionProps = {
   initialState: ExamSessionState;
   saveAnswer: SaveExamAnswer;
   saveFlag: ToggleExamFlag;
+  loadReview: LoadExamReview;
   submit: SubmitExam;
 };
 
@@ -58,6 +61,7 @@ export function ExamSession({
   initialState,
   saveAnswer,
   saveFlag,
+  loadReview,
   submit,
 }: ExamSessionProps) {
   const [state, setState] = useState(initialState);
@@ -69,13 +73,22 @@ export function ExamSession({
   const [reviewOpen, setReviewOpen] = useState(false);
   const [navigatorOpen, setNavigatorOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewRevision, setReviewRevision] = useState<number | null>(null);
+  const [reviewNotice, setReviewNotice] = useState("");
   const [pendingAnswer, setPendingAnswer] = useState<{
     questionId: string;
     attemptQuestionId: string;
     optionId: string;
   } | null>(null);
   const reviewInvokerRef = useRef<HTMLButtonElement | null>(null);
+  const mobileNavigatorInvokerRef = useRef<HTMLButtonElement | null>(null);
+  const mobileNavigatorDialogRef = useRef<HTMLElement | null>(null);
+  const mobileNavigatorCloseRef = useRef<HTMLButtonElement | null>(null);
   const saveSequenceRef = useRef(new Map<string, number>());
+  const mutationQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const clientWallStartedAtRef = useRef(0);
+  const serverStartedAtMsRef = useRef(Date.parse(initialState.serverNow));
   const autoSubmitStartedRef = useRef(false);
 
   const currentIndex = state.questions.findIndex(
@@ -97,14 +110,71 @@ export function ExamSession({
     });
     setNavigatorOpen(false);
   }, []);
-  const closeReview = useCallback(() => setReviewOpen(false), []);
+  const closeReview = useCallback(() => {
+    setReviewOpen(false);
+    setReviewNotice("");
+  }, []);
+  const closeMobileNavigator = useCallback(
+    () => setNavigatorOpen(false),
+    [],
+  );
 
-  const performSubmit = useCallback(async () => {
+  useModalFocus({
+    active: navigatorOpen,
+    containerRef: mobileNavigatorDialogRef,
+    initialFocusRef: mobileNavigatorCloseRef,
+    invokerRef: mobileNavigatorInvokerRef,
+    onClose: closeMobileNavigator,
+  });
+
+  const enqueueMutation = useCallback(
+    <T,>(operation: () => Promise<T>): Promise<T> => {
+      const run = mutationQueueRef.current
+        .catch(() => undefined)
+        .then(operation);
+      mutationQueueRef.current = run.then(
+        () => undefined,
+        () => undefined,
+      );
+      return run;
+    },
+    [],
+  );
+
+  const applyAuthoritativeReview = useCallback(
+    (review: Awaited<ReturnType<LoadExamReview>>) => {
+      setState((current) => ({
+        ...current,
+        answers: Object.fromEntries(
+          current.questions.map((question) => [
+            question.id,
+            review.answers[question.attemptQuestionId] ?? {
+              flagged: false,
+            },
+          ]),
+        ),
+      }));
+      setReviewRevision(review.revision);
+    },
+    [],
+  );
+
+  const refreshReview = useCallback(async () => {
+    const review = await loadReview(state.attemptId);
+    applyAuthoritativeReview(review);
+    return review;
+  }, [applyAuthoritativeReview, loadReview, state.attemptId]);
+
+  const performSubmit = useCallback(async (mode: "manual" | "auto") => {
     if (submitting || state.status !== "in_progress") return;
+    if (mode === "manual" && reviewRevision === null) return;
     setSubmitting(true);
     setError("");
     try {
-      const result = await submit(state.attemptId);
+      const result =
+        mode === "manual"
+          ? await submit(state.attemptId, reviewRevision!)
+          : await submit(state.attemptId);
       setState((current) => ({
         ...current,
         status: result.status,
@@ -113,22 +183,69 @@ export function ExamSession({
         durationSeconds: result.durationSeconds,
       }));
       setReviewOpen(false);
-    } catch {
-      setError(
-        "Chưa thể nộp bài. Các đáp án đã lưu vẫn an toàn; hãy kiểm tra kết nối và thử lại.",
-      );
+    } catch (caught) {
+      if (
+        mode === "manual" &&
+        caught instanceof Error &&
+        caught.message === "REVIEW_STALE"
+      ) {
+        try {
+          await refreshReview();
+          setReviewNotice(
+            "Bài làm đã thay đổi ở một tab khác. Danh sách dưới đây đã được cập nhật; vui lòng rà soát và xác nhận lại.",
+          );
+          setReviewOpen(true);
+        } catch {
+          setReviewOpen(false);
+          setError(
+            "Chưa thể tải lại bản rà soát mới nhất. Hãy kiểm tra kết nối và mở rà soát lại.",
+          );
+        }
+      } else {
+        setError(
+          "Chưa thể nộp bài. Các đáp án đã lưu vẫn an toàn; hãy kiểm tra kết nối và thử lại.",
+        );
+      }
     } finally {
       setSubmitting(false);
     }
-  }, [state.attemptId, state.status, submit, submitting]);
+  }, [
+    refreshReview,
+    reviewRevision,
+    state.attemptId,
+    state.status,
+    submit,
+    submitting,
+  ]);
+
+  useEffect(() => {
+    clientWallStartedAtRef.current = Date.now();
+  }, []);
+
+  const recomputeRemaining = useCallback(() => {
+    const elapsedMs = Math.max(
+      0,
+      Date.now() - clientWallStartedAtRef.current,
+    );
+    const serverNow = new Date(serverStartedAtMsRef.current + elapsedMs);
+    const computed = remainingSeconds(state.expiresAt, serverNow);
+    setRemaining((current) => Math.min(current, computed));
+  }, [state.expiresAt]);
 
   useEffect(() => {
     if (state.status !== "in_progress" || remaining <= 0) return;
-    const interval = window.setInterval(() => {
-      setRemaining((current) => Math.max(0, current - 1));
-    }, 1000);
-    return () => window.clearInterval(interval);
-  }, [remaining, state.status]);
+    recomputeRemaining();
+    const interval = window.setInterval(recomputeRemaining, 1000);
+    const onVisibilityChange = () => recomputeRemaining();
+    const onFocus = () => recomputeRemaining();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("focus", onFocus);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [recomputeRemaining, remaining, state.status]);
 
   useEffect(() => {
     if (
@@ -139,7 +256,7 @@ export function ExamSession({
       return;
     }
     autoSubmitStartedRef.current = true;
-    void performSubmit();
+    void performSubmit("auto");
   }, [performSubmit, remaining, state.status]);
 
   const persistAnswer = useCallback(
@@ -158,10 +275,12 @@ export function ExamSession({
       setSaveStatus("saving");
       setError("");
       try {
-        const saved = await saveAnswer(
-          state.attemptId,
-          attemptQuestionId,
-          optionId,
+        const saved = await enqueueMutation(() =>
+          saveAnswer(
+            state.attemptId,
+            attemptQuestionId,
+            optionId,
+          ),
         );
         if (saveSequenceRef.current.get(questionId) !== sequence) return;
         setState((current) => ({
@@ -184,7 +303,7 @@ export function ExamSession({
         );
       }
     },
-    [saveAnswer, state.attemptId],
+    [enqueueMutation, saveAnswer, state.attemptId],
   );
 
   const chooseOption = useCallback(
@@ -224,10 +343,12 @@ export function ExamSession({
       },
     }));
     setError("");
-    void saveFlag(
-      state.attemptId,
-      currentQuestion.attemptQuestionId,
-      nextFlagged,
+    void enqueueMutation(() =>
+      saveFlag(
+        state.attemptId,
+        currentQuestion.attemptQuestionId,
+        nextFlagged,
+      ),
     ).catch(() => {
       setState((current) => ({
         ...current,
@@ -245,6 +366,7 @@ export function ExamSession({
     });
   }, [
     currentQuestion,
+    enqueueMutation,
     remaining,
     saveFlag,
     state.answers,
@@ -256,6 +378,7 @@ export function ExamSession({
     const onKeyDown = (event: KeyboardEvent) => {
       if (
         reviewOpen ||
+        navigatorOpen ||
         state.status !== "in_progress" ||
         remaining === 0 ||
         isEditableTarget(event.target)
@@ -289,6 +412,7 @@ export function ExamSession({
     currentIndex,
     currentQuestion.options,
     goToQuestion,
+    navigatorOpen,
     remaining,
     reviewOpen,
     state.questions.length,
@@ -316,9 +440,22 @@ export function ExamSession({
     );
   }
 
-  const openReview = (event: ReactMouseEvent<HTMLButtonElement>) => {
+  const openReview = async (event: ReactMouseEvent<HTMLButtonElement>) => {
     reviewInvokerRef.current = event.currentTarget;
-    setReviewOpen(true);
+    setReviewLoading(true);
+    setReviewNotice("");
+    setError("");
+    try {
+      await mutationQueueRef.current;
+      await refreshReview();
+      setReviewOpen(true);
+    } catch {
+      setError(
+        "Chưa thể tải bản rà soát đã lưu. Hãy kiểm tra kết nối và thử lại.",
+      );
+    } finally {
+      setReviewLoading(false);
+    }
   };
 
   const navigator = (
@@ -332,7 +469,10 @@ export function ExamSession({
 
   return (
     <>
-      <main className="exam-shell" inert={reviewOpen ? true : undefined}>
+      <main
+        className="exam-shell"
+        inert={reviewOpen || navigatorOpen ? true : undefined}
+      >
         <header className="exam-header">
           <Link
             href={`/courses/${state.courseSlug}`}
@@ -379,9 +519,10 @@ export function ExamSession({
             ref={reviewInvokerRef}
             type="button"
             className="exam-review-trigger"
-            onClick={openReview}
+            disabled={reviewLoading}
+            onClick={(event) => void openReview(event)}
           >
-            Rà soát và nộp bài
+            {reviewLoading ? "Đang tải rà soát…" : "Rà soát và nộp bài"}
           </button>
         </div>
 
@@ -443,7 +584,10 @@ export function ExamSession({
                 <WarningCircle size={20} />
                 <span>{error}</span>
                 {remaining === 0 ? (
-                  <button type="button" onClick={() => void performSubmit()}>
+                  <button
+                    type="button"
+                    onClick={() => void performSubmit("auto")}
+                  >
                     Thử nộp lại
                   </button>
                 ) : pendingAnswer ? (
@@ -485,6 +629,7 @@ export function ExamSession({
         </div>
 
         <button
+          ref={mobileNavigatorInvokerRef}
           type="button"
           className="exam-mobile-navigator-trigger"
           aria-expanded={navigatorOpen}
@@ -497,38 +642,42 @@ export function ExamSession({
           </strong>
         </button>
 
-        {navigatorOpen ? (
-          <div
-            className="exam-mobile-navigator-backdrop"
-            role="presentation"
-            onClick={() => setNavigatorOpen(false)}
-          >
-            <section
-              className="exam-mobile-navigator-sheet"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Danh sách câu hỏi trên thiết bị di động"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <QuestionNavigator
-                questions={state.questions}
-                answers={state.answers}
-                currentQuestionId={state.currentQuestionId}
-                onSelect={goToQuestion}
-                onClose={() => setNavigatorOpen(false)}
-              />
-            </section>
-          </div>
-        ) : null}
       </main>
+
+      {navigatorOpen ? (
+        <div
+          className="exam-mobile-navigator-backdrop"
+          role="presentation"
+          onClick={closeMobileNavigator}
+        >
+          <section
+            ref={mobileNavigatorDialogRef}
+            className="exam-mobile-navigator-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Danh sách câu hỏi trên thiết bị di động"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <QuestionNavigator
+              questions={state.questions}
+              answers={state.answers}
+              currentQuestionId={state.currentQuestionId}
+              onSelect={goToQuestion}
+              onClose={closeMobileNavigator}
+              closeButtonRef={mobileNavigatorCloseRef}
+            />
+          </section>
+        </div>
+      ) : null}
 
       {reviewOpen ? (
         <ReviewDialog
           summary={summary}
           invokerRef={reviewInvokerRef}
           submitting={submitting}
+          notice={reviewNotice}
           onClose={closeReview}
-          onConfirm={() => void performSubmit()}
+          onConfirm={() => void performSubmit("manual")}
           onInspect={(index) => {
             goToQuestion(index);
             setReviewOpen(false);

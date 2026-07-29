@@ -1,15 +1,17 @@
 "use client";
 
-import { Flag, X } from "@phosphor-icons/react";
-import { useEffect, useRef } from "react";
+import { Flag, WarningCircle, X } from "@phosphor-icons/react";
+import { useRef } from "react";
 import type { RefObject } from "react";
 
 import type { ReviewSummary } from "@/src/features/exam/review";
+import { useModalFocus } from "@/src/features/exam/components/use-modal-focus";
 
 type ReviewDialogProps = {
   summary: ReviewSummary;
   invokerRef: RefObject<HTMLButtonElement | null>;
   submitting: boolean;
+  notice?: string;
   onClose: () => void;
   onConfirm: () => void;
   onInspect: (index: number) => void;
@@ -19,6 +21,7 @@ export function ReviewDialog({
   summary,
   invokerRef,
   submitting,
+  notice,
   onClose,
   onConfirm,
   onInspect,
@@ -26,40 +29,13 @@ export function ReviewDialog({
   const dialogRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    const invoker = invokerRef.current;
-    closeRef.current?.focus();
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-        return;
-      }
-      if (event.key !== "Tab") return;
-      const focusable = Array.from(
-        dialogRef.current?.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
-        ) ?? [],
-      );
-      if (!focusable.length) return;
-      const first = focusable[0]!;
-      const last = focusable[focusable.length - 1]!;
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      invoker?.focus();
-    };
-  }, [invokerRef, onClose]);
+  useModalFocus({
+    active: true,
+    containerRef: dialogRef,
+    initialFocusRef: closeRef,
+    invokerRef,
+    onClose,
+  });
 
   return (
     <div className="exam-modal-backdrop">
@@ -105,6 +81,12 @@ export function ReviewDialog({
             <span>{summary.flaggedCount} câu đặt cờ</span>
           </div>
         </div>
+        {notice ? (
+          <div className="exam-review-notice" role="alert">
+            <WarningCircle size={19} />
+            <span>{notice}</span>
+          </div>
+        ) : null}
 
         <ol className="exam-review-list">
           {summary.questions.map((question, index) => (

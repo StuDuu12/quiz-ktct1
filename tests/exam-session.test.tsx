@@ -15,6 +15,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ExamSession } from "@/src/features/exam/components/exam-session";
 import type {
   ExamSessionState,
+  LoadExamReview,
   SaveExamAnswer,
   SubmitExam,
   ToggleExamFlag,
@@ -67,6 +68,7 @@ function renderSession(
   actions: {
     saveAnswer?: ReturnType<typeof vi.fn<SaveExamAnswer>>;
     saveFlag?: ReturnType<typeof vi.fn<ToggleExamFlag>>;
+    loadReview?: ReturnType<typeof vi.fn<LoadExamReview>>;
     submit?: ReturnType<typeof vi.fn<SubmitExam>>;
   } = {},
 ) {
@@ -82,6 +84,17 @@ function renderSession(
   const saveFlag =
     actions.saveFlag ??
     vi.fn<ToggleExamFlag>().mockResolvedValue(undefined);
+  const loadReview =
+    actions.loadReview ??
+    vi.fn<LoadExamReview>().mockResolvedValue({
+      revision: 1,
+      answers: Object.fromEntries(
+        initialState.questions.map((question) => [
+          question.attemptQuestionId,
+          initialState.answers[question.id] ?? { flagged: false },
+        ]),
+      ),
+    });
   const submit =
     actions.submit ??
     vi.fn<SubmitExam>().mockResolvedValue({
@@ -96,10 +109,11 @@ function renderSession(
       initialState={initialState}
       saveAnswer={saveAnswer}
       saveFlag={saveFlag}
+      loadReview={loadReview}
       submit={submit}
     />,
   );
-  return { saveAnswer, saveFlag, submit };
+  return { saveAnswer, saveFlag, loadReview, submit };
 }
 
 describe("ExamSession", () => {
@@ -168,6 +182,99 @@ describe("ExamSession", () => {
     ).toHaveAttribute("aria-checked", "false");
   });
 
+  it("serializes rapid same-tab answers even when the first network response is delayed", async () => {
+    let resolveFirst:
+      | ((value: { optionId: string; flagged: boolean }) => void)
+      | undefined;
+    let resolveSecond:
+      | ((value: { optionId: string; flagged: boolean }) => void)
+      | undefined;
+    const first = new Promise<{ optionId: string; flagged: boolean }>(
+      (resolve) => {
+        resolveFirst = resolve;
+      },
+    );
+    const second = new Promise<{ optionId: string; flagged: boolean }>(
+      (resolve) => {
+        resolveSecond = resolve;
+      },
+    );
+    const saveAnswer = vi
+      .fn<SaveExamAnswer>()
+      .mockReturnValueOnce(first)
+      .mockReturnValueOnce(second);
+    renderSession(buildState(), { saveAnswer });
+
+    fireEvent.click(
+      screen.getByRole("radio", { name: /Phương án B của câu 1/ }),
+    );
+    fireEvent.click(
+      screen.getByRole("radio", { name: /Phương án C của câu 1/ }),
+    );
+
+    await waitFor(() => expect(saveAnswer).toHaveBeenCalledTimes(1));
+    expect(saveAnswer).toHaveBeenNthCalledWith(
+      1,
+      "attempt-1",
+      "aq1",
+      "q1-b",
+    );
+    expect(saveAnswer).not.toHaveBeenCalledWith(
+      "attempt-1",
+      "aq1",
+      "q1-c",
+    );
+    await act(async () => {
+      resolveFirst?.({ optionId: "q1-b", flagged: false });
+      await first;
+    });
+    await waitFor(() => expect(saveAnswer).toHaveBeenCalledTimes(2));
+    expect(saveAnswer).toHaveBeenNthCalledWith(
+      2,
+      "attempt-1",
+      "aq1",
+      "q1-c",
+    );
+    await act(async () => {
+      resolveSecond?.({ optionId: "q1-c", flagged: false });
+      await second;
+    });
+    expect(
+      screen.getByRole("radio", { name: /Phương án C của câu 1/ }),
+    ).toHaveAttribute("aria-checked", "true");
+  });
+
+  it("serializes answer and flag mutations through the same queue", async () => {
+    let resolveAnswer:
+      | ((value: { optionId: string; flagged: boolean }) => void)
+      | undefined;
+    const pendingAnswer = new Promise<{
+      optionId: string;
+      flagged: boolean;
+    }>((resolve) => {
+      resolveAnswer = resolve;
+    });
+    const saveAnswer = vi.fn<SaveExamAnswer>().mockReturnValue(pendingAnswer);
+    const saveFlag = vi.fn<ToggleExamFlag>().mockResolvedValue(undefined);
+    renderSession(buildState(), { saveAnswer, saveFlag });
+
+    fireEvent.click(
+      screen.getByRole("radio", { name: /Phương án B của câu 1/ }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Đặt cờ/ }));
+
+    await waitFor(() => expect(saveAnswer).toHaveBeenCalledTimes(1));
+    expect(saveFlag).not.toHaveBeenCalled();
+
+    await act(async () => {
+      resolveAnswer?.({ optionId: "q1-b", flagged: false });
+      await pendingAnswer;
+    });
+    await waitFor(() =>
+      expect(saveFlag).toHaveBeenCalledWith("attempt-1", "aq1", true),
+    );
+  });
+
   it("keeps an unsaved answer visible with an explicit retry after a network error", async () => {
     const saveAnswer = vi
       .fn()
@@ -206,7 +313,7 @@ describe("ExamSession", () => {
     trigger.focus();
     fireEvent.click(trigger);
 
-    const dialog = screen.getByRole("dialog", {
+    const dialog = await screen.findByRole("dialog", {
       name: "Rà soát trước khi nộp bài",
     });
     expect(screen.getByRole("main")).toHaveAttribute("inert");
@@ -238,7 +345,7 @@ describe("ExamSession", () => {
     trigger.focus();
     fireEvent.click(trigger);
 
-    const dialog = screen.getByRole("dialog", {
+    const dialog = await screen.findByRole("dialog", {
       name: "Rà soát trước khi nộp bài",
     });
     const close = within(dialog).getByRole("button", {
@@ -256,10 +363,71 @@ describe("ExamSession", () => {
     expect(trigger).toHaveFocus();
 
     fireEvent.click(trigger);
+    const reopenedDialog = await screen.findByRole("dialog");
     fireEvent.click(
-      screen.getByRole("button", { name: "Xác nhận nộp bài" }),
+      within(reopenedDialog).getByRole("button", {
+        name: "Xác nhận nộp bài",
+      }),
     );
-    await waitFor(() => expect(submit).toHaveBeenCalledWith("attempt-1"));
+    await waitFor(() =>
+      expect(submit).toHaveBeenCalledWith("attempt-1", 1),
+    );
+    expect(
+      await screen.findByRole("heading", { name: "Bài thi đã được nộp" }),
+    ).toBeInTheDocument();
+  });
+
+  it("reloads authoritative review and requires reconfirmation after another tab writes", async () => {
+    const firstAnswers = Object.fromEntries(
+      Array.from({ length: 40 }, (_, index) => [
+        `aq${index + 1}`,
+        index === 0
+          ? { optionId: "q1-a", flagged: false }
+          : { flagged: false },
+      ]),
+    );
+    const changedAnswers = {
+      ...firstAnswers,
+      aq1: { optionId: "q1-b", flagged: true },
+    };
+    const loadReview = vi
+      .fn<LoadExamReview>()
+      .mockResolvedValueOnce({ revision: 4, answers: firstAnswers })
+      .mockResolvedValueOnce({ revision: 5, answers: changedAnswers });
+    const submit = vi
+      .fn<SubmitExam>()
+      .mockRejectedValueOnce(new Error("REVIEW_STALE"))
+      .mockResolvedValueOnce({
+        attemptId: "attempt-1",
+        status: "submitted",
+        score: 50,
+        submittedAt: "2026-07-29T10:31:00.000Z",
+        durationSeconds: 1860,
+      });
+    renderSession(buildState(), { loadReview, submit });
+
+    fireEvent.click(screen.getByRole("button", { name: "Rà soát và nộp bài" }));
+    const dialog = await screen.findByRole("dialog", {
+      name: "Rà soát trước khi nộp bài",
+    });
+    expect(within(dialog).getByText("A. Phương án A của câu 1")).toBeInTheDocument();
+
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "Xác nhận nộp bài" }),
+    );
+    expect(
+      await within(dialog).findByRole("alert"),
+    ).toHaveTextContent("đã thay đổi ở một tab khác");
+    expect(within(dialog).getByText("B. Phương án B của câu 1")).toBeInTheDocument();
+    expect(submit).toHaveBeenCalledTimes(1);
+    expect(submit).toHaveBeenNthCalledWith(1, "attempt-1", 4);
+
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "Xác nhận nộp bài" }),
+    );
+    await waitFor(() =>
+      expect(submit).toHaveBeenNthCalledWith(2, "attempt-1", 5),
+    );
     expect(
       await screen.findByRole("heading", { name: "Bài thi đã được nộp" }),
     ).toBeInTheDocument();
@@ -288,6 +456,61 @@ describe("ExamSession", () => {
     });
     expect(submit).toHaveBeenCalledTimes(1);
     expect(submit).toHaveBeenCalledWith("attempt-1");
+  });
+
+  it("recomputes from the absolute deadline after a background clock jump", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-29T10:59:50.000Z"));
+    const submit = vi.fn<SubmitExam>().mockResolvedValue({
+      attemptId: "attempt-1",
+      status: "submitted",
+      score: 0,
+      submittedAt: "2026-07-29T11:00:00.000Z",
+      durationSeconds: 3600,
+    });
+    renderSession(
+      buildState({ serverNow: "2026-07-29T10:59:50.000Z" }),
+      { submit },
+    );
+    expect(screen.getByText("00:10")).toBeInTheDocument();
+
+    vi.setSystemTime(new Date("2026-07-29T11:00:02.000Z"));
+    await act(async () => {
+      fireEvent.focus(window);
+      await Promise.resolve();
+    });
+
+    expect(submit).toHaveBeenCalledWith("attempt-1");
+  });
+
+  it("makes the mobile navigator modal with focus trap, Escape, inert background, and restore", async () => {
+    renderSession();
+    const trigger = screen.getByRole("button", { name: /Danh sách câu/ });
+    trigger.focus();
+    fireEvent.click(trigger);
+
+    const dialog = await screen.findByRole("dialog", {
+      name: "Danh sách câu hỏi trên thiết bị di động",
+    });
+    const close = within(dialog).getByRole("button", {
+      name: "Đóng danh sách câu hỏi",
+    });
+    expect(screen.getByRole("main")).toHaveAttribute("inert");
+    expect(close).toHaveFocus();
+    const questionButtons = within(dialog).getAllByRole("button", {
+      name: /Câu \d+/,
+    });
+    questionButtons.at(-1)!.focus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(close).toHaveFocus();
+
+    fireEvent.keyDown(dialog, { key: "Escape" });
+    expect(
+      screen.queryByRole("dialog", {
+        name: "Danh sách câu hỏi trên thiết bị di động",
+      }),
+    ).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
   });
 
   it("renders a reload of an already submitted attempt without permitting edits", () => {

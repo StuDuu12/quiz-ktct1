@@ -1,4 +1,5 @@
 import { Flag } from "@phosphor-icons/react";
+import type { Ref } from "react";
 
 import type {
   ExamAnswer,
@@ -11,6 +12,7 @@ type QuestionNavigatorProps = {
   currentQuestionId: string;
   onSelect: (index: number) => void;
   onClose?: () => void;
+  closeButtonRef?: Ref<HTMLButtonElement>;
 };
 
 export function QuestionNavigator({
@@ -19,6 +21,7 @@ export function QuestionNavigator({
   currentQuestionId,
   onSelect,
   onClose,
+  closeButtonRef,
 }: QuestionNavigatorProps) {
   const answeredCount = questions.filter(
     (question) => answers[question.id]?.optionId,
@@ -38,6 +41,7 @@ export function QuestionNavigator({
         </div>
         {onClose ? (
           <button
+            ref={closeButtonRef}
             type="button"
             className="exam-navigator-close"
             aria-label="Đóng danh sách câu hỏi"

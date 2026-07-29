@@ -226,14 +226,60 @@ export async function toggleFlag(
   if (error) throw new Error("EXAM_FLAG_SAVE_FAILED");
 }
 
+export async function loadExamReviewSnapshot(attemptId: string) {
+  await requireViewer(["student", "instructor", "admin"]);
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.rpc("get_mock_exam_review", {
+    target_attempt_id: attemptId,
+  });
+  if (error || data?.length !== 40) {
+    throw new Error("EXAM_REVIEW_LOAD_FAILED");
+  }
+  const revision = Number(data[0]!.answer_revision);
+  if (
+    !Number.isSafeInteger(revision) ||
+    revision < 0 ||
+    data.some((row) => Number(row.answer_revision) !== revision)
+  ) {
+    throw new Error("EXAM_REVIEW_LOAD_FAILED");
+  }
+  const answers: Record<string, ExamAnswer> = {};
+  for (const row of data) {
+    answers[row.attempt_question_id] = {
+      ...(row.selected_option_id
+        ? { optionId: row.selected_option_id }
+        : {}),
+      flagged: row.is_flagged,
+    };
+  }
+  return { revision, answers };
+}
+
 export async function submitAttempt(
   attemptId: string,
+  expectedRevision?: number,
 ): Promise<SubmitExamResult> {
   await requireViewer(["student", "instructor", "admin"]);
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase.rpc("submit_mock_exam_attempt", {
-    target_attempt_id: attemptId,
-  });
+  const args =
+    expectedRevision === undefined
+      ? { target_attempt_id: attemptId }
+      : {
+          target_attempt_id: attemptId,
+          expected_answer_revision: expectedRevision,
+        };
+  const { data, error } = await supabase.rpc(
+    "submit_mock_exam_attempt",
+    args,
+  );
+  if (
+    error &&
+    typeof error === "object" &&
+    "message" in error &&
+    String(error.message).includes("REVIEW_STALE")
+  ) {
+    throw new Error("REVIEW_STALE");
+  }
   if (
     error ||
     !data ||

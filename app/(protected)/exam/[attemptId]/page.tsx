@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import {
   loadExamSession,
+  loadExamReviewSnapshot,
   saveExamAnswer,
   submitAttempt,
   toggleFlag,
@@ -22,6 +23,7 @@ export default async function ExamPage({ params }: PageProps) {
       initialState={state}
       saveAnswer={saveExamAnswer}
       saveFlag={toggleFlag}
+      loadReview={loadExamReviewSnapshot}
       submit={submitAttempt}
     />
   );

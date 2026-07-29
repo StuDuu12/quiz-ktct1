@@ -32,6 +32,7 @@ const migrationPaths = [
   "202607290006_preserve_practice_snapshot_scope.sql",
   "202607290007_balanced_mock_exams.sql",
   "202607290008_resilient_mock_exam_sessions.sql",
+  "202607290009_reviewed_mock_exam_submission.sql",
 ].map((file) => path.resolve("supabase/migrations", file));
 
 function uuid(prefix: number, sequence: number) {
@@ -676,6 +677,12 @@ describe("secure balanced mock-exam creation", () => {
         '${secret.rows[0]!.correct_option_id}'
       )
     `);
+    const review = await database.query<{ answer_revision: number }>(`
+      select answer_revision
+      from public.get_mock_exam_review('${attempt.id}')
+      limit 1
+    `);
+    const expectedRevision = review.rows[0]!.answer_revision;
     const first = await database.query<{
       id: string;
       status: string;
@@ -689,7 +696,10 @@ describe("secure balanced mock-exam creation", () => {
         submitted_at,
         score::double precision as score,
         duration_seconds
-      from public.submit_mock_exam_attempt('${attempt.id}')
+      from public.submit_mock_exam_attempt(
+        '${attempt.id}',
+        ${expectedRevision}
+      )
     `);
     const repeated = await database.query<{
       id: string;
@@ -704,7 +714,10 @@ describe("secure balanced mock-exam creation", () => {
         submitted_at,
         score::double precision as score,
         duration_seconds
-      from public.submit_mock_exam_attempt('${attempt.id}')
+      from public.submit_mock_exam_attempt(
+        '${attempt.id}',
+        ${expectedRevision}
+      )
     `);
 
     expect(first.rows).toEqual([
@@ -810,6 +823,159 @@ describe("secure balanced mock-exam creation", () => {
     await resetIdentity();
   });
 
+  it("rejects a manual submit when another tab changes the reviewed answer revision", async () => {
+    await assumeIdentity(ids.student);
+    const attempt = await startAttempt(ids.balancedCourse, ids.balancedConfig);
+    const question = await database.query<{
+      attempt_question_id: string;
+      first_option_id: string;
+      second_option_id: string;
+    }>(`
+      select
+        aq.id as attempt_question_id,
+        aq.question_snapshot -> 'options' -> 0 ->> 'id' as first_option_id,
+        aq.question_snapshot -> 'options' -> 1 ->> 'id' as second_option_id
+      from public.attempt_questions aq
+      where aq.attempt_id = '${attempt.id}'
+      order by aq.position
+      limit 1
+    `);
+    const target = question.rows[0]!;
+    await database.query(`
+      select * from public.save_mock_exam_answer(
+        '${attempt.id}',
+        '${target.attempt_question_id}',
+        '${target.first_option_id}'
+      )
+    `);
+    const reviewed = await database.query<{
+      attempt_question_id: string;
+      selected_option_id: string | null;
+      is_flagged: boolean;
+      answer_revision: number;
+    }>(`
+      select * from public.get_mock_exam_review('${attempt.id}')
+    `);
+    expect(reviewed.rows).toHaveLength(40);
+    const reviewedQuestion = reviewed.rows.find(
+      (row) => row.attempt_question_id === target.attempt_question_id,
+    );
+    expect(reviewedQuestion).toMatchObject({
+      selected_option_id: target.first_option_id,
+      is_flagged: false,
+    });
+    const reviewedRevision = reviewed.rows[0]!.answer_revision;
+    expect(
+      reviewed.rows.every((row) => row.answer_revision === reviewedRevision),
+    ).toBe(true);
+
+    // A second tab writes after the first tab obtained its authoritative review.
+    await database.query(`
+      select * from public.save_mock_exam_answer(
+        '${attempt.id}',
+        '${target.attempt_question_id}',
+        '${target.second_option_id}'
+      )
+    `);
+    await expect(
+      database.query(`
+        select *
+        from public.submit_mock_exam_attempt(
+          '${attempt.id}',
+          ${reviewedRevision}
+        )
+      `),
+    ).rejects.toThrow(/REVIEW_STALE/);
+
+    const refreshed = await database.query<{
+      attempt_question_id: string;
+      selected_option_id: string | null;
+      answer_revision: number;
+    }>(`
+      select * from public.get_mock_exam_review('${attempt.id}')
+    `);
+    const refreshedQuestion = refreshed.rows.find(
+      (row) => row.attempt_question_id === target.attempt_question_id,
+    );
+    expect(refreshedQuestion).toMatchObject({
+      selected_option_id: target.second_option_id,
+    });
+    expect(refreshed.rows[0]!.answer_revision).toBeGreaterThan(
+      reviewedRevision,
+    );
+
+    const submitted = await database.query<{ status: string }>(`
+      select status
+      from public.submit_mock_exam_attempt(
+        '${attempt.id}',
+        ${refreshed.rows[0]!.answer_revision}
+      )
+    `);
+    expect(submitted.rows).toEqual([{ status: "submitted" }]);
+    await resetIdentity();
+  });
+
+  it("increments the authoritative revision for both answer and flag mutations", async () => {
+    await assumeIdentity(ids.student);
+    const attempt = await startAttempt(ids.balancedCourse, ids.balancedConfig);
+    const question = await database.query<{
+      attempt_question_id: string;
+      option_id: string;
+    }>(`
+      select
+        aq.id as attempt_question_id,
+        aq.question_snapshot -> 'options' -> 0 ->> 'id' as option_id
+      from public.attempt_questions aq
+      where aq.attempt_id = '${attempt.id}'
+      order by aq.position
+      limit 1
+    `);
+    const target = question.rows[0]!;
+    const initial = await database.query<{ answer_revision: number }>(`
+      select answer_revision
+      from public.get_mock_exam_review('${attempt.id}')
+      limit 1
+    `);
+    await database.query(`
+      select * from public.save_mock_exam_answer(
+        '${attempt.id}',
+        '${target.attempt_question_id}',
+        '${target.option_id}'
+      )
+    `);
+    const afterAnswer = await database.query<{ answer_revision: number }>(`
+      select answer_revision
+      from public.get_mock_exam_review('${attempt.id}')
+      limit 1
+    `);
+    await database.query(`
+      select public.set_mock_exam_flag(
+        '${attempt.id}',
+        '${target.attempt_question_id}',
+        true
+      )
+    `);
+    const afterFlag = await database.query<{
+      answer_revision: number;
+      is_flagged: boolean;
+    }>(`
+      select answer_revision, is_flagged
+      from public.get_mock_exam_review('${attempt.id}')
+      where attempt_question_id = '${target.attempt_question_id}'
+    `);
+
+    expect(afterAnswer.rows[0]!.answer_revision).toBe(
+      initial.rows[0]!.answer_revision + 1,
+    );
+    expect(afterFlag.rows).toEqual([
+      {
+        answer_revision: afterAnswer.rows[0]!.answer_revision + 1,
+        is_flagged: true,
+      },
+    ]);
+    await resetIdentity();
+  });
+
   it("removes direct learner writes so all mock-exam mutations cross the RPC boundary", async () => {
     await assumeIdentity(ids.student);
     const attempt = await startAttempt(ids.balancedCourse, ids.balancedConfig);
@@ -842,6 +1008,13 @@ describe("secure balanced mock-exam creation", () => {
         update public.attempts
         set status = 'submitted'
         where id = '${attempt.id}'
+      `),
+    ).rejects.toThrow();
+    await expect(
+      database.query(`
+        select revision
+        from public.attempt_answer_revisions
+        where attempt_id = '${attempt.id}'
       `),
     ).rejects.toThrow();
     await resetIdentity();

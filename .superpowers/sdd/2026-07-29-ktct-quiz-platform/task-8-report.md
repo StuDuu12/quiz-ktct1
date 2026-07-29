@@ -57,3 +57,33 @@
 - `npm run lint`: passed.
 - `npm run build`: passed; build output includes
   `/courses/:courseSlug/mock-exam` and `/exam/:attemptId`.
+
+## Review hardening
+
+- Added a server-only answer revision for every mock-exam attempt. Answer and
+  flag RPCs serialize on the attempt row and advance the revision; the
+  authoritative review RPC returns all 40 saved states bound to one revision.
+- Manual submission now requires that reviewed revision. A write from another
+  tab produces `REVIEW_STALE`; the client reloads the authoritative review and
+  requires a second explicit confirmation. The deadline-only overload remains
+  idempotent for automatic submission and synchronized reloads.
+- Serialized all same-tab answer and flag writes through one client queue.
+  Regression tests hold the first request open and prove that a later answer or
+  flag RPC is not issued until it resolves.
+- Replaced interval-decrement timing with absolute recomputation from the
+  server-derived clock on each tick, window focus, and visibility change.
+- Promoted the mobile question navigator to a true modal: initial focus, Tab
+  wrapping, Escape close, inert exam background, and focus restoration now use
+  the same shared focus behavior as the review dialog.
+- Kept the revision relation hidden from authenticated learners; the security
+  suite verifies that it cannot be selected directly.
+
+## Review-fix verification
+
+- Focused exam suite: 7 files, 51 tests passed.
+- Full suite: 21 files, 133 tests passed.
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- `npm run build`: passed.
+- `git diff --check`: passed (only the repository's Windows line-ending
+  conversion notices were emitted).

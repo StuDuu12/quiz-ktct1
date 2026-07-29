@@ -53,6 +53,15 @@ export type ToggleExamFlag = (
   flagged: boolean,
 ) => Promise<void>;
 
+export type ExamReviewSnapshot = {
+  revision: number;
+  answers: Record<string, ExamAnswer>;
+};
+
+export type LoadExamReview = (
+  attemptId: string,
+) => Promise<ExamReviewSnapshot>;
+
 export type SubmitExamResult = {
   attemptId: string;
   status: "submitted";
@@ -63,6 +72,7 @@ export type SubmitExamResult = {
 
 export type SubmitExam = (
   attemptId: string,
+  expectedRevision?: number,
 ) => Promise<SubmitExamResult>;
 
 export type AttemptSnapshot = {
