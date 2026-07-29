@@ -38,6 +38,7 @@ class MemoryQuery implements PromiseLike<unknown> {
   private filters: Array<[string, unknown]> = [];
   private rangeStart = 0;
   private rangeEnd = Number.POSITIVE_INFINITY;
+  private orderColumn: string | null = null;
 
   constructor(
     private client: MemoryProductionClient,
@@ -77,7 +78,8 @@ class MemoryQuery implements PromiseLike<unknown> {
     return this;
   }
 
-  order() {
+  order(column: string) {
+    this.orderColumn = column;
     return this;
   }
 
@@ -91,6 +93,12 @@ class MemoryQuery implements PromiseLike<unknown> {
     const result = await this.execute();
     const data = Array.isArray(result.data) ? result.data[0] ?? null : result.data;
     return { data, error: data ? null : { code: "PGRST116" } };
+  }
+
+  async maybeSingle() {
+    const result = await this.execute();
+    const data = Array.isArray(result.data) ? result.data[0] ?? null : result.data;
+    return { data, error: null };
   }
 
   then<TResult1 = unknown, TResult2 = never>(
@@ -187,6 +195,13 @@ class MemoryQuery implements PromiseLike<unknown> {
     if (this.head) {
       return { data: [], count: selected.length, error: null };
     }
+    if (this.orderColumn) {
+      selected = selected.toSorted((left, right) =>
+        String(left[this.orderColumn!]).localeCompare(
+          String(right[this.orderColumn!]),
+        ),
+      );
+    }
     return {
       data: selected.slice(this.rangeStart, this.rangeEnd + 1),
       error: null,
@@ -196,6 +211,36 @@ class MemoryQuery implements PromiseLike<unknown> {
 
 function asSupabase(client: MemoryProductionClient) {
   return client as unknown as SupabaseClient;
+}
+
+function populateVerifiedContent(
+  client: MemoryProductionClient,
+  courses: Row[] = [
+    {
+      id: "course-1",
+      slug: "kinh-te-chinh-tri-mac-lenin",
+    },
+  ],
+) {
+  client.tables.set("courses", courses);
+  client.tables.set(
+    "chapters",
+    Array.from({ length: 6 }, (_, index) => ({ id: `chapter-${index}` })),
+  );
+  client.tables.set(
+    "questions",
+    Array.from({ length: 497 }, (_, index) => ({
+      id: `question-${index}`,
+      status: "published",
+    })),
+  );
+  client.tables.set(
+    "question_options",
+    Array.from({ length: 1_988 }, (_, index) => ({
+      id: `option-${index}`,
+      question_id: `question-${Math.floor(index / 4)}`,
+    })),
+  );
 }
 
 describe("production mock exam provisioning", () => {
@@ -218,6 +263,132 @@ describe("production mock exam provisioning", () => {
     await expect(
       verifyProductionCounts(asSupabase(client)),
     ).resolves.toMatchObject({ activeMockExamConfigs: 1 });
+  });
+
+  it("reuses one legacy active config instead of creating a deterministic duplicate", async () => {
+    const client = new MemoryProductionClient();
+    const legacyId = "10000000-0000-0000-0000-000000000001";
+    client.tables.set("exam_configs", [
+      {
+        id: legacyId,
+        course_id: "courses-0001",
+        title: "Đề cũ",
+        kind: "mock_exam",
+        question_count: 20,
+        duration_seconds: 1_800,
+        is_active: true,
+        created_by: adminId,
+      },
+    ]);
+
+    await seedProduction(asSupabase(client), projectRoot, adminId);
+    await seedProduction(asSupabase(client), projectRoot, adminId);
+
+    expect(client.tables.get("exam_configs")).toEqual([
+      expect.objectContaining({
+        id: legacyId,
+        course_id: "courses-0001",
+        question_count: 40,
+        duration_seconds: 3_600,
+        is_active: true,
+      }),
+    ]);
+  });
+
+  it("keeps duplicate legacy rows but deterministically deactivates all except one", async () => {
+    const client = new MemoryProductionClient();
+    const firstId = "10000000-0000-0000-0000-000000000001";
+    const secondId = "10000000-0000-0000-0000-000000000002";
+    client.tables.set("exam_configs", [
+      {
+        id: secondId,
+        course_id: "courses-0001",
+        title: "Đề cũ 2",
+        kind: "mock_exam",
+        question_count: 20,
+        duration_seconds: 1_800,
+        is_active: true,
+        created_by: adminId,
+      },
+      {
+        id: firstId,
+        course_id: "courses-0001",
+        title: "Đề cũ 1",
+        kind: "mock_exam",
+        question_count: 30,
+        duration_seconds: 2_700,
+        is_active: true,
+        created_by: adminId,
+      },
+    ]);
+
+    await seedProduction(asSupabase(client), projectRoot, adminId);
+    await seedProduction(asSupabase(client), projectRoot, adminId);
+
+    const configs = client.tables.get("exam_configs")!;
+    expect(configs).toHaveLength(2);
+    expect(configs.filter(({ is_active }) => is_active)).toEqual([
+      expect.objectContaining({
+        id: firstId,
+        question_count: 40,
+        duration_seconds: 3_600,
+      }),
+    ]);
+    expect(configs.find(({ id }) => id === secondId)).toMatchObject({
+      is_active: false,
+    });
+  });
+
+  it("counts only the KTCT active config when another course also has one", async () => {
+    const client = new MemoryProductionClient();
+    populateVerifiedContent(client, [
+      { id: "course-1", slug: "kinh-te-chinh-tri-mac-lenin" },
+      { id: "course-2", slug: "another-course" },
+    ]);
+    client.tables.set("exam_configs", [
+      {
+        id: "config-1",
+        course_id: "course-1",
+        kind: "mock_exam",
+        question_count: 40,
+        duration_seconds: 3_600,
+        is_active: true,
+      },
+      {
+        id: "config-2",
+        course_id: "course-2",
+        kind: "mock_exam",
+        question_count: 40,
+        duration_seconds: 3_600,
+        is_active: true,
+      },
+    ]);
+
+    await expect(
+      verifyProductionCounts(asSupabase(client)),
+    ).resolves.toMatchObject({ courses: 1, activeMockExamConfigs: 1 });
+  });
+
+  it("does not accept another course's active config for KTCT", async () => {
+    const client = new MemoryProductionClient();
+    populateVerifiedContent(client, [
+      { id: "course-1", slug: "kinh-te-chinh-tri-mac-lenin" },
+      { id: "course-2", slug: "another-course" },
+    ]);
+    client.tables.set("exam_configs", [
+      {
+        id: "config-2",
+        course_id: "course-2",
+        kind: "mock_exam",
+        question_count: 40,
+        duration_seconds: 3_600,
+        is_active: true,
+      },
+    ]);
+
+    await expect(verifyProductionCounts(asSupabase(client))).rejects.toThrow(
+      /active_mock_exam_configs=0/,
+    );
   });
 
   it.each([
@@ -271,25 +442,7 @@ describe("production mock exam provisioning", () => {
     ],
   ])("rejects a %s production mock-exam configuration", async (_label, configs) => {
     const client = new MemoryProductionClient();
-    client.tables.set("courses", [{ id: "course-1" }]);
-    client.tables.set(
-      "chapters",
-      Array.from({ length: 6 }, (_, index) => ({ id: `chapter-${index}` })),
-    );
-    client.tables.set(
-      "questions",
-      Array.from({ length: 497 }, (_, index) => ({
-        id: `question-${index}`,
-        status: "published",
-      })),
-    );
-    client.tables.set(
-      "question_options",
-      Array.from({ length: 1_988 }, (_, index) => ({
-        id: `option-${index}`,
-        question_id: `question-${Math.floor(index / 4)}`,
-      })),
-    );
+    populateVerifiedContent(client);
     client.tables.set("exam_configs", configs);
 
     await expect(verifyProductionCounts(asSupabase(client))).rejects.toThrow(

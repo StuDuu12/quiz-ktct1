@@ -114,23 +114,33 @@ export function createProductionClient(environment: ProductionEnvironment) {
 export async function verifyProductionCounts(
   client: SupabaseClient,
 ): Promise<ProductionCounts> {
+  const targetCourse = await client
+    .from("courses")
+    .select("id")
+    .eq("slug", COURSE_SLUG)
+    .maybeSingle();
+  if (targetCourse.error) {
+    operationFailed("Resolve production course", targetCourse.error);
+  }
+  const courseId = targetCourse.data?.id ?? null;
   const [
-    courses,
     chapters,
     questions,
     publishedQuestionOptions,
     activeMockExamConfigRows,
   ] =
     await Promise.all([
-      exactCount(client, "courses"),
       exactCount(client, "chapters"),
       exactCount(client, "questions"),
       publishedQuestionOptionCount(client),
-      client
-        .from("exam_configs")
-        .select("id,question_count,duration_seconds")
-        .eq("kind", "mock_exam")
-        .eq("is_active", true),
+      courseId
+        ? client
+            .from("exam_configs")
+            .select("id,question_count,duration_seconds")
+            .eq("course_id", courseId)
+            .eq("kind", "mock_exam")
+            .eq("is_active", true)
+        : Promise.resolve({ data: [], error: null }),
     ]);
 
   if (activeMockExamConfigRows.error) {
@@ -139,10 +149,10 @@ export async function verifyProductionCounts(
       activeMockExamConfigRows.error,
     );
   }
-  const activeMockExamConfigs = activeMockExamConfigRows.data.length;
-  const mockExamConfig = activeMockExamConfigRows.data[0];
+  const activeMockExamConfigs = activeMockExamConfigRows.data?.length ?? 0;
+  const mockExamConfig = activeMockExamConfigRows.data?.[0];
   const counts = {
-    courses,
+    courses: courseId ? 1 : 0,
     chapters,
     questions,
     publishedQuestionOptions,
@@ -158,7 +168,7 @@ export async function verifyProductionCounts(
     mockExamConfig?.duration_seconds !== 3_600
   ) {
     throw new Error(
-      `Production count verification failed: courses=${courses}, chapters=${chapters}, questions=${questions}, published_question_options=${publishedQuestionOptions}, active_mock_exam_configs=${activeMockExamConfigs}, mock_exam_question_count=${mockExamConfig?.question_count ?? "none"}, mock_exam_duration_seconds=${mockExamConfig?.duration_seconds ?? "none"}`,
+      `Production count verification failed: courses=${counts.courses}, chapters=${chapters}, questions=${questions}, published_question_options=${publishedQuestionOptions}, active_mock_exam_configs=${activeMockExamConfigs}, mock_exam_question_count=${mockExamConfig?.question_count ?? "none"}, mock_exam_duration_seconds=${mockExamConfig?.duration_seconds ?? "none"}`,
     );
   }
   return counts;
@@ -346,11 +356,41 @@ export async function seedProduction(
   );
   if (chapterIds.size !== 6) throw new Error("Production chapter setup failed");
 
+  const deterministicMockExamConfigId = stableUuid(
+    `ktct:${COURSE_SLUG}:mock-exam`,
+  );
+  const existingMockExamConfigs = await client
+    .from("exam_configs")
+    .select("id,is_active")
+    .eq("course_id", courseId)
+    .eq("kind", "mock_exam")
+    .order("id");
+  if (existingMockExamConfigs.error) {
+    operationFailed(
+      "Read production mock exam configurations",
+      existingMockExamConfigs.error,
+    );
+  }
+  const activeMockExamConfigs = existingMockExamConfigs.data.filter(
+    ({ is_active }) => is_active,
+  );
+  // Reuse a stable active row so existing attempts keep their config
+  // reference. Surplus rows are retained below and only made inactive.
+  const canonicalMockExamConfigId =
+    activeMockExamConfigs.find(
+      ({ id }) => id === deterministicMockExamConfigId,
+    )?.id ??
+    activeMockExamConfigs[0]?.id ??
+    existingMockExamConfigs.data.find(
+      ({ id }) => id === deterministicMockExamConfigId,
+    )?.id ??
+    deterministicMockExamConfigId;
+
   const mockExamConfig = await client
     .from("exam_configs")
     .upsert(
       {
-        id: stableUuid(`ktct:${COURSE_SLUG}:mock-exam`),
+        id: canonicalMockExamConfigId,
         course_id: courseId,
         title: "Thi thử tổng hợp",
         kind: "mock_exam",
@@ -363,6 +403,21 @@ export async function seedProduction(
     );
   if (mockExamConfig.error) {
     operationFailed("Create production mock exam configuration", mockExamConfig.error);
+  }
+  const duplicateActiveConfigIds = activeMockExamConfigs
+    .filter(({ id }) => id !== canonicalMockExamConfigId)
+    .map(({ id }) => id);
+  if (duplicateActiveConfigIds.length) {
+    const deactivation = await client
+      .from("exam_configs")
+      .update({ is_active: false })
+      .in("id", duplicateActiveConfigIds);
+    if (deactivation.error) {
+      operationFailed(
+        "Deactivate duplicate production mock exam configurations",
+        deactivation.error,
+      );
+    }
   }
 
   const seed = readAndValidateSeed(projectRoot);
