@@ -91,6 +91,27 @@ describe("assertAllowedRole", () => {
 
     await expect(requireViewer()).rejects.toThrow("REDIRECT:/login");
   });
+
+  it.each([
+    ["student", ["admin"], "/dashboard?access=denied"],
+    ["instructor", ["admin"], "/instructor?access=denied"],
+    ["admin", ["instructor"], "/admin?access=denied"],
+  ] as const)(
+    "redirects %s to its own portal when a role guard denies access",
+    async (role, allowed, destination) => {
+      createServerSupabaseClient.mockResolvedValue(
+        serverClientForProfile({
+          email: `${role}@example.com`,
+          role,
+          is_active: true,
+        }),
+      );
+
+      await expect(requireViewer([...allowed])).rejects.toThrow(
+        `REDIRECT:${destination}`,
+      );
+    },
+  );
 });
 
 describe("portal route guards", () => {

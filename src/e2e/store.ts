@@ -26,6 +26,8 @@ type E2EUser = {
   fullName: string;
   confirmed: boolean;
   role: AppRole;
+  isActive: boolean;
+  createdAt: string;
   assignedCourseIds: string[];
 };
 
@@ -33,7 +35,38 @@ type E2EStore = {
   users: Map<string, E2EUser>;
   practiceAttempts: Map<string, E2EPracticeAttempt>;
   examAttempts: Map<string, E2EExamAttempt>;
+  questions: Map<string, E2EQuestion>;
+  audits: E2EAudit[];
   sequence: number;
+};
+
+type E2EQuestion = {
+  id: string;
+  chapterId: string;
+  chapterTitle: string;
+  courseId: string;
+  content: string;
+  explanation: string;
+  difficulty: number;
+  status: string;
+  sourceNumber: number | null;
+  updatedAt: string;
+  options: Array<{
+    id: string;
+    label: "A" | "B" | "C" | "D";
+    content: string;
+    isCorrect: boolean;
+  }>;
+};
+
+type E2EAudit = {
+  id: number;
+  actorId: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  metadata: Record<string, string | boolean>;
+  createdAt: string;
 };
 
 type E2EPracticeAttempt = {
@@ -64,39 +97,66 @@ function createStore(): E2EStore {
   const users = new Map<string, E2EUser>();
   for (const user of [
     {
-      id: "e2e-student",
+      id: "00000000-0000-4000-8000-000000000001",
       email: "student@example.test",
       password: "Student!2026",
       fullName: "Học viên E2E",
       confirmed: true,
       role: "student" as const,
+      isActive: true,
+      createdAt: "2026-07-29T00:00:00.000Z",
       assignedCourseIds: [],
     },
     {
-      id: "e2e-instructor",
+      id: "00000000-0000-4000-8000-000000000002",
       email: "instructor@example.test",
       password: "Instructor!2026",
       fullName: "Giảng viên E2E",
       confirmed: true,
       role: "instructor" as const,
+      isActive: true,
+      createdAt: "2026-07-29T00:00:00.000Z",
       assignedCourseIds: ["e2e-course-ktct"],
     },
     {
-      id: "e2e-admin",
+      id: "00000000-0000-4000-8000-000000000003",
       email: "admin@example.test",
       password: "Admin!2026",
       fullName: "Quản trị viên E2E",
       confirmed: true,
       role: "admin" as const,
+      isActive: true,
+      createdAt: "2026-07-29T00:00:00.000Z",
       assignedCourseIds: [],
     },
   ]) {
     users.set(user.email, user);
   }
+  const questions = new Map<string, E2EQuestion>();
+  questions.set("e2e-question-draft-1", {
+    id: "e2e-question-draft-1",
+    chapterId: "e2e-chapter-1",
+    chapterTitle: "Chương 1",
+    courseId: "e2e-course-ktct",
+    content: "Câu hỏi bản nháp được phân công",
+    explanation: "",
+    difficulty: 2,
+    status: "draft",
+    sourceNumber: 501,
+    updatedAt: "2026-07-29T00:00:00.000Z",
+    options: ["A", "B", "C", "D"].map((label, index) => ({
+      id: `e2e-question-draft-1-${label.toLowerCase()}`,
+      label: label as "A" | "B" | "C" | "D",
+      content: `Phương án ${label}`,
+      isCorrect: index === 0,
+    })),
+  });
   return {
     users,
     practiceAttempts: new Map(),
     examAttempts: new Map(),
+    questions,
+    audits: [],
     sequence: 0,
   };
 }
@@ -123,6 +183,8 @@ export function registerE2EStudent(input: {
     fullName: input.fullName.trim(),
     confirmed: false,
     role: "student",
+    isActive: true,
+    createdAt: new Date().toISOString(),
     assignedCourseIds: [],
   };
   store().users.set(email, user);
@@ -146,6 +208,9 @@ export function authenticateE2EUser(email: string, password: string) {
   if (!user.confirmed) {
     return { user: null, error: "Email not confirmed" };
   }
+  if (!user.isActive) {
+    return { user: null, error: "Account is inactive" };
+  }
   return { user, error: null };
 }
 
@@ -155,7 +220,7 @@ export function getE2EViewer(sessionId: string | undefined): Viewer | null {
   const user = [...store().users.values()].find(
     (candidate) => candidate.id === sessionId,
   );
-  return user
+  return user?.isActive
     ? { id: user.id, role: user.role, email: user.email }
     : null;
 }
@@ -649,5 +714,173 @@ export function getE2EAdminCatalog(viewer: Viewer) {
         }))
       : [],
     importJobs: [],
+  };
+}
+
+export function getE2EAdminQuestions(
+  viewer: Viewer,
+  courseId?: string | null,
+) {
+  assertE2EEnabled();
+  const targetCourseId = courseId ?? "e2e-course-ktct";
+  const actor = [...store().users.values()].find(
+    (candidate) => candidate.id === viewer.id,
+  );
+  const allowed =
+    viewer.role === "admin" ||
+    (viewer.role === "instructor" &&
+      actor?.assignedCourseIds.includes(targetCourseId));
+  if (!allowed) throw new Error("FORBIDDEN");
+  return [...store().questions.values()]
+    .filter((question) => question.courseId === targetCourseId)
+    .map((question) => structuredClone(question));
+}
+
+export function saveE2EQuestion(
+  viewer: Viewer,
+  input: {
+    id: string | null;
+    chapterId: string;
+    content: string;
+    explanation: string;
+    difficulty: number;
+    status: string;
+    sourceNumber: number | null;
+    options: Array<{
+      label: "A" | "B" | "C" | "D";
+      content: string;
+      isCorrect: boolean;
+    }>;
+  },
+) {
+  assertE2EEnabled();
+  const courseId = input.chapterId.startsWith("e2e-unassigned")
+    ? "e2e-course-unassigned"
+    : "e2e-course-ktct";
+  getE2EAdminQuestions(viewer, courseId);
+  const id = input.id ?? `e2e-question-${++store().sequence}`;
+  store().questions.set(id, {
+    id,
+    chapterId: input.chapterId,
+    chapterTitle: input.chapterId.startsWith("e2e-unassigned")
+      ? "Ngoài phân công"
+      : "Chương 1",
+    courseId,
+    content: input.content,
+    explanation: input.explanation,
+    difficulty: input.difficulty,
+    status: input.status,
+    sourceNumber: input.sourceNumber,
+    updatedAt: new Date().toISOString(),
+    options: input.options.map((option) => ({
+      id: `${id}-${option.label.toLowerCase()}`,
+      ...option,
+    })),
+  });
+  return id;
+}
+
+function requireE2EAdmin(viewer: Viewer) {
+  if (viewer.role !== "admin") throw new Error("FORBIDDEN");
+}
+
+function pushE2EAudit(
+  viewer: Viewer,
+  action: string,
+  entityId: string,
+  metadata: Record<string, string | boolean>,
+) {
+  store().audits.unshift({
+    id: ++store().sequence,
+    actorId: viewer.id,
+    action,
+    entityType: "profile",
+    entityId,
+    metadata,
+    createdAt: new Date().toISOString(),
+  });
+}
+
+export function getE2EAdminUsers(viewer: Viewer) {
+  assertE2EEnabled();
+  requireE2EAdmin(viewer);
+  return [...store().users.values()].map((user) => ({
+    id: user.id,
+    email: user.email,
+    fullName: user.fullName,
+    role: user.role,
+    isActive: user.isActive,
+    createdAt: user.createdAt,
+    assignedCourseIds: [...user.assignedCourseIds],
+  }));
+}
+
+export function setE2EUserRole(
+  viewer: Viewer,
+  targetUserId: string,
+  role: AppRole,
+) {
+  assertE2EEnabled();
+  requireE2EAdmin(viewer);
+  const target = [...store().users.values()].find(
+    (candidate) => candidate.id === targetUserId,
+  );
+  if (!target || target.id === viewer.id) throw new Error("FORBIDDEN");
+  const previous = target.role;
+  target.role = role;
+  target.isActive = true;
+  if (role !== "instructor") target.assignedCourseIds = [];
+  pushE2EAudit(viewer, "profile.role_changed", target.id, {
+    previousRole: previous,
+    role,
+  });
+}
+
+export function setE2EUserActive(
+  viewer: Viewer,
+  targetUserId: string,
+  active: boolean,
+) {
+  assertE2EEnabled();
+  requireE2EAdmin(viewer);
+  const target = [...store().users.values()].find(
+    (candidate) => candidate.id === targetUserId,
+  );
+  if (!target || target.id === viewer.id) throw new Error("FORBIDDEN");
+  target.isActive = active;
+  pushE2EAudit(
+    viewer,
+    active ? "user.activated" : "user.deactivated",
+    target.id,
+    { active },
+  );
+}
+
+export function getE2EAdminAudits(viewer: Viewer) {
+  assertE2EEnabled();
+  requireE2EAdmin(viewer);
+  return store().audits.map((audit) => structuredClone(audit));
+}
+
+export function getE2EAdminReport(viewer: Viewer) {
+  assertE2EEnabled();
+  if (!["admin", "instructor"].includes(viewer.role)) {
+    throw new Error("FORBIDDEN");
+  }
+  const attempts = [
+    ...store().practiceAttempts.values(),
+    ...store().examAttempts.values(),
+  ];
+  return {
+    summary: {
+      activeUsers: [...store().users.values()].filter((user) => user.isActive)
+        .length,
+      attempts: attempts.length,
+      averageScore: null,
+      completionRate: 0,
+      totalUsers: store().users.size,
+    },
+    chapterDifficulty: [],
+    questionMetrics: [],
   };
 }

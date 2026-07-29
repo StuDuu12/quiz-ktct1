@@ -8,6 +8,7 @@ import {
   getE2EViewer,
 } from "@/src/e2e/store";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
+import { portalDestinationForRole } from "@/src/features/auth/destination";
 
 export type Viewer = {
   id: string;
@@ -51,6 +52,8 @@ export async function requireViewer(roles?: AppRole[]): Promise<Viewer> {
   const viewer = await getViewer();
   if (!viewer) redirect("/login");
 
-  if (roles) assertAllowedRole(viewer.role, roles);
+  if (roles && !roles.includes(viewer.role)) {
+    redirect(`${portalDestinationForRole(viewer.role)}?access=denied`);
+  }
   return viewer;
 }

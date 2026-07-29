@@ -2592,6 +2592,19 @@ body {
   box-shadow: var(--focus-ring);
 }
 .admin-sidebar-backdrop { display: none; }
+.access-denied-notice {
+  width: min(100% - 2rem, 88rem);
+  margin: 1rem auto 0;
+  padding: .8rem 1rem;
+  border: 1px solid #edc18f;
+  border-radius: .75rem;
+  color: #74451f;
+  background: #fff4e8;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.learner-shell > .access-denied-notice { width: 100%; margin-top: 0; }
 
 @media (max-width: 1120px) {
   .admin-shell { grid-template-columns: 5.25rem minmax(0, 1fr); }
@@ -2683,12 +2696,17 @@ body {
 }
 
 /* Vietnamese readability baseline across authentication and role portals. */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .auth-form input:not([type="checkbox"]),
   .auth-submit,
+  .history-filters input,
+  .history-filters select,
+  .history-filter-actions button,
   .practice-question-card > h1,
+  .practice-option,
   .option-label,
   .exam-question-card > h1,
+  .exam-option,
   .exam-option-content,
   .question-actions button,
   .exam-question-actions button,

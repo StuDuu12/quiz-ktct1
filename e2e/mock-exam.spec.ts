@@ -132,3 +132,32 @@ test("mock shortcuts do not fire while an editable field has focus", async ({
   ).toHaveAttribute("aria-pressed", "false");
   await expect(page.getByText("Câu 1 / 40")).toBeVisible();
 });
+
+test("student flags, navigates, submits, and finds the mock exam in history", async ({
+  page,
+}) => {
+  await loginAs(page, "student");
+  await startExam(page);
+
+  await page.getByRole("button", { name: /^Đặt cờ\s*F?$/ }).click();
+  await expect(
+    page.getByRole("button", { name: /^Đã đặt cờ\s*F?$/ }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: /^Câu 2,/ }).click();
+  await expect(page.getByText("Câu 2 / 40")).toBeVisible();
+  await page.getByLabel("Phương án B").check();
+  await expect(page.getByText("Đã lưu", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Rà soát và nộp bài" }).click();
+  const review = page.getByRole("dialog", {
+    name: "Rà soát trước khi nộp bài",
+  });
+  await expect(review.getByText("1 câu đặt cờ")).toBeVisible();
+  await review.getByRole("button", { name: "Xác nhận nộp bài" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Bài thi đã được nộp" }),
+  ).toBeVisible();
+
+  await page.goto("/history");
+  await expect(page.getByText("Thi thử tổng hợp").first()).toBeVisible();
+});

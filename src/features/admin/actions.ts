@@ -1,5 +1,11 @@
 import type { AppRole } from "@/src/features/auth/roles";
 import { requireViewer } from "@/src/features/auth/session";
+import { isE2EEnabled } from "@/src/e2e/guard";
+import {
+  saveE2EQuestion,
+  setE2EUserActive,
+  setE2EUserRole,
+} from "@/src/e2e/store";
 import type {
   OptionLabel,
   ParsedQuestion,
@@ -212,9 +218,9 @@ const questionInputSchema = z.object({
 
 export async function saveQuestionForm(formData: FormData) {
   "use server";
-  await requireViewer(["admin", "instructor"]);
+  const viewer = await requireViewer(["admin", "instructor"]);
   const correctLabel = String(formData.get("correct_label") ?? "");
-  const input = questionInputSchema.parse({
+  const rawInput = {
     id: optionalUuid(formData.get("id")),
     chapterId: formData.get("chapter_id"),
     content: formData.get("content"),
@@ -231,9 +237,25 @@ export async function saveQuestionForm(formData: FormData) {
         isCorrect: correctLabel === label,
       }))
       .filter((option) => option.content.trim()),
+  };
+  const e2eQuestionInputSchema = questionInputSchema.extend({
+    id: z.string().min(1).nullable(),
+    chapterId: z.string().min(1),
   });
+  const input = (
+    isE2EEnabled() ? e2eQuestionInputSchema : questionInputSchema
+  ).parse(rawInput);
   const issues = validateQuestionForStatus(input);
   if (issues.length) throw new Error(issues.map((issue) => issue.message).join(" "));
+
+  if (isE2EEnabled()) {
+    saveE2EQuestion(viewer, input);
+    revalidatePath("/admin");
+    revalidatePath("/admin/questions");
+    revalidatePath("/instructor");
+    revalidatePath("/instructor/questions");
+    return;
+  }
 
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.rpc("admin_upsert_question", {
@@ -295,11 +317,19 @@ export async function revokeInstructorForm(formData: FormData) {
 
 export async function setUserActiveForm(formData: FormData) {
   "use server";
-  await requireViewer(["admin"]);
+  const viewer = await requireViewer(["admin"]);
+  const userId = uuidSchema.parse(formData.get("user_id"));
+  const active = String(formData.get("active")) === "true";
+  if (isE2EEnabled()) {
+    setE2EUserActive(viewer, userId, active);
+    revalidatePath("/admin/users");
+    revalidatePath("/admin/reports");
+    return;
+  }
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("admin_set_user_active", {
-    target_user_id: uuidSchema.parse(formData.get("user_id")),
-    target_active: String(formData.get("active")) === "true",
+    target_user_id: userId,
+    target_active: active,
   });
   rpcError(error, "USER_STATUS_SAVE_FAILED");
   revalidatePath("/admin/users");
@@ -307,11 +337,17 @@ export async function setUserActiveForm(formData: FormData) {
 
 export async function setUserRoleForm(formData: FormData): Promise<void> {
   "use server";
-  await requireViewer(["admin"]);
+  const viewer = await requireViewer(["admin"]);
   const input = userRoleSchema.parse({
     userId: formData.get("user_id"),
     role: formData.get("role"),
   });
+  if (isE2EEnabled()) {
+    setE2EUserRole(viewer, input.userId, input.role);
+    revalidatePath("/admin/users");
+    revalidatePath("/admin/reports");
+    return;
+  }
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("admin_set_user_role", {
     target_user_id: input.userId,

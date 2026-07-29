@@ -28,7 +28,7 @@ test("instructor sees only the assigned course across responsive widths", async 
   page,
 }) => {
   await loginAs(page, "instructor");
-  await page.goto("/admin/courses");
+  await page.goto("/instructor/courses");
 
   await expect(
     page.getByRole("heading", { name: "Khóa học và chương" }),

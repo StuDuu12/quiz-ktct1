@@ -1,6 +1,12 @@
 import { requireViewer, type Viewer } from "@/src/features/auth/session";
 import { isE2EEnabled } from "@/src/e2e/guard";
-import { getE2EAdminCatalog } from "@/src/e2e/store";
+import {
+  getE2EAdminAudits,
+  getE2EAdminCatalog,
+  getE2EAdminQuestions,
+  getE2EAdminReport,
+  getE2EAdminUsers,
+} from "@/src/e2e/store";
 import type { Json } from "@/src/lib/supabase/database.types";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
@@ -207,7 +213,8 @@ export async function getAdminCatalog(): Promise<AdminCatalog> {
 export async function getAdminQuestions(
   courseId?: string | null,
 ): Promise<AdminQuestion[]> {
-  await requireViewer(["admin", "instructor"]);
+  const viewer = await requireViewer(["admin", "instructor"]);
+  if (isE2EEnabled()) return getE2EAdminQuestions(viewer, courseId);
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.rpc("get_admin_questions", {
     target_course_id: courseId ?? null,
@@ -247,7 +254,8 @@ export async function getAdminQuestions(
 }
 
 export async function getAdminUsers(): Promise<AdminUser[]> {
-  await requireViewer(["admin"]);
+  const viewer = await requireViewer(["admin"]);
+  if (isE2EEnabled()) return getE2EAdminUsers(viewer);
   const supabase = await createServerSupabaseClient();
   const [profiles, assignments] = await Promise.all([
     supabase
@@ -279,7 +287,8 @@ export async function getAdminUsers(): Promise<AdminUser[]> {
 export async function getAdminReport(
   courseId?: string | null,
 ): Promise<AdminReport> {
-  await requireViewer(["admin", "instructor"]);
+  const viewer = await requireViewer(["admin", "instructor"]);
+  if (isE2EEnabled()) return getE2EAdminReport(viewer);
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.rpc("get_admin_report", {
     target_course_id: courseId ?? null,
@@ -337,7 +346,8 @@ export async function getAdminReport(
 }
 
 export async function getAdminAudits(limit = 40): Promise<AdminAudit[]> {
-  await requireViewer(["admin"]);
+  const viewer = await requireViewer(["admin"]);
+  if (isE2EEnabled()) return getE2EAdminAudits(viewer).slice(0, limit);
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("audit_logs")

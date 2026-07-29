@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChapterRow } from "@/src/features/catalog/components/chapter-row";
 import type { AppRole } from "@/src/features/auth/roles";
 import type { CourseDashboard } from "@/src/features/catalog/queries";
+import { AccessDeniedNotice } from "@/src/features/auth/components/access-denied-notice";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(
@@ -28,6 +29,7 @@ export function CourseOverview({
   } = dashboard;
   return (
     <main className="learner-shell">
+      <AccessDeniedNotice />
       <header className="learner-header">
         <Link href="/dashboard" className="brand-mark"><BookOpen size={24} weight="fill" /> Ôn thi KTCT</Link>
         <nav aria-label="Điều hướng học viên"><Link href="/dashboard" aria-current="page">Tổng quan</Link><Link href="/history">Lịch sử</Link>{viewerRole === "admin" ? <Link href="/admin">Trang quản trị</Link> : null}</nav>

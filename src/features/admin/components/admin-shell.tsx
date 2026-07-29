@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { AdminNavigation } from "@/src/features/admin/components/admin-navigation";
+import { AccessDeniedNotice } from "@/src/features/auth/components/access-denied-notice";
 
 const subscribeToHydration = () => () => {};
 
@@ -63,6 +64,7 @@ export function AdminShell({
         />
       ) : null}
       <div className="admin-stage">
+        <AccessDeniedNotice />
         <header className="admin-mobile-header">
           <button
             type="button"

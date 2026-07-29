@@ -5,6 +5,7 @@ import { POST as expireAttempt } from "@/app/api/e2e/attempts/[attemptId]/expire
 import { POST as login } from "@/app/api/e2e/auth/login/route";
 import { POST as register } from "@/app/api/e2e/auth/register/route";
 import { GET as confirmEmail } from "@/app/api/e2e/confirm/route";
+import { POST as saveInstructorQuestion } from "@/app/api/e2e/instructor/questions/route";
 import { POST as reset } from "@/app/api/e2e/reset/route";
 import * as fixtureStore from "@/src/e2e/store";
 
@@ -13,7 +14,11 @@ const fixtureActionNames = [
   "confirmE2EEmail",
   "expireE2EExam",
   "finishE2EPractice",
+  "getE2EAdminAudits",
   "getE2EAdminCatalog",
+  "getE2EAdminQuestions",
+  "getE2EAdminReport",
+  "getE2EAdminUsers",
   "getE2EAttemptHistory",
   "getE2ECourseDashboard",
   "getE2EExamReview",
@@ -28,10 +33,13 @@ const fixtureActionNames = [
   "resetE2EStore",
   "saveE2EExamAnswer",
   "saveE2EExamFlag",
+  "saveE2EQuestion",
   "saveE2EPracticeAnswer",
   "saveE2EPracticeFlag",
   "startE2EExam",
   "startE2EPractice",
+  "setE2EUserActive",
+  "setE2EUserRole",
   "submitE2EExam",
 ] as const;
 
@@ -86,9 +94,10 @@ describe("E2E fixture production boundary", () => {
       expireAttempt(request, {
         params: Promise.resolve({ attemptId: "e2e-exam-1" }),
       }),
+      saveInstructorQuestion(request),
     ]);
 
-    expect(responses).toHaveLength(5);
+    expect(responses).toHaveLength(6);
     for (const response of responses) {
       expect(response.status).toBe(404);
       await expect(response.json()).resolves.toEqual({ error: "Not found" });
