@@ -80,6 +80,15 @@ function createStore(): E2EStore {
       role: "instructor" as const,
       assignedCourseIds: ["e2e-course-ktct"],
     },
+    {
+      id: "e2e-admin",
+      email: "admin@example.test",
+      password: "Admin!2026",
+      fullName: "Quản trị viên E2E",
+      confirmed: true,
+      role: "admin" as const,
+      assignedCourseIds: [],
+    },
   ]) {
     users.set(user.email, user);
   }

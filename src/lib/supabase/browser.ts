@@ -1,5 +1,7 @@
 import { createBrowserClient } from "@supabase/ssr";
 
+import type { PortalDestination } from "@/src/features/auth/destination";
+import type { AppRole } from "@/src/features/auth/roles";
 import type { Database } from "@/src/lib/supabase/database.types";
 import { getPublicEnv } from "@/src/lib/env";
 
@@ -70,29 +72,51 @@ export async function signUpStudent({
   });
 }
 
-export async function signIn(identifier: string, password: string) {
+type SignInResult = {
+  data: { role: AppRole; destination: PortalDestination } | null;
+  error: { message: string } | null;
+};
+
+type SignInResponse = {
+  error: string | null;
+  role?: AppRole;
+  destination?: PortalDestination;
+};
+
+function parseSignInResponse(result: SignInResponse): SignInResult {
+  if (result.error) {
+    return { data: null, error: { message: result.error } };
+  }
+  if (!result.role || !result.destination) {
+    return {
+      data: null,
+      error: { message: "Không xác định được không gian làm việc." },
+    };
+  }
+  return {
+    data: { role: result.role, destination: result.destination },
+    error: null,
+  };
+}
+
+export async function signIn(
+  identifier: string,
+  password: string,
+): Promise<SignInResult> {
   if (process.env.NEXT_PUBLIC_E2E_MODE === "1") {
     const response = await fetch("/api/e2e/auth/login", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ email: identifier, password }),
     });
-    const result = (await response.json()) as { error: string | null };
-    return {
-      data: null,
-      error: result.error ? { message: result.error } : null,
-    };
+    return parseSignInResponse((await response.json()) as SignInResponse);
   }
   const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ identifier, password }),
   });
-  const result = (await response.json()) as { error: string | null };
-  return {
-    data: null,
-    error: result.error ? { message: result.error } : null,
-  };
+  return parseSignInResponse((await response.json()) as SignInResponse);
 }
 
 export async function signOut() {

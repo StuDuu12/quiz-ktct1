@@ -5,6 +5,7 @@ import {
   authenticateE2EUser,
   E2E_SESSION_COOKIE,
 } from "@/src/e2e/store";
+import { portalDestinationForRole } from "@/src/features/auth/destination";
 
 export async function POST(request: NextRequest) {
   if (!isE2EEnabled()) {
@@ -24,7 +25,11 @@ export async function POST(request: NextRequest) {
       { status: 401 },
     );
   }
-  const response = NextResponse.json({ error: null });
+  const response = NextResponse.json({
+    error: null,
+    role: result.user.role,
+    destination: portalDestinationForRole(result.user.role),
+  });
   response.cookies.set(E2E_SESSION_COOKIE, result.user.id, {
     httpOnly: true,
     path: "/",

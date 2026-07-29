@@ -17,7 +17,7 @@ export default function LoginPage() {
     const formData = new FormData(event.currentTarget);
     setIsSubmitting(true);
     setMessage(null);
-    const { error } = await signIn(
+    const { data, error } = await signIn(
       String(formData.get("identifier") ?? ""),
       String(formData.get("password") ?? ""),
     );
@@ -27,7 +27,12 @@ export default function LoginPage() {
       setMessage(getAuthErrorMessage(error, "signin"));
       return;
     }
-    router.replace("/dashboard");
+    if (!data) {
+      setMessage("Không xác định được không gian làm việc.");
+      return;
+    }
+    router.replace(data.destination);
+    router.refresh();
   }
 
   return (
