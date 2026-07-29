@@ -99,6 +99,15 @@ describe("production configuration", () => {
     );
   });
 
+  it("inlines SSR route chunks so free-tier requests do not compile them lazily", () => {
+    const viteConfig = readFileSync(
+      path.join(projectRoot, "vite.config.ts"),
+      "utf8",
+    );
+
+    expect(viteConfig).toContain("codeSplitting: false");
+  });
+
   it("discovers every SQL migration in strict filename order", () => {
     const migrations = discoverMigrationFiles(projectRoot);
 

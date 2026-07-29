@@ -64,6 +64,17 @@ export default defineConfig(async ({ command }) => {
         e2eTestServer ? "1" : "0",
       ),
     },
+    environments: {
+      ssr: {
+        build: {
+          rollupOptions: {
+            output: {
+              codeSplitting: false,
+            },
+          },
+        },
+      },
+    },
     server: isCodexSeatbeltSandbox
       ? { watch: { useFsEvents: false, usePolling: true } }
       : undefined,
