@@ -4,13 +4,7 @@ import path from "node:path";
 import { chromium, type Browser } from "playwright";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-
-vi.mock("next/font/google", () => ({
-  Be_Vietnam_Pro: () => ({
-    variable: "font-be-vietnam-pro-test",
-  }),
-}));
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import RootLayout from "@/app/layout";
 
@@ -47,7 +41,7 @@ describe("Vietnamese typography", () => {
     await browser.close();
   });
 
-  it("applies the Be Vietnam Pro variable at the root body", () => {
+  it("declares Vietnamese language at the root without runtime font classes", () => {
     const markup = renderToStaticMarkup(
       React.createElement(
         RootLayout,
@@ -57,7 +51,8 @@ describe("Vietnamese typography", () => {
     );
 
     expect(markup).toContain('<html lang="vi">');
-    expect(markup).toContain('<body class="font-be-vietnam-pro-test">');
+    expect(markup).toContain("<body>");
+    expect(markup).not.toContain("_selfHostedCSS");
   });
 
   it("keeps mobile forms, questions, answers, and main actions readable", async () => {
