@@ -54,7 +54,6 @@ export default function ResetPasswordPage() {
           <span>Mật khẩu mới</span>
           <input
             required
-            minLength={8}
             name="password"
             type="password"
             autoComplete="new-password"
@@ -65,7 +64,6 @@ export default function ResetPasswordPage() {
           <span>Xác nhận mật khẩu mới</span>
           <input
             required
-            minLength={8}
             name="confirmPassword"
             type="password"
             autoComplete="new-password"

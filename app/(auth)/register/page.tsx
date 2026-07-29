@@ -68,7 +68,6 @@ export default function RegisterPage() {
           <span>Mật khẩu</span>
           <input
             required
-            minLength={8}
             name="password"
             type="password"
             autoComplete="new-password"
@@ -79,7 +78,6 @@ export default function RegisterPage() {
           <span>Xác nhận mật khẩu</span>
           <input
             required
-            minLength={8}
             name="confirmPassword"
             type="password"
             autoComplete="new-password"

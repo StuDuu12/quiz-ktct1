@@ -98,4 +98,16 @@ describe("public entry experience", () => {
       cleanup();
     }
   });
+
+  it("defers password minimum length validation to the hosted auth policy", () => {
+    for (const Page of [RegisterPage, ResetPasswordPage]) {
+      render(<Page />);
+
+      for (const input of screen.getAllByLabelText(/mật khẩu/i)) {
+        expect(input).not.toHaveAttribute("minlength");
+      }
+
+      cleanup();
+    }
+  });
 });
