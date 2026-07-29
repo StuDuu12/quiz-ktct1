@@ -361,11 +361,18 @@ export function PracticeSession({
 
   return (
     <>
-    <main
-      className="practice-shell"
-      inert={reviewOpen || navigatorOpen ? true : undefined}
-    >
-      <header className="practice-header">
+      <main
+        className="practice-shell"
+        inert={reviewOpen || navigatorOpen ? true : undefined}
+      >
+        {process.env.NEXT_PUBLIC_E2E_MODE === "1" ? (
+          <input
+            type="text"
+            aria-label="Kiểm tra phím tắt khi nhập"
+            data-e2e-shortcut-probe
+          />
+        ) : null}
+        <header className="practice-header">
         <Link
           href={`/courses/${state.courseSlug}`}
           className="practice-brand"

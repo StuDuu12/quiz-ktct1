@@ -95,3 +95,30 @@ test("practice navigator is an accessible bottom sheet on a phone", async ({
   await page.setViewportSize({ width: 1280, height: 900 });
   await expectNoHorizontalOverflow(page);
 });
+
+test("practice shortcuts do not fire while an editable field has focus", async ({
+  page,
+}) => {
+  await loginAs(page, "student");
+  await page.goto(
+    "/courses/kinh-te-chinh-tri-mac-lenin/chapters/1/practice",
+    { waitUntil: "networkidle" },
+  );
+
+  const editor = page.getByRole("textbox", {
+    name: "Kiểm tra phím tắt khi nhập",
+  });
+  await editor.fill("ghi chú ");
+  await editor.pressSequentially("1234f");
+  await editor.press("ArrowRight");
+  await editor.press("ArrowLeft");
+
+  await expect(editor).toHaveValue("ghi chú 1234f");
+  await expect(
+    page.locator('input[type="radio"][name="practice-answer"]:checked'),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: /^Đặt cờ\s*F?$/ }),
+  ).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByText("Câu 1 / 10")).toBeVisible();
+});

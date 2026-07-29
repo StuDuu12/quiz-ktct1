@@ -483,6 +483,61 @@ describe("ExamSession", () => {
     expect(submit).toHaveBeenCalledWith("attempt-1");
   });
 
+  it("announces only meaningful timer thresholds once across background clock jumps", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-29T10:49:59.000Z"));
+    const submit = vi.fn<SubmitExam>(
+      () => new Promise(() => undefined),
+    );
+    renderSession(
+      buildState({ serverNow: "2026-07-29T10:49:59.000Z" }),
+      { submit },
+    );
+
+    const visualTimer = screen.getByLabelText("Thời gian còn lại 10:01");
+    expect(visualTimer).not.toHaveAttribute("aria-live");
+    const warning = screen.getByRole("status", {
+      name: "Cảnh báo thời gian làm bài",
+    });
+    expect(warning).toBeEmptyDOMElement();
+
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+      await Promise.resolve();
+    });
+    expect(warning).toHaveTextContent("Còn 10 phút làm bài.");
+
+    vi.setSystemTime(new Date("2026-07-29T10:55:01.000Z"));
+    await act(async () => {
+      fireEvent.focus(window);
+      await Promise.resolve();
+    });
+    expect(warning).toHaveTextContent("Còn 5 phút làm bài.");
+    const fiveMinuteMarkup = warning.innerHTML;
+
+    await act(async () => {
+      fireEvent.focus(window);
+      await Promise.resolve();
+    });
+    expect(warning.innerHTML).toBe(fiveMinuteMarkup);
+
+    vi.setSystemTime(new Date("2026-07-29T10:59:01.000Z"));
+    await act(async () => {
+      fireEvent.focus(window);
+      await Promise.resolve();
+    });
+    expect(warning).toHaveTextContent("Còn 1 phút làm bài.");
+
+    vi.setSystemTime(new Date("2026-07-29T11:00:01.000Z"));
+    await act(async () => {
+      fireEvent.focus(window);
+      await Promise.resolve();
+    });
+    expect(warning).toHaveTextContent(
+      "Hết giờ. Bài thi đang được tự động nộp.",
+    );
+  });
+
   it("makes the mobile navigator modal with focus trap, Escape, inert background, and restore", async () => {
     renderSession();
     const trigger = screen.getByRole("button", { name: /Danh sách câu/ });

@@ -43,6 +43,16 @@ type ExamSessionProps = {
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
+const TIMER_WARNINGS = [
+  { threshold: 600, message: "Còn 10 phút làm bài." },
+  { threshold: 300, message: "Còn 5 phút làm bài." },
+  { threshold: 60, message: "Còn 1 phút làm bài." },
+  {
+    threshold: 0,
+    message: "Hết giờ. Bài thi đang được tự động nộp.",
+  },
+] as const;
+
 function isEditableTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) return false;
   return Boolean(
@@ -76,6 +86,7 @@ export function ExamSession({
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewRevision, setReviewRevision] = useState<number | null>(null);
   const [reviewNotice, setReviewNotice] = useState("");
+  const [timerAnnouncement, setTimerAnnouncement] = useState("");
   const [pendingAnswer, setPendingAnswer] = useState<{
     questionId: string;
     attemptQuestionId: string;
@@ -90,6 +101,8 @@ export function ExamSession({
   const clientWallStartedAtRef = useRef(0);
   const serverStartedAtMsRef = useRef(Date.parse(initialState.serverNow));
   const autoSubmitStartedRef = useRef(false);
+  const previousRemainingRef = useRef(remaining);
+  const announcedTimerThresholdsRef = useRef(new Set<number>());
 
   const currentIndex = state.questions.findIndex(
     (question) => question.id === state.currentQuestionId,
@@ -258,6 +271,22 @@ export function ExamSession({
     autoSubmitStartedRef.current = true;
     void performSubmit("auto");
   }, [performSubmit, remaining, state.status]);
+
+  useEffect(() => {
+    const previous = previousRemainingRef.current;
+    previousRemainingRef.current = remaining;
+    const crossed = TIMER_WARNINGS.filter(
+      ({ threshold }) =>
+        previous > threshold &&
+        remaining <= threshold &&
+        !announcedTimerThresholdsRef.current.has(threshold),
+    );
+    for (const warning of crossed) {
+      announcedTimerThresholdsRef.current.add(warning.threshold);
+    }
+    const mostUrgent = crossed.at(-1);
+    if (mostUrgent) setTimerAnnouncement(mostUrgent.message);
+  }, [remaining]);
 
   const persistAnswer = useCallback(
     async (
@@ -478,6 +507,13 @@ export function ExamSession({
         className="exam-shell"
         inert={reviewOpen || navigatorOpen ? true : undefined}
       >
+        {process.env.NEXT_PUBLIC_E2E_MODE === "1" ? (
+          <input
+            type="text"
+            aria-label="Kiểm tra phím tắt khi nhập"
+            data-e2e-shortcut-probe
+          />
+        ) : null}
         <header className="exam-header">
           <Link
             href={`/courses/${state.courseSlug}`}
@@ -502,12 +538,20 @@ export function ExamSession({
             ]
               .filter(Boolean)
               .join(" ")}
-            aria-live="polite"
             aria-label={`Thời gian còn lại ${formatTimer(remaining)}`}
           >
             <Clock size={19} />
             <span>{formatTimer(remaining)}</span>
           </div>
+          <span
+            className="visually-hidden"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            aria-label="Cảnh báo thời gian làm bài"
+          >
+            {timerAnnouncement}
+          </span>
         </header>
 
         <div className="exam-save-row">

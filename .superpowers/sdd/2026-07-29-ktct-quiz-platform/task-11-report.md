@@ -14,7 +14,12 @@ components. The suite covers:
 - student denial from the admin surface and instructor course scoping;
 - native radio inputs, visible keyboard focus, modal focus return/Escape,
   reduced motion, 44px answer targets, the below-768px bottom-sheet breakpoint,
-  and no horizontal overflow at 375px, 768px, and 1280px.
+  and no horizontal overflow at 375px, 768px, and 1280px;
+- a non-live visual countdown plus a visually hidden polite warning region
+  which announces the 10-minute, 5-minute, 1-minute, and expiry thresholds once
+  each, including when the browser clock jumps after backgrounding;
+- real-session browser checks proving 1–4, F, and arrow shortcuts do not answer,
+  flag, or navigate while the E2E-only editable probe has focus.
 
 ## Test-only persistence boundary
 
@@ -45,12 +50,19 @@ Representative RED states observed before implementation:
   navigator was not an accessible dialog;
 - mock exam failed because its options used styled `role="radio"` buttons;
 - student admin navigation initially exposed the admin layout;
-- a repeated E2E run caught a pre-hydration server-action click, leading to an
-  explicit hydration marker instead of a fixed delay;
+- a repeated E2E run caught a pre-hydration server-action click, leading to a
+  client-owned launch form whose readiness marker covers the action itself
+  instead of a fixed delay;
 - production-boundary tests drove store-level assertions and 404 endpoint
-  behavior.
+  behavior;
+- the timer regression test first failed on `aria-live="polite"` on the visual
+  countdown, then drove threshold-only announcements;
+- practice and mock editable-shortcut E2E tests first failed because the gated
+  real-session textbox did not exist, then passed with all shortcut effects
+  unchanged while typed text remained.
 
-The final targeted interaction suite passed 23/23 tests before the full gate.
+The fix-round targeted component suite passed 24/24 tests and the two new
+editable-shortcut Playwright regressions passed before the full gate.
 
 ## Verification
 
@@ -58,10 +70,10 @@ All commands were run from the task worktree:
 
 - `npm run typecheck` — passed.
 - `npm run lint` — passed.
-- `npm test` — 32 files passed, 179 tests passed.
+- `npm test` — 32 files passed, 180 tests passed.
 - production build with `E2E_MODE`, `E2E_TEST_SERVER`, and
   `NEXT_PUBLIC_E2E_MODE` removed — passed (`vinext build`, five environments).
-- `npm run test:e2e` — 8 Playwright tests passed in Chromium.
+- `npm run test:e2e` — 10 Playwright tests passed in Chromium.
 - `git diff --check` — passed (only Git line-ending notices).
 
 ## Limitations

@@ -10,13 +10,14 @@ const launchPath =
   "/courses/kinh-te-chinh-tri-mac-lenin/mock-exam";
 
 async function startExam(page: Parameters<typeof loginAs>[0]) {
-  await page.goto(launchPath);
-  await page.locator('[data-hydrated="true"]').waitFor({ state: "attached" });
+  await page.goto(launchPath, { waitUntil: "networkidle" });
+  await page
+    .locator('form[data-hydrated="true"]')
+    .waitFor({ state: "attached" });
   await page
     .getByRole("button", { name: /Bắt đầu thi thử/ })
     .click();
   await expect(page).toHaveURL(/\/exam\/e2e-exam-/);
-  await page.waitForLoadState("networkidle");
 }
 
 test.beforeEach(async ({ request }) => {
@@ -104,4 +105,28 @@ test("mock navigator is a keyboard-safe bottom sheet without phone overflow", as
   await expectNoHorizontalOverflow(page);
   await page.setViewportSize({ width: 1280, height: 900 });
   await expectNoHorizontalOverflow(page);
+});
+
+test("mock shortcuts do not fire while an editable field has focus", async ({
+  page,
+}) => {
+  await loginAs(page, "student");
+  await startExam(page);
+
+  const editor = page.getByRole("textbox", {
+    name: "Kiểm tra phím tắt khi nhập",
+  });
+  await editor.fill("ghi chú ");
+  await editor.pressSequentially("1234f");
+  await editor.press("ArrowRight");
+  await editor.press("ArrowLeft");
+
+  await expect(editor).toHaveValue("ghi chú 1234f");
+  await expect(
+    page.locator('input[type="radio"][name="exam-answer"]:checked'),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: /^Đặt cờ\s*F?$/ }),
+  ).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByText("Câu 1 / 40")).toBeVisible();
 });
