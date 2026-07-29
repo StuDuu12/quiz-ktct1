@@ -7,6 +7,7 @@ import {
   type ProductionEnvironment,
   type SeedQuestion,
   type SetupEnvironment,
+  classifyExistingSeedState,
   readAndValidateSeed,
 } from "./lib";
 
@@ -58,16 +59,20 @@ function chunks<T>(items: T[], size = 200) {
   return result;
 }
 
-async function fetchAllIds(client: SupabaseClient, table: string) {
-  const ids: string[] = [];
+async function fetchAllRows(
+  client: SupabaseClient,
+  table: string,
+  columns: string,
+) {
+  const rows: Record<string, unknown>[] = [];
   for (let offset = 0; ; offset += 1_000) {
     const result = await client
       .from(table)
-      .select("id")
+      .select(columns)
       .range(offset, offset + 999);
     if (result.error) operationFailed(`Read ${table}`, result.error);
-    ids.push(...result.data.map(({ id }) => String(id)));
-    if (result.data.length < 1_000) return ids;
+    rows.push(...(result.data as unknown as Record<string, unknown>[]));
+    if (result.data.length < 1_000) return rows;
   }
 }
 
@@ -211,34 +216,42 @@ export async function seedProduction(
   projectRoot: string,
   adminId: string,
 ) {
-  const existing = await Promise.all([
+  const [
+    courses,
+    chapters,
+    questions,
+    questionOptions,
+    publishedQuestionOptions,
+  ] = await Promise.all([
     exactCount(client, "courses"),
     exactCount(client, "chapters"),
     exactCount(client, "questions"),
     exactCount(client, "question_options"),
+    publishedQuestionOptionCount(client),
   ]);
+  const rawCounts = { courses, chapters, questions, questionOptions };
   if (
-    existing[0] === EXPECTED_PRODUCTION_COUNTS.courses &&
-    existing[1] === EXPECTED_PRODUCTION_COUNTS.chapters &&
-    existing[2] === EXPECTED_PRODUCTION_COUNTS.questions &&
-    existing[3] === EXPECTED_PRODUCTION_COUNTS.publishedQuestionOptions
-  ) {
-    return;
-  }
-  if (
-    existing[0] > EXPECTED_PRODUCTION_COUNTS.courses ||
-    existing[1] > EXPECTED_PRODUCTION_COUNTS.chapters ||
-    existing[2] > EXPECTED_PRODUCTION_COUNTS.questions ||
-    existing[3] > EXPECTED_PRODUCTION_COUNTS.publishedQuestionOptions
+    courses > EXPECTED_PRODUCTION_COUNTS.courses ||
+    chapters > EXPECTED_PRODUCTION_COUNTS.chapters ||
+    questions > EXPECTED_PRODUCTION_COUNTS.questions ||
+    questionOptions > EXPECTED_PRODUCTION_COUNTS.publishedQuestionOptions
   ) {
     throw new Error("Production database contains unexpected content; seed stopped");
   }
 
   let courseId: string;
-  if (existing[0] === 1) {
-    const course = await client.from("courses").select("id,slug").single();
+  if (courses === 1) {
+    const course = await client
+      .from("courses")
+      .select("id,slug,title,status,created_by")
+      .single();
     if (course.error) operationFailed("Read production course", course.error);
-    if (course.data.slug !== COURSE_SLUG) {
+    if (
+      course.data.slug !== COURSE_SLUG ||
+      course.data.title !== COURSE_TITLE ||
+      course.data.status !== "published" ||
+      String(course.data.created_by) !== adminId
+    ) {
       throw new Error("Production database contains an unexpected course");
     }
     courseId = String(course.data.id);
@@ -261,18 +274,27 @@ export async function seedProduction(
     courseId = String(courseResult.data.id);
   }
 
-  if (existing[1] > 0) {
-    const chapters = await client
+  if (chapters > 0) {
+    const chapterRows = await client
       .from("chapters")
-      .select("course_id,position")
+      .select("course_id,position,title,status")
       .order("position");
-    if (chapters.error) operationFailed("Read production chapters", chapters.error);
-    const positions = chapters.data.map(({ course_id, position }) => {
-      if (String(course_id) !== courseId) {
+    if (chapterRows.error) {
+      operationFailed("Read production chapters", chapterRows.error);
+    }
+    const positions = chapterRows.data.map(
+      ({ course_id, position, title, status }) => {
+      const numericPosition = Number(position);
+      if (
+        String(course_id) !== courseId ||
+        title !== CHAPTER_TITLES[numericPosition - 1] ||
+        status !== "published"
+      ) {
         throw new Error("Production database contains an unexpected chapter");
       }
-      return Number(position);
-    });
+      return numericPosition;
+    },
+    );
     if (
       positions.some(
         (position, index) => position !== index + 1 || position > 6,
@@ -302,25 +324,71 @@ export async function seedProduction(
 
   const seed = readAndValidateSeed(projectRoot);
   const rows = buildQuestionRows(seed, chapterIds, adminId);
-  const expectedQuestionIds = new Set(rows.map(({ id }) => id));
-  const expectedOptionIds = new Set(
-    rows.flatMap(({ options }) => options.map(({ id }) => id)),
-  );
-  if (
-    existing[2] > 0 &&
-    (await fetchAllIds(client, "questions")).some(
-      (id) => !expectedQuestionIds.has(id),
-    )
-  ) {
-    throw new Error("Production database contains unexpected questions");
-  }
-  if (
-    existing[3] > 0 &&
-    (await fetchAllIds(client, "question_options")).some(
-      (id) => !expectedOptionIds.has(id),
-    )
-  ) {
-    throw new Error("Production database contains unexpected question options");
+  const actualQuestionRows =
+    questions > 0
+      ? await fetchAllRows(
+          client,
+          "questions",
+          "id,chapter_id,content,explanation,difficulty,source_number,created_by",
+        )
+      : [];
+  const actualOptionRows =
+    questionOptions > 0
+      ? await fetchAllRows(
+          client,
+          "question_options",
+          "id,question_id,label,content,is_correct",
+        )
+      : [];
+  const fingerprint = (values: unknown[]) => JSON.stringify(values);
+  const seedState = classifyExistingSeedState({
+    rawCounts,
+    publishedQuestionOptions,
+    actualQuestions: actualQuestionRows.map((question) => ({
+      id: String(question.id),
+      fingerprint: fingerprint([
+        question.chapter_id,
+        question.content,
+        question.explanation,
+        Number(question.difficulty),
+        Number(question.source_number),
+        question.created_by,
+      ]),
+    })),
+    expectedQuestions: rows.map((question) => ({
+      id: question.id,
+      fingerprint: fingerprint([
+        question.chapter_id,
+        question.content,
+        question.explanation,
+        question.difficulty,
+        question.source_number,
+        question.created_by,
+      ]),
+    })),
+    actualOptions: actualOptionRows.map((option) => ({
+      id: String(option.id),
+      fingerprint: fingerprint([
+        option.question_id,
+        option.label,
+        option.content,
+        Boolean(option.is_correct),
+      ]),
+    })),
+    expectedOptions: rows.flatMap(({ options }) =>
+      options.map((option) => ({
+        id: option.id,
+        fingerprint: fingerprint([
+          option.question_id,
+          option.label,
+          option.content,
+          option.is_correct,
+        ]),
+      })),
+    ),
+  });
+  if (seedState === "complete") {
+    return;
   }
 
   for (const batch of chunks(rows)) {

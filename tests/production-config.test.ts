@@ -7,6 +7,7 @@ import { describe, expect, it } from "vitest";
 import {
   EXPECTED_PRODUCTION_COUNTS,
   PRODUCTION_SMOKE_ROUTES,
+  classifyExistingSeedState,
   discoverMigrationFiles,
   parseProductionEnvironment,
   parseSetupEnvironment,
@@ -90,6 +91,78 @@ describe("production configuration", () => {
 
   it("verifies the deterministic seed has the exact production counts", () => {
     expect(summarizeSeed(projectRoot)).toEqual(EXPECTED_PRODUCTION_COUNTS);
+  });
+
+  it("resumes a fully inserted seed when publication did not complete", () => {
+    expect(
+      classifyExistingSeedState({
+        rawCounts: {
+          courses: 1,
+          chapters: 6,
+          questions: 497,
+          questionOptions: 1_988,
+        },
+        publishedQuestionOptions: 0,
+        actualQuestions: [{ id: "question-1", fingerprint: "expected" }],
+        expectedQuestions: [{ id: "question-1", fingerprint: "expected" }],
+        actualOptions: [{ id: "option-1", fingerprint: "expected" }],
+        expectedOptions: [{ id: "option-1", fingerprint: "expected" }],
+      }),
+    ).toBe("resume");
+  });
+
+  it("rejects same-count seed data with an unexpected deterministic identity", () => {
+    expect(() =>
+      classifyExistingSeedState({
+        rawCounts: {
+          courses: 1,
+          chapters: 6,
+          questions: 497,
+          questionOptions: 1_988,
+        },
+        publishedQuestionOptions: 1_988,
+        actualQuestions: [{ id: "foreign-question", fingerprint: "foreign" }],
+        expectedQuestions: [{ id: "question-1", fingerprint: "expected" }],
+        actualOptions: [{ id: "option-1", fingerprint: "expected" }],
+        expectedOptions: [{ id: "option-1", fingerprint: "expected" }],
+      }),
+    ).toThrow("Production database contains unexpected questions");
+  });
+
+  it("rejects matching identities whose stored seed content drifted", () => {
+    expect(() =>
+      classifyExistingSeedState({
+        rawCounts: {
+          courses: 1,
+          chapters: 6,
+          questions: 497,
+          questionOptions: 1_988,
+        },
+        publishedQuestionOptions: 1_988,
+        actualQuestions: [{ id: "question-1", fingerprint: "changed" }],
+        expectedQuestions: [{ id: "question-1", fingerprint: "expected" }],
+        actualOptions: [{ id: "option-1", fingerprint: "expected" }],
+        expectedOptions: [{ id: "option-1", fingerprint: "expected" }],
+      }),
+    ).toThrow("Production database contains unexpected questions");
+  });
+
+  it("treats a matching fully published deterministic seed as complete", () => {
+    expect(
+      classifyExistingSeedState({
+        rawCounts: {
+          courses: 1,
+          chapters: 6,
+          questions: 497,
+          questionOptions: 1_988,
+        },
+        publishedQuestionOptions: 1_988,
+        actualQuestions: [{ id: "question-1", fingerprint: "expected" }],
+        expectedQuestions: [{ id: "question-1", fingerprint: "expected" }],
+        actualOptions: [{ id: "option-1", fingerprint: "expected" }],
+        expectedOptions: [{ id: "option-1", fingerprint: "expected" }],
+      }),
+    ).toBe("complete");
   });
 
   it("defines smoke checks for public, auth, protected, and admin routes", () => {

@@ -137,6 +137,84 @@ export function discoverMigrationFiles(projectRoot: string): MigrationFile[] {
   return migrations;
 }
 
+export type DeterministicSeedRow = {
+  id: string;
+  fingerprint: string;
+};
+
+type ExistingSeedState = {
+  rawCounts: {
+    courses: number;
+    chapters: number;
+    questions: number;
+    questionOptions: number;
+  };
+  publishedQuestionOptions: number;
+  actualQuestions: DeterministicSeedRow[];
+  expectedQuestions: DeterministicSeedRow[];
+  actualOptions: DeterministicSeedRow[];
+  expectedOptions: DeterministicSeedRow[];
+};
+
+function assertExpectedRows(
+  actual: DeterministicSeedRow[],
+  expected: DeterministicSeedRow[],
+  label: "questions" | "question options",
+) {
+  const expectedById = new Map(
+    expected.map(({ id, fingerprint }) => [id, fingerprint]),
+  );
+  if (
+    actual.length > expected.length ||
+    actual.some(
+      ({ id, fingerprint }) => expectedById.get(id) !== fingerprint,
+    )
+  ) {
+    throw new Error(`Production database contains unexpected ${label}`);
+  }
+}
+
+export function classifyExistingSeedState({
+  rawCounts,
+  publishedQuestionOptions,
+  actualQuestions,
+  expectedQuestions,
+  actualOptions,
+  expectedOptions,
+}: ExistingSeedState): "complete" | "resume" {
+  if (
+    rawCounts.courses > EXPECTED_PRODUCTION_COUNTS.courses ||
+    rawCounts.chapters > EXPECTED_PRODUCTION_COUNTS.chapters ||
+    rawCounts.questions > EXPECTED_PRODUCTION_COUNTS.questions ||
+    rawCounts.questionOptions >
+      EXPECTED_PRODUCTION_COUNTS.publishedQuestionOptions
+  ) {
+    throw new Error(
+      "Production database contains unexpected content; seed stopped",
+    );
+  }
+
+  assertExpectedRows(actualQuestions, expectedQuestions, "questions");
+  assertExpectedRows(actualOptions, expectedOptions, "question options");
+
+  const rawCountsComplete =
+    rawCounts.courses === EXPECTED_PRODUCTION_COUNTS.courses &&
+    rawCounts.chapters === EXPECTED_PRODUCTION_COUNTS.chapters &&
+    rawCounts.questions === EXPECTED_PRODUCTION_COUNTS.questions &&
+    rawCounts.questionOptions ===
+      EXPECTED_PRODUCTION_COUNTS.publishedQuestionOptions;
+  const identitiesComplete =
+    actualQuestions.length === expectedQuestions.length &&
+    actualOptions.length === expectedOptions.length;
+
+  return rawCountsComplete &&
+    identitiesComplete &&
+    publishedQuestionOptions ===
+      EXPECTED_PRODUCTION_COUNTS.publishedQuestionOptions
+    ? "complete"
+    : "resume";
+}
+
 type SeedOption = {
   label: string;
   content: string;

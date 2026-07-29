@@ -22,9 +22,12 @@ Date: 29 July 2026
   in Chapter 6.
 - Added one-time administrator creation, deterministic KTCT seeding, and exact
   database verification scripts. The scripts fail closed without environment
-  values, do not log secrets, stop on unexpected existing data, and verify
-  `courses=1`, `chapters=6`, `questions=497`, and
-  `published_question_options=1988`.
+  values and do not log secrets. A rerun verifies course/chapter identity,
+  deterministic question/option IDs, stored seed fingerprints, raw counts, and
+  the published-option count before treating the seed as complete. Fully
+  inserted but unpublished data resumes publication; foreign or drifted data
+  fails closed. Final verification requires `courses=1`, `chapters=6`,
+  `questions=497`, and `published_question_options=1988`.
 - Added live smoke checks for public authentication routes, the Auth callback,
   signed-out student routes, and the signed-out admin route.
 - Added npm scripts: `production:preflight`, `production:setup`,
@@ -52,13 +55,14 @@ blocked for the deployment owner:
 
 ## Local verification evidence
 
-- `npm test`: passed 34 files and 190 tests.
+- `npm test`: passed 34 files and 194 tests.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed with no warnings.
 - `npm run build`: passed and emitted the full application route manifest.
-- Production-preparation tests: passed 10 tests covering fail-closed runtime
+- Production-preparation tests: passed 14 tests covering fail-closed runtime
   configuration, names-only environment template, migration order, exact seed
-  counts, route coverage, and absolute social metadata.
+  counts, resumability after an interrupted publish, rejection of same-count
+  foreign or drifted seed data, route coverage, and absolute social metadata.
 - `npm run production:preflight` without variables: exited non-zero and named
   only the missing variables.
 - `npm run production:preflight` with non-secret test values: verified 12
