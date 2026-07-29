@@ -20,6 +20,8 @@ describe("generated Supabase database types", () => {
       | "attempt_answers"
       | "import_jobs"
       | "audit_logs"
+      | "question_versions"
+      | "admin_invites"
     >();
   });
 

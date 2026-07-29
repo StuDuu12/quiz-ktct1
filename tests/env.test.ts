@@ -1,5 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getPublicEnv, parsePublicEnv } from "@/src/lib/env";
+import {
+  getPublicEnv,
+  parsePublicEnv,
+} from "@/src/lib/env";
+import {
+  getOptionalServerEnv,
+  parseOptionalServerEnv,
+} from "@/src/lib/server-env";
 
 describe("public Supabase environment", () => {
   afterEach(() => {
@@ -31,6 +38,33 @@ describe("public Supabase environment", () => {
     expect(getPublicEnv()).toEqual({
       supabaseUrl: "https://demo.supabase.co",
       supabaseAnonKey: "anon-key",
+    });
+  });
+
+  it("returns an unavailable state instead of inventing invite delivery", () => {
+    expect(
+      parseOptionalServerEnv({
+        NEXT_PUBLIC_SUPABASE_URL: "https://demo.supabase.co",
+      }),
+    ).toBeNull();
+  });
+
+  it("accepts a service-role key only through the server-only variable", () => {
+    expect(
+      parseOptionalServerEnv({
+        NEXT_PUBLIC_SUPABASE_URL: "https://demo.supabase.co",
+        SUPABASE_SERVICE_ROLE_KEY: "server-secret",
+      }),
+    ).toEqual({
+      supabaseUrl: "https://demo.supabase.co",
+      serviceRoleKey: "server-secret",
+    });
+
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://demo.supabase.co");
+    vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "server-secret");
+    expect(getOptionalServerEnv()).toEqual({
+      supabaseUrl: "https://demo.supabase.co",
+      serviceRoleKey: "server-secret",
     });
   });
 });

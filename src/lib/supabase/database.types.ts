@@ -46,6 +46,7 @@ export type Database = {
           title: string;
           description: string;
           status: string;
+          cover_url: string | null;
           created_by: string;
           created_at: string;
           updated_at: string;
@@ -56,6 +57,7 @@ export type Database = {
           title: string;
           description?: string;
           status?: string;
+          cover_url?: string | null;
           created_by: string;
           created_at?: string;
           updated_at?: string;
@@ -66,6 +68,7 @@ export type Database = {
           title?: string;
           description?: string;
           status?: string;
+          cover_url?: string | null;
           created_by?: string;
           created_at?: string;
           updated_at?: string;
@@ -129,6 +132,7 @@ export type Database = {
           course_id: string;
           position: number;
           title: string;
+          status: string;
           created_at: string;
           updated_at: string;
         };
@@ -137,6 +141,7 @@ export type Database = {
           course_id: string;
           position: number;
           title: string;
+          status?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -145,6 +150,7 @@ export type Database = {
           course_id?: string;
           position?: number;
           title?: string;
+          status?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -537,6 +543,7 @@ export type Database = {
           processed_rows: number;
           failed_rows: number;
           errors: Json;
+          idempotency_key: string | null;
           created_at: string;
           started_at: string | null;
           completed_at: string | null;
@@ -551,6 +558,7 @@ export type Database = {
           processed_rows?: number;
           failed_rows?: number;
           errors?: Json;
+          idempotency_key?: string | null;
           created_at?: string;
           started_at?: string | null;
           completed_at?: string | null;
@@ -565,6 +573,7 @@ export type Database = {
           processed_rows?: number;
           failed_rows?: number;
           errors?: Json;
+          idempotency_key?: string | null;
           created_at?: string;
           started_at?: string | null;
           completed_at?: string | null;
@@ -630,9 +639,177 @@ export type Database = {
           },
         ];
       };
+      question_versions: {
+        Row: {
+          id: number;
+          question_id: string;
+          version_number: number;
+          snapshot: Json;
+          changed_by: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: never;
+          question_id: string;
+          version_number: number;
+          snapshot: Json;
+          changed_by: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: never;
+          question_id?: string;
+          version_number?: number;
+          snapshot?: Json;
+          changed_by?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "question_versions_question_id_fkey";
+            columns: ["question_id"];
+            isOneToOne: false;
+            referencedRelation: "questions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "question_versions_changed_by_fkey";
+            columns: ["changed_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_invites: {
+        Row: {
+          id: string;
+          email: string;
+          full_name: string;
+          course_ids: string[];
+          status: string;
+          requested_by: string;
+          provider_user_id: string | null;
+          error_message: string | null;
+          created_at: string;
+          completed_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          full_name?: string;
+          course_ids?: string[];
+          status?: string;
+          requested_by: string;
+          provider_user_id?: string | null;
+          error_message?: string | null;
+          created_at?: string;
+          completed_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          full_name?: string;
+          course_ids?: string[];
+          status?: string;
+          requested_by?: string;
+          provider_user_id?: string | null;
+          error_message?: string | null;
+          created_at?: string;
+          completed_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "admin_invites_requested_by_fkey";
+            columns: ["requested_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
+      admin_finalize_invite: {
+        Args: {
+          target_invite_id: string;
+          target_status: string;
+          target_provider_user_id?: string | null;
+          target_error_message?: string | null;
+        };
+        Returns: undefined;
+      };
+      admin_import_questions: {
+        Args: {
+          target_course_id: string;
+          target_chapter_id: string;
+          target_file_name: string;
+          target_idempotency_key: string;
+          target_questions: Json;
+        };
+        Returns: {
+          job_id: string;
+          imported_count: number;
+        }[];
+      };
+      admin_request_invite: {
+        Args: {
+          target_email: string;
+          target_full_name: string;
+          target_course_ids: string[];
+        };
+        Returns: string;
+      };
+      admin_set_instructor: {
+        Args: {
+          target_user_id: string;
+          target_course_ids: string[];
+          target_approved: boolean;
+        };
+        Returns: undefined;
+      };
+      admin_set_user_active: {
+        Args: {
+          target_user_id: string;
+          target_active: boolean;
+        };
+        Returns: undefined;
+      };
+      admin_upsert_chapter: {
+        Args: {
+          target_chapter_id: string | null;
+          target_course_id: string;
+          target_position: number;
+          target_title: string;
+          target_status: string;
+        };
+        Returns: string;
+      };
+      admin_upsert_course: {
+        Args: {
+          target_course_id: string | null;
+          target_slug: string;
+          target_title: string;
+          target_description: string;
+          target_status: string;
+          target_cover_url?: string | null;
+        };
+        Returns: string;
+      };
+      admin_upsert_question: {
+        Args: {
+          target_question_id: string | null;
+          target_chapter_id: string;
+          target_content: string;
+          target_explanation: string;
+          target_difficulty: number;
+          target_status: string;
+          target_source_number: number | null;
+          target_options: Json;
+        };
+        Returns: string;
+      };
       allocate_mock_exam_questions: {
         Args: {
           target_course_id: string;
@@ -652,6 +829,14 @@ export type Database = {
       current_role: {
         Args: Record<PropertyKey, never>;
         Returns: Database["public"]["Enums"]["app_role"];
+      };
+      get_admin_questions: {
+        Args: { target_course_id?: string | null };
+        Returns: Json;
+      };
+      get_admin_report: {
+        Args: { target_course_id?: string | null };
+        Returns: Json;
       };
       get_attempt_results: {
         Args: { target_attempt_id: string };
