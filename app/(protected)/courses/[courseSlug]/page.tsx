@@ -11,5 +11,5 @@ export default async function CoursePage({ params }: { params: Promise<{ courseS
 
   if (!data && !error) notFound();
   if (error) return <main className="learner-shell"><section className="message-state" role="alert"><h1>Chưa tải được học phần</h1><p>{error}</p><a href={`/courses/${courseSlug}`}>Thử lại</a></section></main>;
-  return <CourseOverview dashboard={data!} />;
+  return <CourseOverview dashboard={data!} viewerRole={viewer.role} />;
 }

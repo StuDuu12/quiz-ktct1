@@ -156,6 +156,8 @@ export async function saveCourseForm(formData: FormData) {
   rpcError(error, "COURSE_SAVE_FAILED");
   revalidatePath("/admin");
   revalidatePath("/admin/courses");
+  revalidatePath("/instructor");
+  revalidatePath("/instructor/courses");
   void data;
 }
 
@@ -180,6 +182,8 @@ export async function saveChapterForm(formData: FormData) {
   rpcError(error, "CHAPTER_SAVE_FAILED");
   revalidatePath("/admin");
   revalidatePath("/admin/courses");
+  revalidatePath("/instructor");
+  revalidatePath("/instructor/courses");
   void data;
 }
 
@@ -241,6 +245,8 @@ export async function saveQuestionForm(formData: FormData) {
   rpcError(error, "QUESTION_SAVE_FAILED");
   revalidatePath("/admin");
   revalidatePath("/admin/questions");
+  revalidatePath("/instructor");
+  revalidatePath("/instructor/questions");
   void data;
 }
 
@@ -336,6 +342,9 @@ export async function commitQuestionImport(input: {
   revalidatePath("/admin");
   revalidatePath("/admin/questions");
   revalidatePath("/admin/import");
+  revalidatePath("/instructor");
+  revalidatePath("/instructor/questions");
+  revalidatePath("/instructor/import");
   return data?.[0] ?? null;
 }
 

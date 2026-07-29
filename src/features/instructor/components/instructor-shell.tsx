@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import { AdminNavigation } from "@/src/features/admin/components/admin-navigation";
+import { InstructorNavigation } from "@/src/features/instructor/components/instructor-navigation";
 
-export function AdminShell({
+export function InstructorShell({
   email,
   children,
 }: {
@@ -18,7 +18,7 @@ export function AdminShell({
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
     <div className="admin-shell">
-      <a className="admin-skip-link" href="#admin-main">
+      <a className="admin-skip-link" href="#instructor-main">
         Chuyển đến nội dung
       </a>
       <aside className={mobileOpen ? "admin-sidebar is-open" : "admin-sidebar"}>
@@ -26,10 +26,10 @@ export function AdminShell({
           <BookOpenText size={27} weight="fill" aria-hidden="true" />
           <div>
             <strong>KTCT Portal</strong>
-            <span>Quản trị viên</span>
+            <span>Giảng viên</span>
           </div>
         </div>
-        <AdminNavigation role="admin" currentPath={pathname} />
+        <InstructorNavigation currentPath={pathname} />
         <div className="admin-sidebar-footer">
           <span title={email}>{email}</span>
           <Link href="/dashboard">
@@ -50,16 +50,16 @@ export function AdminShell({
         <header className="admin-mobile-header">
           <button
             type="button"
-            aria-label="Mở điều hướng quản trị"
+            aria-label="Mở điều hướng giảng viên"
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((open) => !open)}
           >
             <List size={24} weight="bold" aria-hidden="true" />
           </button>
           <strong>KTCT Portal</strong>
-          <span>Admin</span>
+          <span>Giảng viên</span>
         </header>
-        <main id="admin-main" className="admin-main">
+        <main id="instructor-main" className="admin-main">
           {children}
         </main>
       </div>

@@ -18,7 +18,8 @@ type PageProps = {
 };
 
 export default async function AdminQuestionsPage({ searchParams }: PageProps) {
-  await requireViewer(["admin", "instructor"]);
+  const viewer = await requireViewer(["admin", "instructor"]);
+  const portalPath = viewer.role === "instructor" ? "/instructor" : "/admin";
   const params = await searchParams;
   const rawCourse = Array.isArray(params.course) ? params.course[0] : params.course;
   const catalog = await getAdminCatalog().catch(() => null);
@@ -41,7 +42,7 @@ export default async function AdminQuestionsPage({ searchParams }: PageProps) {
           <h1>Biên soạn và xuất bản</h1>
           <p>Đáp án đúng chỉ đi qua RPC có kiểm tra phạm vi, không lộ ở truy vấn học viên.</p>
         </div>
-        <Link className="admin-header-action is-secondary" href="/admin/import">
+        <Link className="admin-header-action is-secondary" href={`${portalPath}/import`}>
           Nhập Markdown
         </Link>
       </header>

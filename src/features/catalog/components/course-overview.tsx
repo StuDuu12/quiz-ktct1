@@ -2,6 +2,7 @@ import { ArrowRight, BookOpen, ClipboardText, Clock, Target, TrendUp } from "@ph
 import Link from "next/link";
 
 import { ChapterRow } from "@/src/features/catalog/components/chapter-row";
+import type { AppRole } from "@/src/features/auth/roles";
 import type { CourseDashboard } from "@/src/features/catalog/queries";
 
 function formatDate(value: string) {
@@ -10,13 +11,19 @@ function formatDate(value: string) {
   );
 }
 
-export function CourseOverview({ dashboard }: { dashboard: CourseDashboard }) {
+export function CourseOverview({
+  dashboard,
+  viewerRole,
+}: {
+  dashboard: CourseDashboard;
+  viewerRole: AppRole;
+}) {
   const { course, chapters, overallProgress, questionCount, recentAttempts } = dashboard;
   return (
     <main className="learner-shell">
       <header className="learner-header">
         <Link href="/dashboard" className="brand-mark"><BookOpen size={24} weight="fill" /> Ôn thi KTCT</Link>
-        <nav aria-label="Điều hướng học viên"><Link href="/dashboard" aria-current="page">Tổng quan</Link><Link href="/history">Lịch sử</Link></nav>
+        <nav aria-label="Điều hướng học viên"><Link href="/dashboard" aria-current="page">Tổng quan</Link><Link href="/history">Lịch sử</Link>{viewerRole === "admin" ? <Link href="/admin">Trang quản trị</Link> : null}</nav>
       </header>
 
       <section className="course-hero" aria-labelledby="course-title">

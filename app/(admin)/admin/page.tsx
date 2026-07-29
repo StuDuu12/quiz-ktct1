@@ -22,6 +22,7 @@ function metric(value: number | null, suffix = "") {
 
 export default async function AdminDashboardPage() {
   const viewer = await requireViewer(["admin", "instructor"]);
+  const portalPath = viewer.role === "instructor" ? "/instructor" : "/admin";
   const loaded = await Promise.all([
     getAdminCatalog(),
     getAdminReport(),
@@ -40,7 +41,7 @@ export default async function AdminDashboardPage() {
               : "các khóa học đã được phân công"}.
           </p>
         </div>
-        <Link className="admin-header-action" href="/admin/questions">
+        <Link className="admin-header-action" href={`${portalPath}/questions`}>
           <Question size={19} weight="bold" aria-hidden="true" />
           Thêm câu hỏi
         </Link>
@@ -106,7 +107,7 @@ export default async function AdminDashboardPage() {
                   <p className="admin-kicker">ĐỘ KHÓ THEO CHƯƠNG</p>
                   <h2>Cần ưu tiên rà soát</h2>
                 </div>
-                <Link href="/admin/reports">Xem báo cáo</Link>
+                <Link href={`${portalPath}/reports`}>Xem báo cáo</Link>
               </header>
               {loaded[1].chapterDifficulty.length ? (
                 <div className="admin-difficulty-list">
@@ -153,7 +154,7 @@ export default async function AdminDashboardPage() {
                   <dd>{loaded[0].importJobs.length}</dd>
                 </div>
               </dl>
-              <Link href="/admin/courses">
+              <Link href={`${portalPath}/courses`}>
                 Quản lý nội dung
                 <ArrowRight size={17} weight="bold" aria-hidden="true" />
               </Link>

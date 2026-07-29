@@ -11,5 +11,5 @@ export default async function DashboardPage() {
   if (error) return <main className="learner-shell"><section className="message-state" role="alert"><h1>Chưa tải được trang học tập</h1><p>{error}</p><a href="/dashboard">Thử lại</a></section></main>;
   if (!data) return <main className="learner-shell"><section className="message-state"><h1>Chưa có học phần để hiển thị</h1><p>Học phần Kinh tế chính trị Mác – Lênin sẽ xuất hiện ở đây khi được xuất bản.</p></section></main>;
 
-  return <CourseOverview dashboard={data} />;
+  return <CourseOverview dashboard={data} viewerRole={viewer.role} />;
 }

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 const { createServerSupabaseClient, redirect } = vi.hoisted(() => ({
@@ -88,5 +90,16 @@ describe("assertAllowedRole", () => {
     });
 
     await expect(requireViewer()).rejects.toThrow("REDIRECT:/login");
+  });
+});
+
+describe("portal route guards", () => {
+  it("keeps the administration route exclusive to administrators", () => {
+    const adminLayoutSource = readFileSync(
+      resolve("app/(admin)/admin/layout.tsx"),
+      "utf8",
+    );
+
+    expect(adminLayoutSource).toContain('requireViewer(["admin"])');
   });
 });
