@@ -1,16 +1,15 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import {
   finishPractice,
   getPracticeChapterByRoute,
   loadPracticeSession,
-  loadOrStartPracticeE2E,
   savePracticeAnswer,
   savePracticeFlag,
-  startPractice,
+  startOrResumePracticeForRoute,
 } from "@/src/features/practice/actions";
+import { PracticeLaunchForm } from "@/src/features/practice/components/practice-launch-form";
 import { PracticeSession } from "@/src/features/practice/components/practice-session";
-import { isE2EEnabled } from "@/src/e2e/guard";
 
 type PageProps = {
   params: Promise<{ courseSlug: string; position: string }>;
@@ -32,21 +31,16 @@ export default async function CoursePracticePage({
 
   const query = await searchParams;
   const attemptId = typeof query.attempt === "string" ? query.attempt : null;
-  if (isE2EEnabled()) {
-    const state = await loadOrStartPracticeE2E(chapter.id);
-    return (
-      <PracticeSession
-        initialState={state}
-        saveAnswer={savePracticeAnswer}
-        saveFlag={savePracticeFlag}
-        finish={finishPractice}
-      />
-    );
-  }
   if (!attemptId) {
-    const started = await startPractice(chapter.id);
-    redirect(
-      `/courses/${courseSlug}/chapters/${position}/practice?attempt=${started.attemptId}`,
+    return (
+      <PracticeLaunchForm
+        action={startOrResumePracticeForRoute.bind(
+          null,
+          chapter.course.slug,
+          chapter.position,
+        )}
+        chapterTitle={chapter.title}
+      />
     );
   }
 

@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import {
   finishPractice,
@@ -6,8 +6,9 @@ import {
   loadPracticeSession,
   savePracticeAnswer,
   savePracticeFlag,
-  startPractice,
+  startOrResumePracticeForRoute,
 } from "@/src/features/practice/actions";
+import { PracticeLaunchForm } from "@/src/features/practice/components/practice-launch-form";
 import { PracticeSession } from "@/src/features/practice/components/practice-session";
 
 type PageProps = {
@@ -23,8 +24,16 @@ export default async function PracticePage({ params, searchParams }: PageProps) 
   const query = await searchParams;
   const attemptId = typeof query.attempt === "string" ? query.attempt : null;
   if (!attemptId) {
-    const started = await startPractice(chapterId);
-    redirect(`/practice/${chapterId}?attempt=${started.attemptId}`);
+    return (
+      <PracticeLaunchForm
+        action={startOrResumePracticeForRoute.bind(
+          null,
+          chapter.course.slug,
+          chapter.position,
+        )}
+        chapterTitle={chapter.title}
+      />
+    );
   }
 
   const state = await loadPracticeSession(chapterId, attemptId).catch(() => null);

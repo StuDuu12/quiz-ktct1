@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { isE2EEnabled } from "@/src/e2e/guard";
 import {
@@ -10,7 +11,6 @@ import {
   loadOrStartE2EPractice,
   saveE2EPracticeAnswer,
   saveE2EPracticeFlag,
-  startE2EPractice,
 } from "@/src/e2e/store";
 import { requireViewer } from "@/src/features/auth/session";
 import type {
@@ -19,6 +19,7 @@ import type {
   PracticeQuestion,
   PracticeState,
 } from "@/src/features/practice/types";
+import { startOrResumePracticeAttempt } from "@/src/features/practice/start-or-resume";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
 type ChapterRecord = {
@@ -169,19 +170,31 @@ export async function getPracticeChapterByRoute(
 
 export async function startPractice(chapterId: string) {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
-  if (isE2EEnabled()) return startE2EPractice(viewer.id, chapterId);
+  if (isE2EEnabled()) {
+    const state = loadOrStartE2EPractice(viewer.id, chapterId);
+    return { attemptId: state.attemptId };
+  }
   const chapter = await getPracticeChapterById(chapterId);
-  const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase.rpc("start_attempt", {
-    target_course_id: chapter.course_id,
-    target_exam_config_id: null,
-    target_chapter_id: chapter.id,
-  });
-
-  if (error || !data) {
+  try {
+    const attempt = await startOrResumePracticeAttempt(
+      chapter.course_id,
+      chapter.id,
+    );
+    return { attemptId: attempt.id };
+  } catch (error) {
     throw practiceError("Không thể bắt đầu lượt luyện tập.", error);
   }
-  return { attemptId: data.id };
+}
+
+export async function startOrResumePracticeForRoute(
+  courseSlug: string,
+  position: number,
+): Promise<never> {
+  const chapter = await getPracticeChapterByRoute(courseSlug, position);
+  const started = await startPractice(chapter.id);
+  redirect(
+    `/courses/${chapter.course.slug}/chapters/${chapter.position}/practice?attempt=${started.attemptId}`,
+  );
 }
 
 export async function loadOrStartPracticeE2E(
@@ -202,10 +215,11 @@ export async function loadPracticeSession(
   }
   const chapter = await getPracticeChapterById(chapterId);
   const supabase = await createServerSupabaseClient();
-  const { data: attempt, error: attemptError } = await supabase.rpc(
-    "sync_practice_attempt",
-    { target_attempt_id: attemptId },
-  );
+  const { data: attempt, error: attemptError } = await supabase
+    .from("attempts")
+    .select("id, user_id, course_id, kind, status, expires_at, score")
+    .eq("id", attemptId)
+    .maybeSingle();
 
   if (
     attemptError ||
@@ -248,6 +262,23 @@ export async function loadPracticeSession(
     throw practiceError("Không thể tải đáp án đã lưu.", answerError);
   }
 
+  const selectedAnswers = (savedAnswers ?? []).filter(
+    (answer) => answer.selected_option_id !== null,
+  );
+  const { data: feedbackRows, error: feedbackError } = selectedAnswers.length
+    ? await supabase.rpc("load_practice_answer_feedback", {
+        target_attempt_id: attemptId,
+      })
+    : { data: [], error: null };
+  if (feedbackError) {
+    throw practiceError("Không thể tải phản hồi đáp án.", feedbackError);
+  }
+  const feedbackByAttemptQuestion = new Map(
+    (feedbackRows ?? []).map((feedback) => [
+      feedback.attempt_question_id,
+      feedback,
+    ]),
+  );
   const byAttemptQuestion = new Map(
     (savedAnswers ?? []).map((answer) => [
       answer.attempt_question_id,
@@ -268,24 +299,25 @@ export async function loadPracticeSession(
         : {}),
     };
 
-    if (saved.selected_option_id && attempt.status === "in_progress") {
-      const { data: feedback, error: feedbackError } = await supabase.rpc(
-        "save_practice_answer",
-        {
-          target_attempt_id: attemptId,
-          target_attempt_question_id: question.attemptQuestionId,
-          target_option_id: saved.selected_option_id,
-        },
+    if (saved.selected_option_id) {
+      const feedback = feedbackByAttemptQuestion.get(
+        question.attemptQuestionId,
       );
-      if (feedbackError || !feedback?.[0]) {
-        throw practiceError("Không thể tải phản hồi đáp án.", feedbackError);
+      if (!feedback) {
+        throw practiceError("Không thể tải phản hồi đáp án.");
       }
-      answer.isCorrect = feedback[0].is_correct;
-      answer.explanation = feedback[0].explanation;
-      answer.optionId = feedback[0].selected_option_id;
+      answer.isCorrect = feedback.is_correct;
+      answer.explanation = feedback.explanation;
+      answer.optionId = feedback.selected_option_id;
     }
     answers[question.id] = answer;
   }
+
+  const status =
+    attempt.status === "in_progress" &&
+    Date.now() >= new Date(attempt.expires_at).getTime()
+      ? "expired"
+      : attempt.status;
 
   return {
     attemptId,
@@ -294,7 +326,7 @@ export async function loadPracticeSession(
     chapterPosition: chapter.position,
     chapterTitle: chapter.title,
     currentQuestionId: questions[0]!.id,
-    status: attempt.status,
+    status,
     score: attempt.score === null ? null : Number(attempt.score),
     questions,
     answers,

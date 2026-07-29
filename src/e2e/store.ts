@@ -172,6 +172,7 @@ export function getE2ECourseDashboard(
     attempts: 0,
     accuracy: null,
     latestAttemptAt: null,
+    activeAttemptId: null,
   }));
   return {
     course: {

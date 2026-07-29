@@ -12,6 +12,9 @@ function formatDate(value: string | null) {
 
 export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; courseSlug: string }) {
   const ready = chapter.accuracy !== null;
+  const practiceHref = chapter.activeAttemptId
+    ? `/courses/${courseSlug}/chapters/${chapter.position}/practice?attempt=${chapter.activeAttemptId}`
+    : `/courses/${courseSlug}/chapters/${chapter.position}/practice`;
   return (
     <article className="chapter-row">
       <div className="chapter-number" aria-hidden="true">{String(chapter.position).padStart(2, "0")}</div>
@@ -30,9 +33,9 @@ export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; c
           <strong>{formatDate(chapter.latestAttemptAt)}</strong>
         </div>
       </div>
-      <Link className="practice-link" href={`/courses/${courseSlug}/chapters/${chapter.position}/practice`}>
-        {ready ? <CheckCircle size={18} weight="fill" /> : null}
-        Luyện tập <ArrowRight size={16} />
+      <Link className="practice-link" href={practiceHref}>
+        {ready || chapter.activeAttemptId ? <CheckCircle size={18} weight="fill" /> : null}
+        {chapter.activeAttemptId ? "Tiếp tục" : "Luyện tập"} <ArrowRight size={16} />
       </Link>
     </article>
   );

@@ -927,6 +927,13 @@ export type Database = {
         };
         Returns: Database["public"]["Tables"]["attempts"]["Row"];
       };
+      start_or_resume_practice: {
+        Args: {
+          target_course_id: string;
+          target_chapter_id: string;
+        };
+        Returns: Database["public"]["Tables"]["attempts"]["Row"];
+      };
       save_practice_answer: {
         Args: {
           target_attempt_id: string;
@@ -954,6 +961,15 @@ export type Database = {
           target_chapter_id: string;
         };
         Returns: Database["public"]["Tables"]["attempt_questions"]["Row"][];
+      };
+      load_practice_answer_feedback: {
+        Args: { target_attempt_id: string };
+        Returns: {
+          attempt_question_id: string;
+          selected_option_id: string;
+          is_correct: boolean;
+          explanation: string;
+        }[];
       };
       set_practice_flag: {
         Args: {

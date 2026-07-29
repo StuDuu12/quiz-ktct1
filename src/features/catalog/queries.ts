@@ -12,6 +12,7 @@ export type ChapterSummary = {
   attempts: number;
   accuracy: number | null;
   latestAttemptAt: string | null;
+  activeAttemptId: string | null;
 };
 
 export type RecentAttempt = {
@@ -68,7 +69,9 @@ export async function getCourseDashboard(
           .order("position"),
         supabase
           .from("attempts")
-          .select("id, kind, status, score, submitted_at, started_at")
+          .select(
+            "id, kind, status, score, submitted_at, started_at, expires_at, attempt_questions(question_snapshot)",
+          )
           .eq("course_id", course.id)
           .eq("user_id", viewer.id)
           .order("started_at", { ascending: false }),
@@ -84,7 +87,18 @@ export async function getCourseDashboard(
       title: string;
       questions: { id: string }[] | null;
     }>;
-    const typedAttempts = attempts ?? [];
+    const typedAttempts = (attempts ?? []) as Array<{
+      id: string;
+      kind: "practice" | "mock_exam";
+      status: "submitted" | "in_progress" | "expired";
+      score: number | null;
+      submitted_at: string | null;
+      started_at: string;
+      expires_at: string;
+      attempt_questions:
+        | Array<{ question_snapshot: unknown }>
+        | null;
+    }>;
     const { data: submittedProgress, error: progressError } = await supabase.rpc(
       "get_submitted_practice_progress",
       { target_course_id: course.id },
@@ -104,6 +118,41 @@ export async function getCourseDashboard(
         latestByChapter.set(row.chapter_id, row.submitted_at);
       }
     }
+    const activeAttemptByChapter = new Map<string, string>();
+    const now = Date.now();
+    for (const attempt of typedAttempts) {
+      if (
+        attempt.kind !== "practice" ||
+        attempt.status !== "in_progress" ||
+        new Date(attempt.expires_at).getTime() <= now
+      ) {
+        continue;
+      }
+
+      const chapterIds = new Set(
+        (attempt.attempt_questions ?? [])
+          .map(({ question_snapshot }) => {
+            if (
+              typeof question_snapshot !== "object" ||
+              question_snapshot === null ||
+              Array.isArray(question_snapshot)
+            ) {
+              return null;
+            }
+            const chapterId = (
+              question_snapshot as { chapter_id?: unknown }
+            ).chapter_id;
+            return typeof chapterId === "string" ? chapterId : null;
+          })
+          .filter((chapterId): chapterId is string => chapterId !== null),
+      );
+      if (chapterIds.size !== 1) continue;
+
+      const chapterId = chapterIds.values().next().value;
+      if (chapterId && !activeAttemptByChapter.has(chapterId)) {
+        activeAttemptByChapter.set(chapterId, attempt.id);
+      }
+    }
 
     const chapterSummaries = typedChapters.map((chapter) => {
       const progress = calculateChapterProgress(attemptProgress, chapter.id);
@@ -114,6 +163,7 @@ export async function getCourseDashboard(
         questionCount: chapter.questions?.length ?? 0,
         ...progress,
         latestAttemptAt: latestByChapter.get(chapter.id) ?? null,
+        activeAttemptId: activeAttemptByChapter.get(chapter.id) ?? null,
       };
     });
     const completed = chapterSummaries.filter((chapter) => chapter.accuracy !== null);
