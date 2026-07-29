@@ -70,12 +70,12 @@ export async function signUpStudent({
   });
 }
 
-export async function signIn(email: string, password: string) {
+export async function signIn(identifier: string, password: string) {
   if (process.env.NEXT_PUBLIC_E2E_MODE === "1") {
     const response = await fetch("/api/e2e/auth/login", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: identifier, password }),
     });
     const result = (await response.json()) as { error: string | null };
     return {
@@ -83,10 +83,16 @@ export async function signIn(email: string, password: string) {
       error: result.error ? { message: result.error } : null,
     };
   }
-  return createBrowserSupabaseClient().auth.signInWithPassword({
-    email,
-    password,
+  const response = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ identifier, password }),
   });
+  const result = (await response.json()) as { error: string | null };
+  return {
+    data: null,
+    error: result.error ? { message: result.error } : null,
+  };
 }
 
 export async function signOut() {

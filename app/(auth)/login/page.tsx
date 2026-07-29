@@ -18,7 +18,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
     setMessage(null);
     const { error } = await signIn(
-      String(formData.get("email") ?? ""),
+      String(formData.get("identifier") ?? ""),
       String(formData.get("password") ?? ""),
     );
     setIsSubmitting(false);
@@ -41,8 +41,14 @@ export default function LoginPage() {
     >
       <form onSubmit={onSubmit} className="auth-form" noValidate>
         <label>
-          <span>Email</span>
-          <input required name="email" type="email" autoComplete="email" placeholder="ban@example.com" />
+          <span>Tên đăng nhập hoặc email</span>
+          <input
+            required
+            name="identifier"
+            type="text"
+            autoComplete="username"
+            placeholder="ban@example.com"
+          />
         </label>
         <label>
           <span>Mật khẩu</span>

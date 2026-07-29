@@ -69,6 +69,15 @@ describe("public entry experience", () => {
     expect(container.querySelector(".auth-card")).toBeInTheDocument();
   });
 
+  it("accepts a username or email as the login identifier", () => {
+    render(<LoginPage />);
+
+    const identifier = screen.getByLabelText("Tên đăng nhập hoặc email");
+    expect(identifier).toHaveAttribute("name", "identifier");
+    expect(identifier).toHaveAttribute("type", "text");
+    expect(identifier).toHaveAttribute("autocomplete", "username");
+  });
+
   it("uses a full document navigation for password recovery", () => {
     render(<LoginPage />);
 

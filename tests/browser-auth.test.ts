@@ -9,19 +9,38 @@ vi.mock("@supabase/ssr", () => ({ createBrowserClient }));
 import {
   getAuthErrorMessage,
   requestPasswordReset,
+  signIn,
   signUpStudent,
 } from "@/src/lib/supabase/browser";
 
 describe("browser auth actions", () => {
   const signUp = vi.fn();
+  const signInWithPassword = vi.fn();
   const resetPasswordForEmail = vi.fn();
+  const fetchMock = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://demo.supabase.co");
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "anon-key");
+    vi.stubEnv("NEXT_PUBLIC_E2E_MODE", "");
+    vi.stubGlobal("fetch", fetchMock);
     createBrowserClient.mockReturnValue({
-      auth: { signUp, resetPasswordForEmail },
+      auth: { signInWithPassword, signUp, resetPasswordForEmail },
+    });
+  });
+
+  it("submits production sign-in requests through the same-origin API", async () => {
+    fetchMock.mockResolvedValue({
+      json: async () => ({ error: null }),
+    });
+
+    await signIn("admin", "1");
+
+    expect(fetch).toHaveBeenCalledWith("/api/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ identifier: "admin", password: "1" }),
     });
   });
 
