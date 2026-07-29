@@ -556,29 +556,36 @@ export function ExamSession({
             </div>
 
             <h1 id="exam-question-title">{currentQuestion.content}</h1>
-            <div
+            <fieldset
               className="exam-option-list"
-              role="radiogroup"
-              aria-label="Các phương án trả lời"
             >
+              <legend className="visually-hidden">
+                Các phương án trả lời
+              </legend>
               {currentQuestion.options.map((option, index) => {
                 const selected = currentAnswer?.optionId === option.id;
                 return (
-                  <button
+                  <label
                     key={option.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
                     className={selected ? "exam-option is-selected" : "exam-option"}
-                    onClick={() => chooseOption(option.id)}
                   >
+                    <input
+                      type="radio"
+                      className="native-option-input"
+                      name="exam-answer"
+                      value={option.id}
+                      aria-label={`Phương án ${option.label}: ${option.content}`}
+                      aria-checked={selected}
+                      checked={selected}
+                      onChange={() => chooseOption(option.id)}
+                    />
                     <span className="exam-option-key">{index + 1}</span>
                     <span className="exam-option-content">{option.content}</span>
                     <span className="exam-option-label">{option.label}</span>
-                  </button>
+                  </label>
                 );
               })}
-            </div>
+            </fieldset>
 
             {error ? (
               <div

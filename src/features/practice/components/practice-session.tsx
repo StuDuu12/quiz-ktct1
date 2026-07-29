@@ -26,6 +26,7 @@ import {
   applyPracticeFeedback,
   togglePracticeFlag,
 } from "@/src/features/practice/engine";
+import { useModalFocus } from "@/src/features/exam/components/use-modal-focus";
 import type {
   FinishPractice,
   PracticeState,
@@ -67,6 +68,9 @@ export function PracticeSession({
   const dialogRef = useRef<HTMLElement>(null);
   const closeDialogRef = useRef<HTMLButtonElement>(null);
   const reviewInvokerRef = useRef<HTMLButtonElement | null>(null);
+  const navigatorInvokerRef = useRef<HTMLButtonElement | null>(null);
+  const navigatorDialogRef = useRef<HTMLElement | null>(null);
+  const navigatorCloseRef = useRef<HTMLButtonElement | null>(null);
 
   const currentIndex = state.questions.findIndex(
     (question) => question.id === state.currentQuestionId,
@@ -150,6 +154,17 @@ export function PracticeSession({
   const closeReview = useCallback(() => {
     setReviewOpen(false);
   }, []);
+  const closeNavigator = useCallback(() => {
+    setNavigatorOpen(false);
+  }, []);
+
+  useModalFocus({
+    active: navigatorOpen,
+    containerRef: navigatorDialogRef,
+    initialFocusRef: navigatorCloseRef,
+    invokerRef: navigatorInvokerRef,
+    onClose: closeNavigator,
+  });
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -231,10 +246,11 @@ export function PracticeSession({
             <strong>{answeredCount}/{state.questions.length} câu</strong>
           </div>
           <button
+            ref={navigatorCloseRef}
             className="icon-button navigator-close"
             type="button"
             aria-label="Đóng danh sách câu hỏi"
-            onClick={() => setNavigatorOpen(false)}
+            onClick={closeNavigator}
           >
             <X size={20} />
           </button>
@@ -274,6 +290,7 @@ export function PracticeSession({
     ),
     [
       answeredCount,
+      closeNavigator,
       currentQuestion.id,
       goToQuestion,
       state.answers,
@@ -344,7 +361,10 @@ export function PracticeSession({
 
   return (
     <>
-    <main className="practice-shell" inert={reviewOpen ? true : undefined}>
+    <main
+      className="practice-shell"
+      inert={reviewOpen || navigatorOpen ? true : undefined}
+    >
       <header className="practice-header">
         <Link
           href={`/courses/${state.courseSlug}`}
@@ -392,7 +412,8 @@ export function PracticeSession({
           </div>
 
           <h1 id="practice-question-title">{currentQuestion.content}</h1>
-          <div className="option-list" role="radiogroup" aria-label="Các phương án trả lời">
+          <fieldset className="option-list">
+            <legend className="visually-hidden">Các phương án trả lời</legend>
             {currentQuestion.options.map((option, index) => {
               const selected = currentAnswer?.optionId === option.id;
               const correctness =
@@ -402,22 +423,28 @@ export function PracticeSession({
                     ? " is-incorrect"
                     : "";
               return (
-                <button
+                <label
                   key={option.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  disabled={Boolean(currentAnswer?.locked)}
-                  className={`practice-option${selected ? " is-selected" : ""}${correctness}`}
-                  onClick={() => chooseOption(option.id)}
+                  className={`practice-option${selected ? " is-selected" : ""}${correctness}${currentAnswer?.locked ? " is-disabled" : ""}`}
                 >
+                  <input
+                    className="native-option-input"
+                    type="radio"
+                    name="practice-answer"
+                      value={option.id}
+                      aria-label={`Phương án ${option.label}: ${option.content}`}
+                      aria-checked={selected}
+                      checked={selected}
+                    disabled={Boolean(currentAnswer?.locked)}
+                    onChange={() => chooseOption(option.id)}
+                  />
                   <span className="option-key">{index + 1}</span>
                   <span className="option-label">{option.content}</span>
                   <span className="option-letter">{option.label}</span>
-                </button>
+                </label>
               );
             })}
-          </div>
+          </fieldset>
 
           {currentAnswer?.showFeedback &&
           typeof currentAnswer.isCorrect === "boolean" ? (
@@ -497,6 +524,7 @@ export function PracticeSession({
       </div>
 
       <button
+        ref={navigatorInvokerRef}
         type="button"
         className="mobile-navigator-button"
         aria-expanded={navigatorOpen}
@@ -506,14 +534,26 @@ export function PracticeSession({
         Danh sách câu
         <strong>{answeredCount}/{state.questions.length}</strong>
       </button>
+    </main>
+
       {navigatorOpen ? (
-        <div className="mobile-navigator-backdrop" onClick={() => setNavigatorOpen(false)}>
-          <div className="mobile-navigator-sheet" onClick={(event) => event.stopPropagation()}>
+        <div
+          className="mobile-navigator-backdrop"
+          role="presentation"
+          onClick={closeNavigator}
+        >
+          <section
+            ref={navigatorDialogRef}
+            className="mobile-navigator-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Danh sách câu hỏi trên thiết bị di động"
+            onClick={(event) => event.stopPropagation()}
+          >
             {navigator}
-          </div>
+          </section>
         </div>
       ) : null}
-    </main>
 
       {reviewOpen ? (
         <div className="practice-modal-backdrop">

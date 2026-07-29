@@ -1,5 +1,7 @@
 import type { Viewer } from "@/src/features/auth/session";
 import { calculateChapterProgress, type ProgressAttempt } from "@/src/features/catalog/progress";
+import { isE2EEnabled } from "@/src/e2e/guard";
+import { getE2ECourseDashboard } from "@/src/e2e/store";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
 export type ChapterSummary = {
@@ -39,6 +41,12 @@ export async function getCourseDashboard(
   viewer: Viewer,
   courseSlug: string,
 ): Promise<DashboardResult> {
+  if (isE2EEnabled()) {
+    return {
+      data: getE2ECourseDashboard(courseSlug),
+      error: null,
+    };
+  }
   try {
     const supabase = await createServerSupabaseClient();
     const { data: course, error: courseError } = await supabase

@@ -33,7 +33,7 @@ const localBindingConfig = {
     : [],
 };
 
-export default defineConfig(async () => {
+export default defineConfig(async ({ command }) => {
   // Keep Wrangler and Miniflare state project-local. These are non-secret tool
   // settings; application environment belongs in ignored `.env*` files.
   process.env.WRANGLER_WRITE_LOGS ??= "false";
@@ -42,8 +42,19 @@ export default defineConfig(async () => {
 
   // Wrangler snapshots its log path while the Cloudflare plugin is imported.
   const { cloudflare } = await import("@cloudflare/vite-plugin");
+  const e2eTestServer =
+    command === "serve" && process.env.E2E_MODE === "1";
 
   return {
+    define: {
+      "process.env.E2E_MODE": JSON.stringify(e2eTestServer ? "1" : "0"),
+      "process.env.E2E_TEST_SERVER": JSON.stringify(
+        e2eTestServer ? "1" : "0",
+      ),
+      "process.env.NEXT_PUBLIC_E2E_MODE": JSON.stringify(
+        e2eTestServer ? "1" : "0",
+      ),
+    },
     server: isCodexSeatbeltSandbox
       ? { watch: { useFsEvents: false, usePolling: true } }
       : undefined,

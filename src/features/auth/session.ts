@@ -1,6 +1,12 @@
 import type { AppRole } from "@/src/features/auth/roles";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { isE2EEnabled } from "@/src/e2e/guard";
+import {
+  E2E_SESSION_COOKIE,
+  getE2EViewer,
+} from "@/src/e2e/store";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
 export type Viewer = {
@@ -16,6 +22,10 @@ export function assertAllowedRole(role: AppRole, allowed: AppRole[]) {
 }
 
 export async function getViewer(): Promise<Viewer | null> {
+  if (isE2EEnabled()) {
+    const cookieStore = await cookies();
+    return getE2EViewer(cookieStore.get(E2E_SESSION_COOKIE)?.value);
+  }
   const supabase = await createServerSupabaseClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
   const user = userData.user;

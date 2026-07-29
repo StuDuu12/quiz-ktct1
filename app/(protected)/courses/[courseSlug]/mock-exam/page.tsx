@@ -12,6 +12,7 @@ import {
   getMockExamLaunch,
   startMockExamForCourse,
 } from "@/src/features/exam/actions";
+import { HydrationMarker } from "@/src/components/hydration-marker";
 
 type PageProps = {
   params: Promise<{ courseSlug: string }>;
@@ -56,6 +57,7 @@ export default async function MockExamLaunchPage({ params }: PageProps) {
           Khi bắt đầu, đồng hồ chạy ngay. Bài sẽ tự nộp khi hết giờ bằng những
           đáp án đã lưu gần nhất.
         </div>
+        <HydrationMarker />
         <form action={startAction}>
           <button type="submit">
             Bắt đầu thi thử <ArrowRight size={18} />

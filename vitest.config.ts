@@ -5,6 +5,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname),
+      "server-only": path.resolve(
+        import.meta.dirname,
+        "tests/server-only-stub.ts",
+      ),
       "next/dist/compiled/server-only": path.resolve(
         import.meta.dirname,
         "tests/server-only-stub.ts",
@@ -13,5 +17,6 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    include: ["tests/**/*.test.{ts,tsx}"],
   },
 });

@@ -4,11 +4,13 @@ import {
   finishPractice,
   getPracticeChapterByRoute,
   loadPracticeSession,
+  loadOrStartPracticeE2E,
   savePracticeAnswer,
   savePracticeFlag,
   startPractice,
 } from "@/src/features/practice/actions";
 import { PracticeSession } from "@/src/features/practice/components/practice-session";
+import { isE2EEnabled } from "@/src/e2e/guard";
 
 type PageProps = {
   params: Promise<{ courseSlug: string; position: string }>;
@@ -30,6 +32,17 @@ export default async function CoursePracticePage({
 
   const query = await searchParams;
   const attemptId = typeof query.attempt === "string" ? query.attempt : null;
+  if (isE2EEnabled()) {
+    const state = await loadOrStartPracticeE2E(chapter.id);
+    return (
+      <PracticeSession
+        initialState={state}
+        saveAnswer={savePracticeAnswer}
+        saveFlag={savePracticeFlag}
+        finish={finishPractice}
+      />
+    );
+  }
   if (!attemptId) {
     const started = await startPractice(chapter.id);
     redirect(

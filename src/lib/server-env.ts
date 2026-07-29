@@ -1,4 +1,4 @@
-import "next/dist/compiled/server-only";
+import "server-only";
 
 import { parseOptionalServerEnv } from "@/src/lib/server-env-schema";
 

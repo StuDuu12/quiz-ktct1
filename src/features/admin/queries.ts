@@ -1,4 +1,6 @@
 import { requireViewer, type Viewer } from "@/src/features/auth/session";
+import { isE2EEnabled } from "@/src/e2e/guard";
+import { getE2EAdminCatalog } from "@/src/e2e/store";
 import type { Json } from "@/src/lib/supabase/database.types";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
@@ -139,6 +141,7 @@ async function assignedCourseIds(viewer: Viewer) {
 
 export async function getAdminCatalog(): Promise<AdminCatalog> {
   const viewer = await requireViewer(["admin", "instructor"]);
+  if (isE2EEnabled()) return getE2EAdminCatalog(viewer);
   const scope = await assignedCourseIds(viewer);
   if (scope?.length === 0) return { courses: [], chapters: [], importJobs: [] };
 

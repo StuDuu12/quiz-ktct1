@@ -24,7 +24,7 @@ export default function LoginPage() {
       setMessage(getAuthErrorMessage(error, "signin"));
       return;
     }
-    router.replace("/");
+    router.replace("/dashboard");
   }
 
   return (

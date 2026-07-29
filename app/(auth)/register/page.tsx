@@ -10,6 +10,7 @@ import {
 
 export default function RegisterPage() {
   const [message, setMessage] = useState<string | null>(null);
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function onSubmit(formData: FormData) {
@@ -34,10 +35,13 @@ export default function RegisterPage() {
     });
     setIsSubmitting(false);
 
+    if (error) {
+      setMessage(getAuthErrorMessage(error, "register"));
+      return;
+    }
+    setRegisteredEmail(String(formData.get("email") ?? ""));
     setMessage(
-      error
-        ? getAuthErrorMessage(error, "register")
-        : "Đăng ký thành công. Hãy kiểm tra email để xác minh tài khoản trước khi đăng nhập.",
+      "Đăng ký thành công. Hãy kiểm tra email để xác minh tài khoản trước khi đăng nhập.",
     );
   }
 
@@ -78,6 +82,14 @@ export default function RegisterPage() {
           khoản sử dụng.
         </label>
         {message && <p role="status">{message}</p>}
+        {registeredEmail &&
+        process.env.NEXT_PUBLIC_E2E_MODE === "1" ? (
+          <Link
+            href={`/api/e2e/confirm?email=${encodeURIComponent(registeredEmail)}`}
+          >
+            Xác minh email thử nghiệm
+          </Link>
+        ) : null}
         <button disabled={isSubmitting} type="submit">
           {isSubmitting ? "Đang tạo tài khoản…" : "Đăng ký"}
         </button>

@@ -3,6 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { isE2EEnabled } from "@/src/e2e/guard";
+import {
+  getE2EExamReview,
+  getE2EMockExamLaunch,
+  loadE2EExam,
+  saveE2EExamAnswer,
+  saveE2EExamFlag,
+  startE2EExam,
+  submitE2EExam,
+} from "@/src/e2e/store";
 import { requireViewer } from "@/src/features/auth/session";
 import { startMockExam } from "@/src/features/exam/start-attempt";
 import type {
@@ -79,6 +89,11 @@ function parseExamQuestion(
 
 export async function getMockExamLaunch(courseSlug: string) {
   await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    const launch = getE2EMockExamLaunch(courseSlug);
+    if (!launch) throw new Error("MOCK_EXAM_COURSE_NOT_FOUND");
+    return launch;
+  }
   const supabase = await createServerSupabaseClient();
   const { data: course, error: courseError } = await supabase
     .from("courses")
@@ -107,6 +122,10 @@ export async function getMockExamLaunch(courseSlug: string) {
 
 export async function startMockExamForCourse(courseSlug: string) {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    const attempt = startE2EExam(viewer.id);
+    redirect(`/exam/${attempt.id}`);
+  }
   const launch = await getMockExamLaunch(courseSlug);
   const attempt = await startMockExam(viewer.id, launch.config.id);
   redirect(`/exam/${attempt.id}`);
@@ -116,6 +135,7 @@ export async function loadExamSession(
   attemptId: string,
 ): Promise<ExamSessionState> {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) return loadE2EExam(viewer.id, attemptId);
   const supabase = await createServerSupabaseClient();
   const { data: clockRows, error: clockError } = await supabase.rpc(
     "sync_mock_exam_attempt",
@@ -197,7 +217,15 @@ export async function saveExamAnswer(
   attemptQuestionId: string,
   optionId: string,
 ) {
-  await requireViewer(["student", "instructor", "admin"]);
+  const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    return saveE2EExamAnswer(
+      viewer.id,
+      attemptId,
+      attemptQuestionId,
+      optionId,
+    );
+  }
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.rpc("save_mock_exam_answer", {
     target_attempt_id: attemptId,
@@ -216,7 +244,11 @@ export async function toggleFlag(
   attemptQuestionId: string,
   flagged: boolean,
 ) {
-  await requireViewer(["student", "instructor", "admin"]);
+  const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    saveE2EExamFlag(viewer.id, attemptId, attemptQuestionId, flagged);
+    return;
+  }
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("set_mock_exam_flag", {
     target_attempt_id: attemptId,
@@ -227,7 +259,8 @@ export async function toggleFlag(
 }
 
 export async function loadExamReviewSnapshot(attemptId: string) {
-  await requireViewer(["student", "instructor", "admin"]);
+  const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) return getE2EExamReview(viewer.id, attemptId);
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.rpc("get_mock_exam_review", {
     target_attempt_id: attemptId,
@@ -259,7 +292,10 @@ export async function submitAttempt(
   attemptId: string,
   expectedRevision?: number,
 ): Promise<SubmitExamResult> {
-  await requireViewer(["student", "instructor", "admin"]);
+  const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    return submitE2EExam(viewer.id, attemptId, expectedRevision);
+  }
   const supabase = await createServerSupabaseClient();
   const args =
     expectedRevision === undefined

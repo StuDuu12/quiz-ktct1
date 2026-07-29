@@ -2,6 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 
+import { isE2EEnabled } from "@/src/e2e/guard";
+import {
+  finishE2EPractice,
+  getE2EPracticeChapter,
+  loadE2EPractice,
+  loadOrStartE2EPractice,
+  saveE2EPracticeAnswer,
+  saveE2EPracticeFlag,
+  startE2EPractice,
+} from "@/src/e2e/store";
 import { requireViewer } from "@/src/features/auth/session";
 import type {
   PracticeAnswer,
@@ -102,6 +112,15 @@ export async function getPracticeChapterById(
   chapterId: string,
 ): Promise<ChapterRecord & { course: CourseRecord }> {
   await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    const position = Number(chapterId.replace("e2e-chapter-", ""));
+    const chapter = getE2EPracticeChapter(
+      "kinh-te-chinh-tri-mac-lenin",
+      position,
+    );
+    if (!chapter) throw new Error("CHAPTER_NOT_FOUND");
+    return chapter;
+  }
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("chapters")
@@ -118,6 +137,11 @@ export async function getPracticeChapterByRoute(
   position: number,
 ): Promise<ChapterRecord & { course: CourseRecord }> {
   await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    const chapter = getE2EPracticeChapter(courseSlug, position);
+    if (!chapter) throw new Error("CHAPTER_NOT_FOUND");
+    return chapter;
+  }
   const supabase = await createServerSupabaseClient();
   const { data: course, error: courseError } = await supabase
     .from("courses")
@@ -144,6 +168,8 @@ export async function getPracticeChapterByRoute(
 }
 
 export async function startPractice(chapterId: string) {
+  const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) return startE2EPractice(viewer.id, chapterId);
   const chapter = await getPracticeChapterById(chapterId);
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.rpc("start_attempt", {
@@ -158,11 +184,22 @@ export async function startPractice(chapterId: string) {
   return { attemptId: data.id };
 }
 
+export async function loadOrStartPracticeE2E(
+  chapterId: string,
+): Promise<PracticeState> {
+  const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (!isE2EEnabled()) throw new Error("E2E_FIXTURE_DISABLED");
+  return loadOrStartE2EPractice(viewer.id, chapterId);
+}
+
 export async function loadPracticeSession(
   chapterId: string,
   attemptId: string,
 ): Promise<PracticeState> {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    return loadE2EPractice(viewer.id, chapterId, attemptId);
+  }
   const chapter = await getPracticeChapterById(chapterId);
   const supabase = await createServerSupabaseClient();
   const { data: attempt, error: attemptError } = await supabase.rpc(
@@ -269,7 +306,15 @@ export async function savePracticeAnswer(
   attemptQuestionId: string,
   optionId: string,
 ) {
-  await requireViewer(["student", "instructor", "admin"]);
+  const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    return saveE2EPracticeAnswer(
+      viewer.id,
+      attemptId,
+      attemptQuestionId,
+      optionId,
+    );
+  }
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.rpc("save_practice_answer", {
     target_attempt_id: attemptId,
@@ -293,7 +338,16 @@ export async function savePracticeFlag(
   attemptQuestionId: string,
   flagged: boolean,
 ) {
-  await requireViewer(["student", "instructor", "admin"]);
+  const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    saveE2EPracticeFlag(
+      viewer.id,
+      attemptId,
+      attemptQuestionId,
+      flagged,
+    );
+    return;
+  }
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("set_practice_flag", {
     target_attempt_id: attemptId,
@@ -304,7 +358,8 @@ export async function savePracticeFlag(
 }
 
 export async function finishPractice(attemptId: string) {
-  await requireViewer(["student", "instructor", "admin"]);
+  const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) return finishE2EPractice(viewer.id, attemptId);
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.rpc("finish_practice_attempt", {
     target_attempt_id: attemptId,
