@@ -71,6 +71,7 @@ describe("Vietnamese typography", () => {
         <article class="practice-question-card">
           <h1>Nội dung câu hỏi luyện tập</h1>
           <button class="practice-option"><span class="option-label">Phương án luyện tập</span></button>
+          <footer class="question-actions"><button>Tiếp theo</button></footer>
         </article>
         <article class="exam-question-card">
           <h1>Nội dung câu hỏi thi thử</h1>
@@ -86,6 +87,7 @@ describe("Vietnamese typography", () => {
       ".auth-submit",
       ".practice-question-card > h1",
       ".option-label",
+      ".question-actions button",
       ".exam-question-card > h1",
       ".exam-option-content",
       ".exam-question-actions button",
