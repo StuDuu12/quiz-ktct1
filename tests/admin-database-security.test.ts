@@ -363,11 +363,18 @@ describe("advanced administration database boundaries", () => {
         where action = 'questions.imported'
           and metadata ->> 'idempotency_key' = 'batch-valid'
       `);
+      const jobs = await database.query<{ count: number }>(`
+        select count(*)::integer as count
+        from public.import_jobs
+        where uploaded_by = '${ids.instructor}'
+          and idempotency_key = 'batch-valid'
+      `);
       expect(first.rows).toEqual([
         { job_id: expect.any(String), imported_count: 2 },
       ]);
       expect(retry.rows).toEqual(first.rows);
       expect(persisted.rows[0]!.count).toBe(2);
+      expect(jobs.rows[0]!.count).toBe(1);
       expect(audit.rows[0]!.count).toBe(1);
     } finally {
       await resetIdentity();

@@ -5,7 +5,7 @@ import {
   FileText,
   SpinnerGap,
 } from "@phosphor-icons/react";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 
 import { previewImport } from "@/src/features/admin/import-preview";
 import type { ParsedQuestion } from "@/src/features/question-bank/types";
@@ -21,6 +21,16 @@ type ChapterChoice = {
   courseId: string;
   position: number;
   title: string;
+};
+
+type PreviewSession = {
+  courseId: string;
+  chapterId: string;
+  fileName: string;
+  source: string;
+  idempotencyKey: string;
+  preview: ReturnType<typeof previewImport>;
+  importedCount: number | null;
 };
 
 export function ImportWorkspace({
@@ -48,35 +58,48 @@ export function ImportWorkspace({
   );
   const [source, setSource] = useState("");
   const [fileName, setFileName] = useState("questions.md");
-  const [previewedSource, setPreviewedSource] = useState("");
+  const [previewSession, setPreviewSession] =
+    useState<PreviewSession | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const preview =
-    previewedSource && chapterId
-      ? previewImport(previewedSource, chapterId)
-      : null;
+  const isSubmittingRef = useRef(false);
 
   function changeCourse(nextCourseId: string) {
     setCourseId(nextCourseId);
     setChapterId(
       chapters.find((chapter) => chapter.courseId === nextCourseId)?.id ?? "",
     );
-    setPreviewedSource("");
+    setPreviewSession(null);
     setResult(null);
   }
 
   function confirmImport() {
-    if (!preview || !courseId || !chapterId) return;
+    if (
+      !previewSession ||
+      previewSession.importedCount !== null ||
+      isSubmittingRef.current
+    ) {
+      return;
+    }
+    isSubmittingRef.current = true;
+    const session = previewSession;
     startTransition(async () => {
       setResult(null);
       try {
         const saved = await commitAction({
-          courseId,
-          chapterId,
-          fileName,
-          idempotencyKey: crypto.randomUUID(),
-          questions: preview.importableQuestions,
+          courseId: session.courseId,
+          chapterId: session.chapterId,
+          fileName: session.fileName,
+          idempotencyKey: session.idempotencyKey,
+          questions: session.preview.importableQuestions,
         });
+        if (saved) {
+          setPreviewSession((current) =>
+            current?.idempotencyKey === session.idempotencyKey
+              ? { ...current, importedCount: saved.imported_count }
+              : current,
+          );
+        }
         setResult(
           saved
             ? `Đã nhập ${saved.imported_count} câu. Mã tác vụ ${saved.job_id}.`
@@ -86,6 +109,8 @@ export function ImportWorkspace({
         setResult(
           "Không thể nhập dữ liệu. Không có phần dữ liệu nào được ghi.",
         );
+      } finally {
+        isSubmittingRef.current = false;
       }
     });
   }
@@ -133,7 +158,8 @@ export function ImportWorkspace({
               required
               onChange={(event) => {
                 setChapterId(event.currentTarget.value);
-                setPreviewedSource("");
+                setPreviewSession(null);
+                setResult(null);
               }}
             >
               <option value="">Chọn chương</option>
@@ -149,7 +175,11 @@ export function ImportWorkspace({
             <input
               value={fileName}
               required
-              onChange={(event) => setFileName(event.currentTarget.value)}
+              onChange={(event) => {
+                setFileName(event.currentTarget.value);
+                setPreviewSession(null);
+                setResult(null);
+              }}
             />
           </label>
           <label className="import-file-control">
@@ -160,9 +190,10 @@ export function ImportWorkspace({
               onChange={async (event) => {
                 const file = event.currentTarget.files?.[0];
                 if (!file) return;
+                setPreviewSession(null);
+                setResult(null);
                 setFileName(file.name);
                 setSource(await file.text());
-                setPreviewedSource("");
               }}
             />
           </label>
@@ -175,7 +206,8 @@ export function ImportWorkspace({
             placeholder="Câu 1: Nội dung câu hỏi..."
             onChange={(event) => {
               setSource(event.currentTarget.value);
-              setPreviewedSource("");
+              setPreviewSession(null);
+              setResult(null);
             }}
           />
         </label>
@@ -184,8 +216,26 @@ export function ImportWorkspace({
           type="button"
           disabled={!source.trim() || !chapterId}
           onClick={() => {
-            setPreviewedSource(source);
             setResult(null);
+            setPreviewSession((current) => {
+              if (
+                current?.courseId === courseId &&
+                current.chapterId === chapterId &&
+                current.fileName === fileName &&
+                current.source === source
+              ) {
+                return current;
+              }
+              return {
+                courseId,
+                chapterId,
+                fileName,
+                source,
+                idempotencyKey: crypto.randomUUID(),
+                preview: previewImport(source, chapterId),
+                importedCount: null,
+              };
+            });
           }}
         >
           <FileArrowUp size={19} weight="bold" aria-hidden="true" />
@@ -193,10 +243,12 @@ export function ImportWorkspace({
         </button>
       </section>
 
-      {preview ? (
+      {previewSession ? (
         <ImportPreviewPanel
-          preview={preview}
-          onConfirm={isPending ? undefined : confirmImport}
+          preview={previewSession.preview}
+          onConfirm={confirmImport}
+          disabled={isPending}
+          importedCount={previewSession.importedCount}
         />
       ) : (
         <section className="admin-empty admin-empty-compact">

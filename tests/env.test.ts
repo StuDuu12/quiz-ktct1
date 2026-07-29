@@ -5,8 +5,8 @@ import {
 } from "@/src/lib/env";
 import {
   getOptionalServerEnv,
-  parseOptionalServerEnv,
 } from "@/src/lib/server-env";
+import { parseOptionalServerEnv } from "@/src/lib/server-env-schema";
 
 describe("public Supabase environment", () => {
   afterEach(() => {

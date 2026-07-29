@@ -55,6 +55,13 @@ mutations RPC-only:
 - It displays parsed, valid, issue, and duplicate counts plus issue details and
   duplicate source numbers.
 - No write occurs until the user checks the explicit final confirmation.
+- Each confirmed preview owns one idempotency key derived from its current
+  source/file/course/chapter identity. Retries after a lost response reuse that
+  key; changing any identity input invalidates the preview and creates a new key
+  only when the replacement preview is analyzed.
+- A synchronous submission guard prevents concurrent double-submit, and a
+  successful response replaces the active confirmation with a disabled
+  completion state.
 - `admin_import_questions` validates the complete payload before durable
   writes, inserts the batch in one transaction, deduplicates source numbers,
   records versions and an import job, and is idempotent per uploader/key.
@@ -77,6 +84,9 @@ mutations RPC-only:
 
 - `SUPABASE_SERVICE_ROLE_KEY` is read only from `src/lib/server-env.ts` by the
   server-only admin client path. It has no `NEXT_PUBLIC_` alias.
+- Both the server environment reader and privileged Supabase client import
+  Next's server-only guard. The pure environment schema remains independently
+  testable, with a Vitest-only marker stub that does not affect production.
 - When the key is absent, the UI disables new invitation delivery and states
   that no email was sent. It never reports a simulated success.
 - Provider success/failure is finalized in the database and audited.
@@ -105,24 +115,29 @@ mutations RPC-only:
 - `tests/admin-components.test.tsx`
   - Role-aware navigation
   - Import counts/issues/final confirmation
+  - Stable preview idempotency key across a lost-response retry
+  - Key renewal after preview identity changes
+  - Concurrent double-submit prevention and completed confirmation state
+- The database import retry test also proves one persisted import job and one
+  audit entry for the reused key.
 - Extended environment and generated database type tests.
 
 ## Verification
 
-Focused verification:
+Fix-round focused verification:
 
 ```text
-6 test files passed, 28 tests passed
-database security follow-up: 8/8 passed
+3 test files passed, 18 tests passed
 ```
 
 Full verification completed before commit:
 
 ```text
-npm test          30 files, 173 tests passed
+npm test          30 files, 176 tests passed
 npm run typecheck exit 0
 npm run lint      exit 0
 npm run build     exit 0
+client secret reference scan: clean
 ```
 
 The production build recognizes all six administration routes.

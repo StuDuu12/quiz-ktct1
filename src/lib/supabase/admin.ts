@@ -1,3 +1,5 @@
+import "next/dist/compiled/server-only";
+
 import { createClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/src/lib/supabase/database.types";

@@ -12,9 +12,13 @@ import type { ImportPreview } from "@/src/features/admin/import-preview";
 export function ImportPreviewPanel({
   preview,
   onConfirm,
+  disabled = false,
+  importedCount = null,
 }: {
   preview: ImportPreview;
   onConfirm?: () => void;
+  disabled?: boolean;
+  importedCount?: number | null;
 }) {
   const [confirmed, setConfirmed] = useState(false);
   return (
@@ -74,6 +78,7 @@ export function ImportPreviewPanel({
             type="checkbox"
             checked={confirmed}
             required
+            disabled={importedCount !== null}
             onChange={(event) => setConfirmed(event.currentTarget.checked)}
           />
           <span>
@@ -83,10 +88,17 @@ export function ImportPreviewPanel({
         </label>
         <button
           type="button"
-          disabled={!confirmed || !preview.confirmationRequired}
+          disabled={
+            disabled ||
+            importedCount !== null ||
+            !confirmed ||
+            !preview.confirmationRequired
+          }
           onClick={onConfirm}
         >
-          Nhập {preview.validCount} câu
+          {importedCount === null
+            ? `Nhập ${preview.validCount} câu`
+            : `Đã nhập ${importedCount} câu`}
         </button>
       </div>
     </section>
