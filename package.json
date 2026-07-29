@@ -14,7 +14,11 @@
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "production:preflight": "tsx scripts/production/preflight.ts",
+    "production:setup": "tsx scripts/production/setup.ts",
+    "production:verify": "tsx scripts/production/verify.ts",
+    "production:smoke": "tsx scripts/production/smoke.ts"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
@@ -46,6 +50,7 @@
     "jsdom": "^29.1.1",
     "react-server-dom-webpack": "19.2.6",
     "tailwindcss": "4.2.1",
+    "tsx": "4.22.1",
     "typescript": "5.9.3",
     "vinext": "0.0.50",
     "vite": "8.0.13",

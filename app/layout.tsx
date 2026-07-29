@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
+
+import { buildSiteMetadata } from "@/src/lib/site-metadata";
+
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Phòng luyện thi KTCT",
-  description: "Nền tảng luyện thi kiến thức công trình.",
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
-};
+export const metadata: Metadata = buildSiteMetadata(
+  process.env.NEXT_PUBLIC_SITE_URL,
+);
 
 export default function RootLayout({
   children,
