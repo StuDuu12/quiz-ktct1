@@ -45,6 +45,20 @@ describe("instructor portal", () => {
     expect(instructorNavigation).not.toContain("Nhật ký hệ thống");
   });
 
+  it("does not prefetch every authenticated portal route in parallel", () => {
+    const instructorNavigation = readFileSync(
+      resolve("src/features/instructor/components/instructor-navigation.tsx"),
+      "utf8",
+    );
+    const adminNavigation = readFileSync(
+      resolve("src/features/admin/components/admin-navigation.tsx"),
+      "utf8",
+    );
+
+    expect(instructorNavigation).toContain("prefetch={false}");
+    expect(adminNavigation).toContain("prefetch={false}");
+  });
+
   it("keeps instructor dashboard links inside the instructor portal", async () => {
     requireViewer.mockResolvedValue({
       id: "instructor-1",

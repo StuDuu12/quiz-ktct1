@@ -26,6 +26,7 @@ export function InstructorNavigation({ currentPath }: { currentPath: string }) {
           <Link
             key={href}
             href={href}
+            prefetch={false}
             aria-current={active ? "page" : undefined}
           >
             <Icon size={20} weight={active ? "fill" : "duotone"} aria-hidden="true" />
