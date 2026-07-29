@@ -1,15 +1,8 @@
-import type { Metadata } from "next";
-import { SkeletonPreview } from "./_sites-preview/SkeletonPreview";
-
-export const metadata: Metadata = {
-  title: "Your site is taking shape",
-  description:
-    "Your first version will appear here automatically when it’s ready.",
-  other: {
-    "codex-preview": "development",
-  },
-};
-
 export default function Home() {
-  return <SkeletonPreview />;
+  return (
+    <main className="app-shell">
+      <h1>Phòng luyện thi KTCT</h1>
+      <p>Chuẩn bị cho bài thi của bạn với các đề luyện tập có cấu trúc.</p>
+    </main>
+  );
 }
