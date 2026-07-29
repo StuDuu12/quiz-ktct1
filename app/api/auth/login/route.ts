@@ -28,10 +28,14 @@ export async function POST(request: Request) {
   }
 
   if (result.error) {
-    return NextResponse.json(
+    const errorResponse = NextResponse.json(
       { error: result.error.message },
       { status: 401 },
     );
+    for (const cookie of response.cookies.getAll()) {
+      errorResponse.cookies.set(cookie);
+    }
+    return errorResponse;
   }
 
   return response;
