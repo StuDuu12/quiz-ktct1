@@ -592,6 +592,16 @@ export type Database = {
           answered_at: string | null;
         }[];
       };
+      get_submitted_practice_progress: {
+        Args: { target_course_id: string };
+        Returns: {
+          attempt_id: string;
+          chapter_id: string;
+          correct_count: number;
+          total_count: number;
+          submitted_at: string;
+        }[];
+      };
       is_course_instructor: {
         Args: { target_course_id: string };
         Returns: boolean;

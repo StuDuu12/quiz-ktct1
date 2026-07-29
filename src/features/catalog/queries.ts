@@ -77,49 +77,23 @@ export async function getCourseDashboard(
       questions: { id: string }[] | null;
     }>;
     const typedAttempts = attempts ?? [];
-    const attemptIds = typedAttempts
-      .filter((attempt) => attempt.kind === "practice")
-      .map((attempt) => attempt.id);
+    const { data: submittedProgress, error: progressError } = await supabase.rpc(
+      "get_submitted_practice_progress",
+      { target_course_id: course.id },
+    );
+    if (progressError) return { data: null, error: "Không thể tải kết quả luyện tập lúc này." };
 
-    const attemptProgress: ProgressAttempt[] = [];
+    const attemptProgress: ProgressAttempt[] = (submittedProgress ?? []).map((row) => ({
+      chapterId: row.chapter_id,
+      status: "submitted",
+      correct: row.correct_count,
+      total: row.total_count,
+    }));
     const latestByChapter = new Map<string, string>();
-
-    if (attemptIds.length > 0) {
-      const { data: attemptQuestions, error: questionError } = await supabase
-        .from("attempt_questions")
-        .select("attempt_id, questions(chapter_id), attempt_answers(is_correct)")
-        .in("attempt_id", attemptIds);
-
-      if (questionError) return { data: null, error: "Không thể tải kết quả luyện tập lúc này." };
-
-      const counts = new Map<string, { correct: number; total: number }>();
-      const byAttempt = new Map(typedAttempts.map((attempt) => [attempt.id, attempt]));
-      for (const row of (attemptQuestions ?? []) as unknown as Array<{
-        attempt_id: string;
-        questions: { chapter_id: string } | null;
-        attempt_answers: { is_correct: boolean | null } | null;
-      }>) {
-        const chapterId = row.questions?.chapter_id;
-        const attempt = byAttempt.get(row.attempt_id);
-        if (!chapterId || !attempt || attempt.kind !== "practice") continue;
-        const key = `${row.attempt_id}:${chapterId}`;
-        const count = counts.get(key) ?? { correct: 0, total: 0 };
-        count.total += 1;
-        count.correct += row.attempt_answers?.is_correct ? 1 : 0;
-        counts.set(key, count);
-        if (attempt.status === "submitted") {
-          const occurredAt = attempt.submitted_at ?? attempt.started_at;
-          const currentLatest = latestByChapter.get(chapterId);
-          if (!currentLatest || new Date(occurredAt) > new Date(currentLatest)) {
-            latestByChapter.set(chapterId, occurredAt);
-          }
-        }
-      }
-      for (const [key, count] of counts) {
-        const attemptId = key.slice(0, key.indexOf(":"));
-        const chapterId = key.slice(key.indexOf(":") + 1);
-        const attempt = byAttempt.get(attemptId);
-        if (attempt) attemptProgress.push({ chapterId, status: attempt.status, ...count });
+    for (const row of submittedProgress ?? []) {
+      const currentLatest = latestByChapter.get(row.chapter_id);
+      if (!currentLatest || new Date(row.submitted_at) > new Date(currentLatest)) {
+        latestByChapter.set(row.chapter_id, row.submitted_at);
       }
     }
 

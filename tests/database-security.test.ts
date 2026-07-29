@@ -42,6 +42,7 @@ const ids = {
 const migrationPaths = [
   path.resolve("supabase/migrations/202607290001_initial_schema.sql"),
   path.resolve("supabase/migrations/202607290002_rls_policies.sql"),
+  path.resolve("supabase/migrations/202607290003_learner_progress.sql"),
 ];
 
 describe("database security behavior", () => {
@@ -538,6 +539,44 @@ describe("database security behavior", () => {
         from public.get_attempt_results('${ids.resultAttempt}')
       `);
       expect(result.rows).toEqual([{ is_correct: true }]);
+    } finally {
+      await resetIdentity();
+    }
+  });
+
+  it("returns submitted practice aggregates through the restricted learner progress RPC", async () => {
+    try {
+      await database.exec(`
+        update public.attempts
+        set status = 'submitted'
+        where id = '${ids.otherAttempt}'
+      `);
+      await assumeIdentity(ids.student);
+
+      await expect(
+        database.query(`
+          select is_correct from public.attempt_answers
+          where id = '${ids.otherAnswer}'
+        `),
+      ).rejects.toThrow();
+
+      const history = await database.query<{
+        attempt_id: string;
+        chapter_id: string;
+        correct_count: number;
+        total_count: number;
+        submitted_at: Date;
+      }>(`
+        select * from public.get_submitted_practice_progress('${ids.otherCourse}')
+      `);
+      expect(history.rows).toHaveLength(1);
+      expect(history.rows[0]).toMatchObject({
+        attempt_id: ids.otherAttempt,
+        chapter_id: ids.otherChapter,
+        correct_count: 1,
+        total_count: 1,
+      });
+      expect(history.rows[0]?.submitted_at).toBeInstanceOf(Date);
     } finally {
       await resetIdentity();
     }

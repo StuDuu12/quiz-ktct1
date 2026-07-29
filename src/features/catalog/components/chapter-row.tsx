@@ -19,14 +19,16 @@ export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; c
         <h3>{chapter.title}</h3>
         <p><BookOpen size={16} weight="duotone" /> {chapter.questionCount} câu hỏi</p>
       </div>
-      <div className="chapter-metric">
-        <span>Độ chính xác</span>
-        <strong className={ready ? "metric-good" : "metric-empty"}>{ready ? `${chapter.accuracy}%` : "—"}</strong>
-        {ready && <small>{chapter.attempts} lượt đã nộp</small>}
-      </div>
-      <div className="chapter-latest">
-        <span><Clock size={15} /> Lần gần nhất</span>
-        <strong>{formatDate(chapter.latestAttemptAt)}</strong>
+      <div className="chapter-details">
+        <div className="chapter-metric">
+          <span>Độ chính xác</span>
+          <strong className={ready ? "metric-good" : "metric-empty"}>{ready ? `${chapter.accuracy}%` : "—"}</strong>
+          {ready && <small>{chapter.attempts} lượt đã nộp</small>}
+        </div>
+        <div className="chapter-latest">
+          <span><Clock size={15} /> Lần gần nhất</span>
+          <strong>{formatDate(chapter.latestAttemptAt)}</strong>
+        </div>
       </div>
       <Link className="practice-link" href={`/courses/${courseSlug}/chapters/${chapter.position}/practice`}>
         {ready ? <CheckCircle size={18} weight="fill" /> : null}
