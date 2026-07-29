@@ -23,6 +23,32 @@ Ngoài phân tách vai trò, đợt triển khai phải sửa các lỗi product
 5. Thi thử không hoạt động vì production thiếu `exam_configs`.
 6. Typography tiếng Việt quá nhỏ, weight/tracking thiếu ổn định và bố cục quiz chưa phù hợp tablet/mobile.
 
+Trang `/` là landing page công khai mới. Khách xem giới thiệu học phần trước khi đăng nhập; sau đăng nhập, server xác định vai trò và đưa người dùng tới đúng portal.
+
+### 1.1 Landing page công khai
+
+Landing page dùng hướng hình ảnh đã duyệt:
+
+- Bố cục hero bất đối xứng nhẹ, nội dung bên trái và ảnh học tập thật bên phải.
+- Màu nhấn xanh ngọc đồng nhất với nhận diện chung.
+- Font `Be Vietnam Pro`, nội dung ngắn, rõ và thân thiện với tiếng Việt.
+- CTA chính “Đăng nhập”, CTA phụ “Tạo tài khoản”.
+- Thông tin thật: 497 câu hỏi, 6 chương, thi thử 40 câu trong 60 phút.
+- Khối giới thiệu riêng cho Sinh viên, Giảng viên và Admin nhưng không giả lập giao diện sản phẩm bằng các hình chữ nhật.
+- Ảnh hero là ảnh học tập được tạo riêng, không có chữ, logo hoặc watermark; dùng `next/image` với kích thước cố định để tránh CLS.
+- Navigation công khai gồm Giới thiệu, Lộ trình, Vai trò và Đăng nhập; desktop nằm một dòng, mobile thu gọn.
+- Landing page giữ nguyên URL `/`, có metadata tiếng Việt, Open Graph cơ bản và không tự chuyển hướng người chưa đăng nhập.
+
+Luồng:
+
+```text
+Landing page `/`
+  -> `/login` hoặc `/register`
+  -> xác thực
+  -> server đọc `public.profiles.role`
+  -> `/dashboard`, `/instructor` hoặc `/admin`
+```
+
 ## 2. Phương án kiến trúc
 
 ### 2.1 Route và layout
@@ -200,6 +226,9 @@ Ba portal dùng cùng spacing, radius, icon Phosphor và semantic color token đ
    - Start tạo một attempt có 40 snapshot câu hỏi.
 
 4. Giao diện:
+   - Landing page hiển thị đúng nội dung, ảnh và CTA ở 375/768/1024/1440.
+   - Landing navigation một dòng trên desktop, không che nội dung trên mobile.
+   - Ảnh hero có kích thước dự trữ, alt text tiếng Việt và không gây CLS.
    - Kiểm tra hình học hàng chương ở 375/768/1024/1440.
    - Không item nào bị clip hoặc tràn ngang.
    - Quiz navigator chuyển đúng sidebar/drawer.
