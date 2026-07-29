@@ -35,4 +35,13 @@ describe("generated Supabase database types", () => {
       Database["public"]["Enums"]["app_role"]
     >().toEqualTypeOf<"admin" | "instructor" | "student">();
   });
+
+  it("types trusted attempt start and result functions", () => {
+    expectTypeOf<
+      Database["public"]["Functions"]["start_attempt"]["Returns"]
+    >().toEqualTypeOf<Database["public"]["Tables"]["attempts"]["Row"]>();
+    expectTypeOf<
+      Database["public"]["Functions"]["get_attempt_results"]["Returns"][number]["is_correct"]
+    >().toEqualTypeOf<boolean | null>();
+  });
 });

@@ -138,8 +138,13 @@ describe("Supabase database migrations", () => {
         "can_manage_course",
         "handle_new_user",
         "protect_profile_privileged_fields",
+        "assert_question_has_one_correct_option",
+        "validate_question_publication",
+        "validate_published_question_options",
         "protect_attempt_submission",
         "prepare_attempt_answer",
+        "start_attempt",
+        "get_attempt_results",
         "write_audit_log",
       ]),
     );
@@ -147,6 +152,8 @@ describe("Supabase database migrations", () => {
       expect.arrayContaining([
         "on_auth_user_created",
         "protect_profile_privileged_fields",
+        "validate_question_publication",
+        "validate_published_question_options",
         "protect_attempt_submission",
         "prepare_attempt_answer",
       ]),
@@ -221,19 +228,23 @@ describe("Supabase database migrations", () => {
         and grantee = 'authenticated'
         and privilege_type in ('INSERT', 'UPDATE', 'DELETE')
     `);
-    const answerKeyPrivilege = await database!.query<{
+    const answerKeyPrivileges = await database!.query<{
+      table_name: string;
       column_name: string;
     }>(`
-      select column_name
+      select table_name, column_name
       from information_schema.column_privileges
       where table_schema = 'public'
-        and table_name = 'question_options'
+        and (
+          (table_name = 'question_options' and column_name = 'is_correct')
+          or
+          (table_name = 'attempt_answers' and column_name = 'is_correct')
+        )
         and grantee in ('anon', 'authenticated')
         and privilege_type = 'SELECT'
-        and column_name = 'is_correct'
     `);
 
     expect(tablePrivileges.rows).toEqual([]);
-    expect(answerKeyPrivilege.rows).toEqual([]);
+    expect(answerKeyPrivileges.rows).toEqual([]);
   });
 });

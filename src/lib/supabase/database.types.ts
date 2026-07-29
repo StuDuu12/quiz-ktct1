@@ -582,9 +582,26 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: Database["public"]["Enums"]["app_role"];
       };
+      get_attempt_results: {
+        Args: { target_attempt_id: string };
+        Returns: {
+          attempt_question_id: string;
+          question_id: string;
+          selected_option_id: string | null;
+          is_correct: boolean | null;
+          answered_at: string | null;
+        }[];
+      };
       is_course_instructor: {
         Args: { target_course_id: string };
         Returns: boolean;
+      };
+      start_attempt: {
+        Args: {
+          target_course_id: string;
+          target_exam_config_id?: string | null;
+        };
+        Returns: Database["public"]["Tables"]["attempts"]["Row"];
       };
       write_audit_log: {
         Args: {

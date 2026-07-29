@@ -23,17 +23,13 @@ grant select on public.attempt_questions to authenticated;
 grant insert, update, delete
   on public.courses, public.chapters, public.questions,
   public.question_options, public.exam_configs to authenticated;
-grant select on public.attempts, public.attempt_answers, public.audit_logs
-  to authenticated;
-grant insert (
-  user_id,
-  course_id,
-  exam_config_id,
-  kind,
-  expires_at,
-  question_order,
-  option_order
-) on public.attempts to authenticated;
+grant select on public.attempts, public.audit_logs to authenticated;
+grant select (
+  id,
+  attempt_question_id,
+  selected_option_id,
+  answered_at
+) on public.attempt_answers to authenticated;
 grant update (status) on public.attempts to authenticated;
 grant insert (attempt_question_id, selected_option_id)
   on public.attempt_answers to authenticated;
@@ -213,10 +209,17 @@ using (public.can_manage_course(course_id))
 with check (public.can_manage_course(course_id));
 
 create policy "students own attempts"
-on public.attempts for all
+on public.attempts for select
 using (
   user_id = auth.uid()
-  or public.current_role() in ('admin', 'instructor')
+  or public.can_manage_course(course_id)
+);
+
+create policy "students submit own attempts"
+on public.attempts for update
+using (
+  user_id = auth.uid()
+  or public.current_role() = 'admin'
 )
 with check (
   user_id = auth.uid()
@@ -232,7 +235,7 @@ using (
     where a.id = attempt_id
       and (
         a.user_id = auth.uid()
-        or public.current_role() in ('admin', 'instructor')
+        or public.can_manage_course(a.course_id)
       )
   )
 );
@@ -247,7 +250,7 @@ using (
     where aq.id = attempt_question_id
       and (
         a.user_id = auth.uid()
-        or public.current_role() in ('admin', 'instructor')
+        or public.can_manage_course(a.course_id)
       )
   )
 );

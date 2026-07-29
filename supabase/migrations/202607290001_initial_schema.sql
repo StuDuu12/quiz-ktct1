@@ -306,6 +306,86 @@ begin
 end;
 $$;
 
+create or replace function public.assert_question_has_one_correct_option(
+  target_question_id uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  target_status text;
+  correct_option_count integer;
+begin
+  select status
+  into target_status
+  from public.questions
+  where id = target_question_id;
+
+  if target_status = 'published' then
+    select count(*)
+    into correct_option_count
+    from public.question_options
+    where question_id = target_question_id
+      and is_correct;
+
+    if correct_option_count <> 1 then
+      raise exception 'Published question must have exactly one correct option'
+        using errcode = '23514';
+    end if;
+  end if;
+end;
+$$;
+
+create or replace function public.validate_question_publication()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  correct_option_count integer;
+begin
+  if new.status = 'published' then
+    select count(*)
+    into correct_option_count
+    from public.question_options
+    where question_id = new.id
+      and is_correct;
+
+    if correct_option_count <> 1 then
+      raise exception 'Published question must have exactly one correct option'
+        using errcode = '23514';
+    end if;
+  end if;
+
+  return new;
+end;
+$$;
+
+create or replace function public.validate_published_question_options()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if tg_op = 'DELETE' then
+    perform public.assert_question_has_one_correct_option(old.question_id);
+  elsif tg_op = 'INSERT' then
+    perform public.assert_question_has_one_correct_option(new.question_id);
+  else
+    perform public.assert_question_has_one_correct_option(new.question_id);
+    if old.question_id is distinct from new.question_id then
+      perform public.assert_question_has_one_correct_option(old.question_id);
+    end if;
+  end if;
+
+  return case when tg_op = 'DELETE' then old else new end;
+end;
+$$;
+
 create or replace function public.protect_attempt_submission()
 returns trigger
 language plpgsql
@@ -334,6 +414,14 @@ begin
   if old.status <> 'in_progress' and new is distinct from old then
     raise exception 'Submitted or expired attempts are immutable'
       using errcode = '23514';
+  end if;
+
+  if old.status = 'in_progress' and clock_timestamp() >= old.expires_at then
+    new.status := 'expired';
+    new.submitted_at := null;
+    new.duration_seconds := null;
+    new.score := null;
+    return new;
   end if;
 
   if new.status = 'submitted' and old.status = 'in_progress' then
@@ -376,6 +464,7 @@ as $$
 declare
   target_attempt_id uuid;
   target_status public.attempt_status;
+  target_expires_at timestamptz;
 begin
   if tg_table_name = 'attempt_questions' then
     target_attempt_id := case
@@ -392,13 +481,18 @@ begin
     end;
   end if;
 
-  select status
-  into target_status
+  select status, expires_at
+  into target_status, target_expires_at
   from public.attempts
   where id = target_attempt_id;
 
   if target_status is distinct from 'in_progress'::public.attempt_status then
     raise exception 'Attempt content is immutable after completion'
+      using errcode = '23514';
+  end if;
+
+  if clock_timestamp() >= target_expires_at then
+    raise exception 'Attempt has expired'
       using errcode = '23514';
   end if;
 
@@ -442,6 +536,269 @@ begin
 
   new.answered_at := now();
   return new;
+end;
+$$;
+
+create or replace function public.start_attempt(
+  target_course_id uuid,
+  target_exam_config_id uuid default null
+)
+returns public.attempts
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  requester_id uuid := auth.uid();
+  selected_kind public.attempt_kind;
+  selected_question_count integer;
+  selected_duration_seconds integer;
+  should_shuffle_questions boolean;
+  should_shuffle_options boolean;
+  selected_question_ids uuid[];
+  question_order_snapshot jsonb;
+  option_order_snapshot jsonb := '{}'::jsonb;
+  current_option_order jsonb;
+  current_question_snapshot jsonb;
+  created_attempt public.attempts%rowtype;
+  question_position integer;
+  attempt_started_at timestamptz := clock_timestamp();
+begin
+  if requester_id is null then
+    raise exception 'Authentication required'
+      using errcode = '28000';
+  end if;
+
+  if not exists (
+    select 1
+    from public.profiles
+    where id = requester_id
+      and is_active
+  ) then
+    raise exception 'Active profile required'
+      using errcode = '42501';
+  end if;
+
+  if not exists (
+    select 1
+    from public.courses
+    where id = target_course_id
+      and status = 'published'
+  ) then
+    raise exception 'Published course not found'
+      using errcode = '22023';
+  end if;
+
+  if target_exam_config_id is not null then
+    select
+      kind,
+      question_count,
+      duration_seconds,
+      shuffle_questions,
+      shuffle_options
+    into
+      selected_kind,
+      selected_question_count,
+      selected_duration_seconds,
+      should_shuffle_questions,
+      should_shuffle_options
+    from public.exam_configs
+    where id = target_exam_config_id
+      and course_id = target_course_id
+      and is_active;
+
+    if not found then
+      raise exception 'Active exam configuration does not belong to course'
+        using errcode = '22023';
+    end if;
+  else
+    selected_kind := 'practice';
+    selected_duration_seconds := 3600;
+    should_shuffle_questions := true;
+    should_shuffle_options := true;
+
+    select count(*)
+    into selected_question_count
+    from public.questions q
+    join public.chapters ch on ch.id = q.chapter_id
+    where ch.course_id = target_course_id
+      and q.status = 'published';
+  end if;
+
+  select array_agg(ranked.id order by ranked.sort_key, ranked.id)
+  into selected_question_ids
+  from (
+    select
+      q.id,
+      case
+        when should_shuffle_questions then random()
+        else coalesce(q.source_number, 2147483647)::double precision
+      end as sort_key
+    from public.questions q
+    join public.chapters ch on ch.id = q.chapter_id
+    where ch.course_id = target_course_id
+      and q.status = 'published'
+    order by sort_key, q.id
+    limit selected_question_count
+  ) ranked;
+
+  if coalesce(array_length(selected_question_ids, 1), 0)
+    <> selected_question_count then
+    raise exception 'Course does not contain enough published questions'
+      using errcode = '22023';
+  end if;
+
+  if selected_question_count = 0 then
+    raise exception 'Course has no published questions'
+      using errcode = '22023';
+  end if;
+
+  question_order_snapshot := to_jsonb(selected_question_ids);
+
+  for question_position in 1..array_length(selected_question_ids, 1) loop
+    select coalesce(
+      jsonb_agg(to_jsonb(ordered.id) order by ordered.sort_key, ordered.id),
+      '[]'::jsonb
+    )
+    into current_option_order
+    from (
+      select
+        qo.id,
+        case
+          when should_shuffle_options then random()
+          else ascii(qo.label)
+        end as sort_key
+      from public.question_options qo
+      where qo.question_id = selected_question_ids[question_position]
+    ) ordered;
+
+    option_order_snapshot := option_order_snapshot || jsonb_build_object(
+      selected_question_ids[question_position]::text,
+      current_option_order
+    );
+  end loop;
+
+  insert into public.attempts (
+    user_id,
+    course_id,
+    exam_config_id,
+    kind,
+    started_at,
+    expires_at,
+    question_order,
+    option_order
+  )
+  values (
+    requester_id,
+    target_course_id,
+    target_exam_config_id,
+    selected_kind,
+    attempt_started_at,
+    attempt_started_at + make_interval(secs => selected_duration_seconds),
+    question_order_snapshot,
+    option_order_snapshot
+  )
+  returning * into created_attempt;
+
+  for question_position in 1..array_length(selected_question_ids, 1) loop
+    current_option_order := option_order_snapshot
+      -> selected_question_ids[question_position]::text;
+
+    select jsonb_build_object(
+      'id', q.id,
+      'content', q.content,
+      'explanation', q.explanation,
+      'difficulty', q.difficulty,
+      'options', (
+        select jsonb_agg(
+          jsonb_build_object(
+            'id', qo.id,
+            'label', qo.label,
+            'content', qo.content
+          )
+          order by ordered.position
+        )
+        from jsonb_array_elements_text(current_option_order)
+          with ordinality as ordered(option_id, position)
+        join public.question_options qo
+          on qo.id = ordered.option_id::uuid
+      )
+    )
+    into current_question_snapshot
+    from public.questions q
+    where q.id = selected_question_ids[question_position];
+
+    insert into public.attempt_questions (
+      attempt_id,
+      question_id,
+      position,
+      question_snapshot,
+      option_order
+    )
+    values (
+      created_attempt.id,
+      selected_question_ids[question_position],
+      question_position,
+      current_question_snapshot,
+      current_option_order
+    );
+  end loop;
+
+  return created_attempt;
+end;
+$$;
+
+create or replace function public.get_attempt_results(target_attempt_id uuid)
+returns table (
+  attempt_question_id uuid,
+  question_id uuid,
+  selected_option_id uuid,
+  is_correct boolean,
+  answered_at timestamptz
+)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  requester_id uuid := auth.uid();
+  attempt_owner_id uuid;
+  attempt_course_id uuid;
+  target_status public.attempt_status;
+begin
+  select user_id, course_id, status
+  into attempt_owner_id, attempt_course_id, target_status
+  from public.attempts
+  where id = target_attempt_id;
+
+  if not found then
+    raise exception 'Attempt not found'
+      using errcode = '22023';
+  end if;
+
+  if target_status <> 'submitted' then
+    raise exception 'Attempt results are unavailable before submission'
+      using errcode = '42501';
+  end if;
+
+  if requester_id is distinct from attempt_owner_id
+    and not public.can_manage_course(attempt_course_id) then
+    raise exception 'Attempt results are outside the assigned course'
+      using errcode = '42501';
+  end if;
+
+  return query
+  select
+    aq.id,
+    aq.question_id,
+    aa.selected_option_id,
+    aa.is_correct,
+    aa.answered_at
+  from public.attempt_questions aq
+  left join public.attempt_answers aa on aa.attempt_question_id = aq.id
+  where aq.attempt_id = target_attempt_id
+  order by aq.position;
 end;
 $$;
 
@@ -537,6 +894,15 @@ create trigger questions_set_updated_at
 before update on public.questions
 for each row execute function public.set_updated_at();
 
+create trigger validate_question_publication
+before insert or update of status on public.questions
+for each row execute function public.validate_question_publication();
+
+create constraint trigger validate_published_question_options
+after insert or update or delete on public.question_options
+deferrable initially immediate
+for each row execute function public.validate_published_question_options();
+
 create trigger exam_configs_set_updated_at
 before update on public.exam_configs
 for each row execute function public.set_updated_at();
@@ -574,3 +940,12 @@ grant execute on function public.write_audit_log(
   jsonb,
   jsonb
 ) to service_role;
+
+revoke all on function public.assert_question_has_one_correct_option(uuid)
+from public;
+
+revoke all on function public.start_attempt(uuid, uuid) from public, anon;
+grant execute on function public.start_attempt(uuid, uuid) to authenticated;
+
+revoke all on function public.get_attempt_results(uuid) from public, anon;
+grant execute on function public.get_attempt_results(uuid) to authenticated;
