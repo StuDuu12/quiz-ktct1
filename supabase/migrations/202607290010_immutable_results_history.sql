@@ -1,53 +1,5 @@
--- Extend the protected grading snapshot to practice attempts. Existing rows
--- are backfilled once from the source bank; all future rows are captured at
--- attempt creation and never exposed through table grants or RLS policies.
-insert into public.attempt_question_secrets (
-  attempt_question_id,
-  correct_option_id,
-  explanation
-)
-select aq.id, qo.id, q.explanation
-from public.attempt_questions aq
-join public.questions q on q.id = aq.question_id
-join public.question_options qo
-  on qo.question_id = q.id
-  and qo.is_correct
-on conflict (attempt_question_id) do nothing;
-
-drop trigger capture_mock_exam_secret on public.attempt_questions;
-drop function public.capture_mock_exam_secret();
-
-create function public.capture_attempt_question_secret()
-returns trigger
-language plpgsql
-security definer
-set search_path = ''
-as $$
-begin
-  insert into public.attempt_question_secrets (
-    attempt_question_id,
-    correct_option_id,
-    explanation
-  )
-  select new.id, qo.id, q.explanation
-  from public.questions q
-  join public.question_options qo
-    on qo.question_id = q.id
-    and qo.is_correct
-  where q.id = new.question_id;
-
-  if not found then
-    raise exception 'Attempt grading snapshot not found'
-      using errcode = '23514';
-  end if;
-
-  return new;
-end;
-$$;
-
-create trigger capture_attempt_question_secret
-after insert on public.attempt_questions
-for each row execute function public.capture_attempt_question_secret();
+-- Protected all-kind secret capture, legacy reconciliation, and option-ID
+-- protection are installed in migration 004 before practice creation.
 
 -- Grade every attempt kind from the protected immutable answer key.
 create or replace function public.prepare_attempt_answer()
@@ -57,33 +9,26 @@ security definer
 set search_path = ''
 as $$
 declare
-  expected_question_id uuid;
-  selected_question_id uuid;
   snapshot_correct_option_id uuid;
 begin
-  select aq.question_id
-  into expected_question_id
-  from public.attempt_questions aq
-  where aq.id = new.attempt_question_id;
-
-  if expected_question_id is null then
-    raise exception 'Attempt question does not exist'
-      using errcode = '23503';
+  if not exists (
+    select 1
+    from public.attempt_questions aq
+    cross join lateral jsonb_array_elements_text(aq.option_order)
+      snapshot_option(option_id)
+    where aq.id = new.attempt_question_id
+      and (
+        new.selected_option_id is null
+        or snapshot_option.option_id = new.selected_option_id::text
+      )
+  ) then
+    raise exception 'Selected option is outside the attempt snapshot'
+      using errcode = '23514';
   end if;
 
   if new.selected_option_id is null then
     new.is_correct := null;
   else
-    select qo.question_id
-    into selected_question_id
-    from public.question_options qo
-    where qo.id = new.selected_option_id;
-
-    if selected_question_id is distinct from expected_question_id then
-      raise exception 'Selected option does not belong to the attempt question'
-        using errcode = '23514';
-    end if;
-
     select aqs.correct_option_id
     into snapshot_correct_option_id
     from public.attempt_question_secrets aqs
@@ -122,8 +67,6 @@ as $$
 declare
   requester_id uuid := auth.uid();
   owned_attempt public.attempts%rowtype;
-  target_question_id uuid;
-  selected_question_id uuid;
   existing_option_id uuid;
   answer_exists boolean := false;
   answer_was_locked boolean := false;
@@ -147,24 +90,16 @@ begin
       using errcode = '23514';
   end if;
 
-  select aq.question_id
-  into target_question_id
-  from public.attempt_questions aq
-  where aq.id = target_attempt_question_id
-    and aq.attempt_id = target_attempt_id;
-
-  if not found then
-    raise exception 'Attempt question is outside the owned attempt'
-      using errcode = '42501';
-  end if;
-
-  select qo.question_id
-  into selected_question_id
-  from public.question_options qo
-  where qo.id = target_option_id;
-
-  if selected_question_id is distinct from target_question_id then
-    raise exception 'Selected option does not belong to the attempt question'
+  if not exists (
+    select 1
+    from public.attempt_questions aq
+    cross join lateral jsonb_array_elements_text(aq.option_order)
+      snapshot_option(option_id)
+    where aq.id = target_attempt_question_id
+      and aq.attempt_id = target_attempt_id
+      and snapshot_option.option_id = target_option_id::text
+  ) then
+    raise exception 'Selected option is outside the attempt snapshot'
       using errcode = '23514';
   end if;
 

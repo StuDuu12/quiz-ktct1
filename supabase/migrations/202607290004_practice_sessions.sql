@@ -3,6 +3,215 @@ add column is_flagged boolean not null default false;
 
 grant select (is_flagged) on public.attempt_answers to authenticated;
 
+-- Capture grading material as soon as practice attempts can be created.
+-- Learners never receive table access; feedback is exposed only through the
+-- owned practice RPC and submitted-result RPC added later.
+create table public.attempt_question_secrets (
+  attempt_question_id uuid primary key
+    references public.attempt_questions(id) on delete cascade,
+  correct_option_id uuid not null
+    references public.question_options(id),
+  explanation text not null
+);
+
+alter table public.attempt_question_secrets enable row level security;
+revoke all on public.attempt_question_secrets
+from public, anon, authenticated;
+
+-- Rows created before this capture relation cannot always recover an historic
+-- answer key. Prefer a formerly-correct selected answer when it proves the key;
+-- otherwise use the best source state available at migration time. Preserve a
+-- snapshot explanation when one exists.
+insert into public.attempt_question_secrets (
+  attempt_question_id,
+  correct_option_id,
+  explanation
+)
+select
+  aq.id,
+  recovered_key.correct_option_id,
+  case
+    when aq.question_snapshot ? 'explanation'
+      then aq.question_snapshot ->> 'explanation'
+    else q.explanation
+  end
+from public.attempt_questions aq
+join public.questions q on q.id = aq.question_id
+join lateral (
+  select candidate.correct_option_id
+  from (
+    select aa.selected_option_id as correct_option_id, 0 as priority
+    from public.attempt_answers aa
+    where aa.attempt_question_id = aq.id
+      and aa.selected_option_id is not null
+      and aa.is_correct
+    union all
+    select qo.id, 1
+    from public.question_options qo
+    where qo.question_id = aq.question_id
+      and qo.is_correct
+  ) candidate
+  order by candidate.priority
+  limit 1
+) recovered_key on true
+on conflict (attempt_question_id) do nothing;
+
+create function public.capture_attempt_question_secret()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.attempt_question_secrets (
+    attempt_question_id,
+    correct_option_id,
+    explanation
+  )
+  select new.id, qo.id, q.explanation
+  from public.questions q
+  join public.question_options qo
+    on qo.question_id = q.id
+    and qo.is_correct
+  where q.id = new.question_id;
+
+  if not found then
+    raise exception 'Attempt grading snapshot not found'
+      using errcode = '23514';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger capture_attempt_question_secret
+after insert on public.attempt_questions
+for each row execute function public.capture_attempt_question_secret();
+
+-- An option ID stored in an attempt snapshot is part of immutable attempt
+-- content. Content/correctness may evolve in the source bank, but deleting or
+-- replacing the identity would make the learner's stored choice unsavable.
+create function public.protect_attempt_snapshot_option_identity()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if (
+    tg_op = 'DELETE'
+    or new.id is distinct from old.id
+  ) and exists (
+    select 1
+    from public.attempt_questions aq
+    cross join lateral jsonb_array_elements_text(aq.option_order)
+      snapshot_option(option_id)
+    where snapshot_option.option_id = old.id::text
+  ) then
+    raise exception 'Option identity is referenced by an attempt snapshot'
+      using errcode = '23503';
+  end if;
+
+  return case when tg_op = 'DELETE' then old else new end;
+end;
+$$;
+
+create trigger protect_attempt_snapshot_option_identity
+before update or delete on public.question_options
+for each row execute function public.protect_attempt_snapshot_option_identity();
+
+-- Keep truly pre-capture submitted rows internally consistent with the one
+-- recoverable key chosen above. Migration-owner maintenance temporarily
+-- bypasses normal completed-attempt immutability.
+alter table public.attempt_answers
+disable trigger guard_attempt_answer_mutation;
+
+update public.attempt_answers aa
+set is_correct = case
+  when aa.selected_option_id is null then null
+  else aa.selected_option_id = aqs.correct_option_id
+end
+from public.attempt_question_secrets aqs
+where aqs.attempt_question_id = aa.attempt_question_id;
+
+alter table public.attempt_answers
+enable trigger guard_attempt_answer_mutation;
+
+alter table public.attempts
+disable trigger protect_attempt_submission;
+
+with grading as (
+  select
+    a.id as attempt_id,
+    count(aq.id)::integer as total_questions,
+    count(*) filter (where aa.is_correct)::integer as correct_answers
+  from public.attempts a
+  left join public.attempt_questions aq on aq.attempt_id = a.id
+  left join public.attempt_answers aa on aa.attempt_question_id = aq.id
+  where a.status = 'submitted'::public.attempt_status
+  group by a.id
+)
+update public.attempts a
+set score = case
+  when grading.total_questions = 0 then 0
+  else round(
+    (grading.correct_answers::numeric * 100) / grading.total_questions,
+    2
+  )
+end
+from grading
+where grading.attempt_id = a.id;
+
+alter table public.attempts
+enable trigger protect_attempt_submission;
+
+-- All answer grading is based on immutable option membership and the protected
+-- key, never mutable live question membership.
+create or replace function public.prepare_attempt_answer()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  snapshot_correct_option_id uuid;
+begin
+  if not exists (
+    select 1
+    from public.attempt_questions aq
+    cross join lateral jsonb_array_elements_text(aq.option_order)
+      snapshot_option(option_id)
+    where aq.id = new.attempt_question_id
+      and (
+        new.selected_option_id is null
+        or snapshot_option.option_id = new.selected_option_id::text
+      )
+  ) then
+    raise exception 'Selected option is outside the attempt snapshot'
+      using errcode = '23514';
+  end if;
+
+  if new.selected_option_id is null then
+    new.is_correct := null;
+  else
+    select aqs.correct_option_id
+    into snapshot_correct_option_id
+    from public.attempt_question_secrets aqs
+    where aqs.attempt_question_id = new.attempt_question_id;
+
+    if snapshot_correct_option_id is null then
+      raise exception 'Attempt grading snapshot not found'
+        using errcode = '23514';
+    end if;
+
+    new.is_correct := new.selected_option_id = snapshot_correct_option_id;
+  end if;
+
+  new.answered_at := clock_timestamp();
+  return new;
+end;
+$$;
+
 create or replace function public.lock_practice_answer()
 returns trigger
 language plpgsql
@@ -283,8 +492,6 @@ declare
   target_kind public.attempt_kind;
   target_status public.attempt_status;
   target_expires_at timestamptz;
-  target_question_id uuid;
-  selected_question_id uuid;
   existing_option_id uuid;
   answer_exists boolean;
 begin
@@ -310,24 +517,16 @@ begin
       using errcode = '23514';
   end if;
 
-  select question_id
-  into target_question_id
-  from public.attempt_questions
-  where id = target_attempt_question_id
-    and attempt_id = target_attempt_id;
-
-  if not found then
-    raise exception 'Attempt question is outside the owned attempt'
-      using errcode = '42501';
-  end if;
-
-  select question_id
-  into selected_question_id
-  from public.question_options
-  where id = target_option_id;
-
-  if selected_question_id is distinct from target_question_id then
-    raise exception 'Selected option does not belong to the attempt question'
+  if not exists (
+    select 1
+    from public.attempt_questions aq
+    cross join lateral jsonb_array_elements_text(aq.option_order)
+      snapshot_option(option_id)
+    where aq.id = target_attempt_question_id
+      and aq.attempt_id = target_attempt_id
+      and snapshot_option.option_id = target_option_id::text
+  ) then
+    raise exception 'Selected option is outside the attempt snapshot'
       using errcode = '23514';
   end if;
 

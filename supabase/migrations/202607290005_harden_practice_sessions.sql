@@ -118,8 +118,6 @@ declare
   target_kind public.attempt_kind;
   target_status public.attempt_status;
   target_expires_at timestamptz;
-  target_question_id uuid;
-  selected_question_id uuid;
   existing_option_id uuid;
   answer_exists boolean := false;
   answer_was_locked boolean := false;
@@ -142,24 +140,16 @@ begin
       using errcode = '23514';
   end if;
 
-  select question_id
-  into target_question_id
-  from public.attempt_questions
-  where id = target_attempt_question_id
-    and attempt_id = target_attempt_id;
-
-  if not found then
-    raise exception 'Attempt question is outside the owned attempt'
-      using errcode = '42501';
-  end if;
-
-  select question_id
-  into selected_question_id
-  from public.question_options
-  where id = target_option_id;
-
-  if selected_question_id is distinct from target_question_id then
-    raise exception 'Selected option does not belong to the attempt question'
+  if not exists (
+    select 1
+    from public.attempt_questions aq
+    cross join lateral jsonb_array_elements_text(aq.option_order)
+      snapshot_option(option_id)
+    where aq.id = target_attempt_question_id
+      and aq.attempt_id = target_attempt_id
+      and snapshot_option.option_id = target_option_id::text
+  ) then
+    raise exception 'Selected option is outside the attempt snapshot'
       using errcode = '23514';
   end if;
 
@@ -190,14 +180,13 @@ begin
   select
     aa.selected_option_id,
     aa.is_correct,
-    q.explanation,
+    aqs.explanation,
     answer_was_locked
   from public.attempt_answers aa
-  join public.attempt_questions aq on aq.id = aa.attempt_question_id
-  join public.questions q on q.id = aq.question_id
+  join public.attempt_question_secrets aqs
+    on aqs.attempt_question_id = aa.attempt_question_id
   where aa.attempt_question_id = target_attempt_question_id
-    and aa.selected_option_id is not null
-    and aq.attempt_id = target_attempt_id;
+    and aa.selected_option_id is not null;
 end;
 $$;
 

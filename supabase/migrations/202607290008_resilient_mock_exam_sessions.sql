@@ -96,8 +96,6 @@ as $$
 declare
   requester_id uuid := auth.uid();
   owned_attempt public.attempts%rowtype;
-  target_question_id uuid;
-  selected_question_id uuid;
 begin
   select *
   into owned_attempt
@@ -118,24 +116,16 @@ begin
       using errcode = '23514';
   end if;
 
-  select question_id
-  into target_question_id
-  from public.attempt_questions
-  where id = target_attempt_question_id
-    and attempt_id = target_attempt_id;
-
-  if not found then
-    raise exception 'Attempt question is outside the owned mock exam'
-      using errcode = '42501';
-  end if;
-
-  select question_id
-  into selected_question_id
-  from public.question_options
-  where id = target_option_id;
-
-  if selected_question_id is distinct from target_question_id then
-    raise exception 'Selected option does not belong to the attempt question'
+  if not exists (
+    select 1
+    from public.attempt_questions aq
+    cross join lateral jsonb_array_elements_text(aq.option_order)
+      snapshot_option(option_id)
+    where aq.id = target_attempt_question_id
+      and aq.attempt_id = target_attempt_id
+      and snapshot_option.option_id = target_option_id::text
+  ) then
+    raise exception 'Selected option is outside the attempt snapshot'
       using errcode = '23514';
   end if;
 

@@ -1,69 +1,5 @@
--- The learner snapshot is intentionally answer-free. Preserve grading and
--- review data in a server-only relation with RLS enabled and no authenticated
--- grants or policies.
-create table public.attempt_question_secrets (
-  attempt_question_id uuid primary key
-    references public.attempt_questions(id) on delete cascade,
-  correct_option_id uuid not null
-    references public.question_options(id),
-  explanation text not null
-);
-
-alter table public.attempt_question_secrets enable row level security;
-revoke all on public.attempt_question_secrets from public, anon, authenticated;
-
-insert into public.attempt_question_secrets (
-  attempt_question_id,
-  correct_option_id,
-  explanation
-)
-select aq.id, qo.id, q.explanation
-from public.attempt_questions aq
-join public.attempts a on a.id = aq.attempt_id
-join public.questions q on q.id = aq.question_id
-join public.question_options qo
-  on qo.question_id = q.id
-  and qo.is_correct
-where a.kind = 'mock_exam'::public.attempt_kind
-on conflict (attempt_question_id) do nothing;
-
-create function public.capture_mock_exam_secret()
-returns trigger
-language plpgsql
-security definer
-set search_path = ''
-as $$
-begin
-  if exists (
-    select 1
-    from public.attempts a
-    where a.id = new.attempt_id
-      and a.kind = 'mock_exam'::public.attempt_kind
-  ) then
-    insert into public.attempt_question_secrets (
-      attempt_question_id,
-      correct_option_id,
-      explanation
-    )
-    select new.id, qo.id, q.explanation
-    from public.questions q
-    join public.question_options qo
-      on qo.question_id = q.id
-      and qo.is_correct
-    where q.id = new.question_id;
-
-    if not found then
-      raise exception 'Mock-exam question has no correct option snapshot'
-        using errcode = '23514';
-    end if;
-  end if;
-  return new;
-end;
-$$;
-
-create trigger capture_mock_exam_secret
-after insert on public.attempt_questions
-for each row execute function public.capture_mock_exam_secret();
+-- The protected all-kind grading relation and capture trigger are installed
+-- in migration 004, before practice attempts can be created.
 
 create function public.strip_mock_exam_snapshot_secrets()
 returns trigger
@@ -136,55 +72,40 @@ security definer
 set search_path = ''
 as $$
 declare
-  expected_question_id uuid;
-  selected_question_id uuid;
-  target_kind public.attempt_kind;
   snapshot_correct_option_id uuid;
 begin
-  select aq.question_id, a.kind
-  into expected_question_id, target_kind
-  from public.attempt_questions aq
-  join public.attempts a on a.id = aq.attempt_id
-  where aq.id = new.attempt_question_id;
-
-  if expected_question_id is null then
-    raise exception 'Attempt question does not exist'
-      using errcode = '23503';
+  if not exists (
+    select 1
+    from public.attempt_questions aq
+    cross join lateral jsonb_array_elements_text(aq.option_order)
+      snapshot_option(option_id)
+    where aq.id = new.attempt_question_id
+      and (
+        new.selected_option_id is null
+        or snapshot_option.option_id = new.selected_option_id::text
+      )
+  ) then
+    raise exception 'Selected option is outside the attempt snapshot'
+      using errcode = '23514';
   end if;
 
   if new.selected_option_id is null then
     new.is_correct := null;
   else
-    select question_id
-    into selected_question_id
-    from public.question_options
-    where id = new.selected_option_id;
+    select aqs.correct_option_id
+    into snapshot_correct_option_id
+    from public.attempt_question_secrets aqs
+    where aqs.attempt_question_id = new.attempt_question_id;
 
-    if selected_question_id is distinct from expected_question_id then
-      raise exception 'Selected option does not belong to the attempt question'
+    if snapshot_correct_option_id is null then
+      raise exception 'Attempt grading snapshot not found'
         using errcode = '23514';
     end if;
 
-    if target_kind = 'mock_exam'::public.attempt_kind then
-      select correct_option_id
-      into snapshot_correct_option_id
-      from public.attempt_question_secrets
-      where attempt_question_id = new.attempt_question_id;
-
-      if snapshot_correct_option_id is null then
-        raise exception 'Mock-exam grading snapshot not found'
-          using errcode = '23514';
-      end if;
-      new.is_correct := new.selected_option_id = snapshot_correct_option_id;
-    else
-      select is_correct
-      into new.is_correct
-      from public.question_options
-      where id = new.selected_option_id;
-    end if;
+    new.is_correct := new.selected_option_id = snapshot_correct_option_id;
   end if;
 
-  new.answered_at := now();
+  new.answered_at := clock_timestamp();
   return new;
 end;
 $$;

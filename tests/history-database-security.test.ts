@@ -17,15 +17,18 @@ const ids = {
   optionOneWrong: "40000000-0000-0000-0000-000000000002",
   optionTwoCorrect: "40000000-0000-0000-0000-000000000003",
   optionTwoWrong: "40000000-0000-0000-0000-000000000004",
+  newlyAddedOption: "40000000-0000-0000-0000-000000000005",
   config: "50000000-0000-0000-0000-000000000001",
   practice: "60000000-0000-0000-0000-000000000001",
   mock: "60000000-0000-0000-0000-000000000002",
   inProgress: "60000000-0000-0000-0000-000000000003",
   otherMock: "60000000-0000-0000-0000-000000000004",
+  inProgressMock: "60000000-0000-0000-0000-000000000005",
   practiceQuestion: "70000000-0000-0000-0000-000000000001",
   mockQuestion: "70000000-0000-0000-0000-000000000002",
   inProgressQuestion: "70000000-0000-0000-0000-000000000003",
   otherMockQuestion: "70000000-0000-0000-0000-000000000004",
+  inProgressMockQuestion: "70000000-0000-0000-0000-000000000005",
 };
 
 const migrationPaths = [
@@ -222,6 +225,12 @@ describe("immutable attempt results and scoped history", () => {
           'mock_exam', now() - interval '1 day', now() + interval '1 hour',
           '["${ids.questionTwo}"]',
           '{"${ids.questionTwo}":["${ids.optionTwoCorrect}","${ids.optionTwoWrong}"]}'
+        ),
+        (
+          '${ids.inProgressMock}', '${ids.student}', '${ids.course}', '${ids.config}',
+          'mock_exam', now(), now() + interval '1 hour',
+          '["${ids.questionTwo}"]',
+          '{"${ids.questionTwo}":["${ids.optionTwoCorrect}","${ids.optionTwoWrong}"]}'
         );
 
       insert into public.attempt_questions (
@@ -247,6 +256,11 @@ describe("immutable attempt results and scoped history", () => {
           '${ids.otherMockQuestion}', '${ids.otherMock}', '${ids.questionTwo}', 1,
           '${questionTwoSnapshot}',
           '["${ids.optionTwoCorrect}","${ids.optionTwoWrong}"]'
+        ),
+        (
+          '${ids.inProgressMockQuestion}', '${ids.inProgressMock}', '${ids.questionTwo}', 1,
+          '${questionTwoSnapshot}',
+          '["${ids.optionTwoCorrect}","${ids.optionTwoWrong}"]'
         );
 
       insert into public.attempt_answers (
@@ -270,6 +284,13 @@ describe("immutable attempt results and scoped history", () => {
       set
         content = 'Edited source option',
         is_correct = not is_correct;
+      insert into public.question_options (
+        id, question_id, label, content, is_correct
+      )
+      values (
+        '${ids.newlyAddedOption}', '${ids.questionTwo}', 'C',
+        'New live option', false
+      );
     `);
   }, 30_000);
 
@@ -412,8 +433,13 @@ describe("immutable attempt results and scoped history", () => {
           kind: "practice",
           status: "in_progress",
         },
+        {
+          attempt_id: ids.inProgressMock,
+          kind: "mock_exam",
+          status: "in_progress",
+        },
       ]);
-      expect(history.rows.every((row) => row.total_count === 3)).toBe(true);
+      expect(history.rows.every((row) => row.total_count === 4)).toBe(true);
     } finally {
       await resetIdentity();
     }
@@ -453,7 +479,7 @@ describe("immutable attempt results and scoped history", () => {
         )
       `);
       expect(secondPage.rows).toHaveLength(1);
-      expect(secondPage.rows[0]!.total_count).toBe(3);
+      expect(secondPage.rows[0]!.total_count).toBe(4);
     } finally {
       await resetIdentity();
     }
@@ -468,13 +494,99 @@ describe("immutable attempt results and scoped history", () => {
           '${ids.student}', null, null, null, null, null, null, 1, 20
         )
       `);
-      expect(history.rows[0]!.total_count).toBe(3);
+      expect(history.rows[0]!.total_count).toBe(4);
 
       const result = await database.query<{ attempt_id: string }>(`
         select attempt_id
         from public.get_attempt_result_details('${ids.mock}')
       `);
       expect(result.rows).toEqual([{ attempt_id: ids.mock }]);
+    } finally {
+      await resetIdentity();
+    }
+  });
+
+  it("uses edited snapshotted options but blocks deleting or replacing their ids", async () => {
+    try {
+      await assumeIdentity(ids.student);
+      await database.query(`
+        select * from public.save_practice_answer(
+          '${ids.inProgress}',
+          '${ids.inProgressQuestion}',
+          '${ids.optionTwoCorrect}'
+        )
+      `);
+      await database.query(`
+        select * from public.save_mock_exam_answer(
+          '${ids.inProgressMock}',
+          '${ids.inProgressMockQuestion}',
+          '${ids.optionTwoCorrect}'
+        )
+      `);
+      await resetIdentity();
+
+      const graded = await database.query<{
+        attempt_question_id: string;
+        is_correct: boolean;
+      }>(`
+        select attempt_question_id, is_correct
+        from public.attempt_answers
+        where attempt_question_id in (
+          '${ids.inProgressQuestion}',
+          '${ids.inProgressMockQuestion}'
+        )
+        order by attempt_question_id
+      `);
+      expect(graded.rows).toEqual([
+        {
+          attempt_question_id: ids.inProgressQuestion,
+          is_correct: true,
+        },
+        {
+          attempt_question_id: ids.inProgressMockQuestion,
+          is_correct: true,
+        },
+      ]);
+
+      await expect(
+        database.exec(`
+          delete from public.question_options
+          where id = '${ids.optionOneWrong}'
+        `),
+      ).rejects.toThrow(/attempt snapshot/i);
+      await expect(
+        database.exec(`
+          update public.question_options
+          set id = '40000000-0000-0000-0000-000000000099'
+          where id = '${ids.optionOneWrong}'
+        `),
+      ).rejects.toThrow(/attempt snapshot/i);
+    } finally {
+      await resetIdentity();
+    }
+  });
+
+  it("rejects newly added live options outside practice and mock snapshots", async () => {
+    try {
+      await assumeIdentity(ids.student);
+      await expect(
+        database.query(`
+          select * from public.save_practice_answer(
+            '${ids.inProgress}',
+            '${ids.inProgressQuestion}',
+            '${ids.newlyAddedOption}'
+          )
+        `),
+      ).rejects.toThrow(/snapshot|attempt question/i);
+      await expect(
+        database.query(`
+          select * from public.save_mock_exam_answer(
+            '${ids.inProgressMock}',
+            '${ids.inProgressMockQuestion}',
+            '${ids.newlyAddedOption}'
+          )
+        `),
+      ).rejects.toThrow(/snapshot|attempt question/i);
     } finally {
       await resetIdentity();
     }

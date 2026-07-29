@@ -5,10 +5,11 @@
 - Added pure `gradeAttempt(snapshot, answers)` grading with explicit correct,
   incorrect, unanswered, and percentage totals.
 - Added migration `202607290010_immutable_results_history.sql`.
-  `attempt_question_secrets` now captures both practice and mock-exam answer
-  keys and explanations. Existing practice rows are safely backfilled, future
-  rows are captured at attempt-question creation, and the relation remains RLS
-  protected with no learner grants or policies.
+  `attempt_question_secrets` captures both practice and mock-exam answer keys
+  and explanations. Capture now begins in migration 004, at the same boundary
+  where practice attempts become creatable, so no new practice row can exist
+  before its immutable grading secret. The relation remains RLS protected with
+  no learner grants or policies.
 - Replaced practice grading and immediate feedback reads from mutable source
   questions with the protected attempt secret. Editing a source question,
   correct option, option content, or explanation no longer changes a captured
@@ -51,10 +52,30 @@
 - Existing practice and mock-exam session tests now verify the clear result
   link on a submitted reload.
 
+## Review fixes
+
+- Added sequential migration regressions for a practice attempt created at the
+  migration-004 boundary and for a genuinely pre-capture submitted row.
+- A pre-capture row now uses the strongest recoverable key: a selected answer
+  previously recorded as correct, otherwise the current source key. Its stored
+  answer correctness and submitted score are reconciled to that one key.
+  Historic explanations are recovered from `question_snapshot` when present;
+  if an older snapshot lacks one, the original explanation is not recoverable
+  and the migration uses the current source explanation.
+- Practice and mock answer saves, plus the shared answer trigger, validate a
+  selected option only against the immutable `attempt_questions.option_order`.
+  A live option added later is rejected even when it belongs to the same source
+  question.
+- Source option content and correctness remain editable, while deleting or
+  replacing any option ID referenced by an attempt snapshot is blocked. This
+  preserves both selected and unselected snapshot identities.
+- Added database regressions for edited snapshotted options, newly added live
+  options, and deletion/ID replacement of unselected snapshotted options.
+
 ## Verification
 
-- Focused Task 9/session suite: 6 files, 37 tests passed.
-- Full suite: 25 files, 147 tests passed.
+- Sequential migration/security suite: 5 files, 41 tests passed.
+- Full suite: 26 files, 151 tests passed.
 - `npm run typecheck`: passed.
 - `npm run lint`: passed.
 - `npm run build`: passed; build output includes `/history` and
