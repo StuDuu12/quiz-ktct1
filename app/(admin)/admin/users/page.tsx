@@ -11,9 +11,10 @@ import {
   resendInviteForm,
   revokeInstructorForm,
   setUserActiveForm,
-  setUserRoleForm,
+  setUserRoleStateAction,
 } from "@/src/features/admin/actions";
 import { InviteInstructorForm } from "@/src/features/admin/components/invite-instructor-form";
+import { UserRoleForm } from "@/src/features/admin/components/user-role-form";
 import {
   getAdminCatalog,
   getAdminUsers,
@@ -80,20 +81,12 @@ export default async function AdminUsersPage() {
                     <details>
                       <summary>Quyền và phân công</summary>
                       <div className="admin-user-actions">
-                        <form action={setUserRoleForm}>
-                          <input type="hidden" name="user_id" value={user.id} />
-                          <label>
-                            Vai trò cho {user.fullName || user.email}
-                            <select name="role" defaultValue={user.role}>
-                              <option value="student">Học viên</option>
-                              <option value="instructor">Giảng viên</option>
-                              <option value="admin">Quản trị viên</option>
-                            </select>
-                          </label>
-                          <button className="admin-secondary-button" type="submit">
-                            Cập nhật vai trò
-                          </button>
-                        </form>
+                        <UserRoleForm
+                          userId={user.id}
+                          userLabel={user.fullName || user.email}
+                          role={user.role}
+                          action={setUserRoleStateAction}
+                        />
                         {user.role !== "admin" ? (
                           <form action={approveInstructorForm}>
                             <input type="hidden" name="user_id" value={user.id} />

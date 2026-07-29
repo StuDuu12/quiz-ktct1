@@ -321,6 +321,27 @@ export async function setUserRoleForm(formData: FormData): Promise<void> {
   revalidatePath("/admin/users");
 }
 
+export type UserRoleActionResult = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
+
+export async function setUserRoleStateAction(
+  _previous: UserRoleActionResult,
+  formData: FormData,
+): Promise<UserRoleActionResult> {
+  "use server";
+  try {
+    await setUserRoleForm(formData);
+    return { status: "success", message: "Đã cập nhật vai trò." };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Không thể cập nhật vai trò.",
+    };
+  }
+}
+
 export async function commitQuestionImport(input: {
   courseId: string;
   chapterId: string;

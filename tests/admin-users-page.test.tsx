@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const { getAdminCatalog, getAdminUsers, requireViewer } = vi.hoisted(() => ({
@@ -17,6 +17,7 @@ vi.mock("@/src/features/admin/actions", () => ({
   revokeInstructorForm: vi.fn(),
   setUserActiveForm: vi.fn(),
   setUserRoleForm: vi.fn(),
+  setUserRoleStateAction: vi.fn(),
 }));
 vi.mock("@/src/features/admin/components/invite-instructor-form", () => ({
   InviteInstructorForm: () => <div>Invite form</div>,
@@ -26,6 +27,7 @@ vi.mock("@/src/features/auth/session", () => ({ requireViewer }));
 vi.mock("@/src/lib/server-env", () => ({ getOptionalServerEnv: vi.fn() }));
 
 import AdminUsersPage from "@/app/(admin)/admin/users/page";
+import { UserRoleForm } from "@/src/features/admin/components/user-role-form";
 
 afterEach(cleanup);
 
@@ -51,5 +53,28 @@ describe("AdminUsersPage", () => {
     expect(screen.getByRole("option", { name: "Giảng viên" })).toHaveValue("instructor");
     expect(screen.getByRole("option", { name: "Quản trị viên" })).toHaveValue("admin");
     expect(screen.getByRole("button", { name: "Cập nhật vai trò" })).toBeInTheDocument();
+  });
+});
+
+describe("UserRoleForm", () => {
+  it("renders accessible server feedback beside the role controls", async () => {
+    const action = vi.fn().mockResolvedValue({
+      status: "error",
+      message: "At least one active admin must remain",
+    });
+    render(
+      <UserRoleForm
+        userId="00000000-0000-4000-8000-000000000777"
+        userLabel="Role target"
+        role="student"
+        action={action}
+      />,
+    );
+
+    fireEvent.submit(screen.getByRole("button", { name: "Cập nhật vai trò" }).closest("form")!);
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "At least one active admin must remain",
+    );
   });
 });

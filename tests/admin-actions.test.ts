@@ -16,6 +16,7 @@ import {
   assertUserAdministrationRole,
   previewImport,
   setUserRoleForm,
+  setUserRoleStateAction,
   validateQuestionForStatus,
 } from "@/src/features/admin/actions";
 
@@ -102,6 +103,25 @@ describe("user role administration", () => {
 
     await expect(setUserRoleForm(formData)).rejects.toThrow();
     expect(createServerSupabaseClient).not.toHaveBeenCalled();
+  });
+
+  it("returns the database-safe message for action-state feedback", async () => {
+    createServerSupabaseClient.mockResolvedValue({
+      rpc: vi.fn().mockResolvedValue({
+        data: null,
+        error: { message: "At least one active admin must remain" },
+      }),
+    });
+    const formData = new FormData();
+    formData.set("user_id", "00000000-0000-4000-8000-000000000777");
+    formData.set("role", "student");
+
+    await expect(
+      setUserRoleStateAction({ status: "idle", message: "" }, formData),
+    ).resolves.toEqual({
+      status: "error",
+      message: "At least one active admin must remain",
+    });
   });
 });
 
