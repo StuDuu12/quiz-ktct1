@@ -6,6 +6,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 const migrationPaths = [
   path.resolve("supabase/migrations/202607290001_initial_schema.sql"),
   path.resolve("supabase/migrations/202607290002_rls_policies.sql"),
+  path.resolve("supabase/migrations/202607290003_learner_progress.sql"),
+  path.resolve("supabase/migrations/202607290004_practice_sessions.sql"),
 ];
 
 const expectedTables = [
@@ -144,6 +146,9 @@ describe("Supabase database migrations", () => {
         "protect_attempt_submission",
         "prepare_attempt_answer",
         "start_attempt",
+        "save_practice_answer",
+        "set_practice_flag",
+        "finish_practice_attempt",
         "get_attempt_results",
         "write_audit_log",
       ]),

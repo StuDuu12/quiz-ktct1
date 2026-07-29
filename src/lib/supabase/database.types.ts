@@ -434,6 +434,7 @@ export type Database = {
           attempt_question_id: string;
           selected_option_id: string | null;
           is_correct: boolean | null;
+          is_flagged: boolean;
           answered_at: string;
         };
         Insert: {
@@ -441,6 +442,7 @@ export type Database = {
           attempt_question_id: string;
           selected_option_id?: string | null;
           is_correct?: boolean | null;
+          is_flagged?: boolean;
           answered_at?: string;
         };
         Update: {
@@ -448,6 +450,7 @@ export type Database = {
           attempt_question_id?: string;
           selected_option_id?: string | null;
           is_correct?: boolean | null;
+          is_flagged?: boolean;
           answered_at?: string;
         };
         Relationships: [
@@ -610,7 +613,31 @@ export type Database = {
         Args: {
           target_course_id: string;
           target_exam_config_id?: string | null;
+          target_chapter_id?: string | null;
         };
+        Returns: Database["public"]["Tables"]["attempts"]["Row"];
+      };
+      save_practice_answer: {
+        Args: {
+          target_attempt_id: string;
+          target_attempt_question_id: string;
+          target_option_id: string;
+        };
+        Returns: {
+          is_correct: boolean;
+          explanation: string;
+        }[];
+      };
+      set_practice_flag: {
+        Args: {
+          target_attempt_id: string;
+          target_attempt_question_id: string;
+          target_flagged: boolean;
+        };
+        Returns: undefined;
+      };
+      finish_practice_attempt: {
+        Args: { target_attempt_id: string };
         Returns: Database["public"]["Tables"]["attempts"]["Row"];
       };
       write_audit_log: {
