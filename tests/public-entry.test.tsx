@@ -46,16 +46,16 @@ describe("public entry experience", () => {
 
     expect(
       screen.getByRole("heading", {
-        name: "Luyện chắc từng chương. Tự tin bước vào phòng thi.",
+        name: "Học có lộ trình. Tự tin khi vào thi.",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("Dữ liệu học phần")).toHaveTextContent(
-      "497 câu hỏi đã đối chiếu",
+    expect(screen.getByLabelText("Thông tin học phần")).toHaveTextContent(
+      "497 Câu hỏi đã đối chiếu",
     );
     expect(
-      screen.getByRole("link", { name: "Bắt đầu luyện tập" }),
+      screen.getByRole("link", { name: "Tạo tài khoản" }),
     ).toHaveAttribute("href", "/register");
-    expect(screen.getAllByRole("link", { name: "Đăng nhập" })).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: "Đăng nhập" })).toHaveLength(3);
     for (const loginLink of screen.getAllByRole("link", { name: "Đăng nhập" })) {
       expect(loginLink).toHaveAttribute("href", "/login");
     }

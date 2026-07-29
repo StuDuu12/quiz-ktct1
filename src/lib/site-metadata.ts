@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
-export const SITE_TITLE = "Phòng luyện thi KTCT";
+export const SITE_TITLE = "Ôn thi Kinh tế chính trị Mác - Lênin";
 export const SITE_DESCRIPTION =
-  "Luyện tập theo chương và thi thử Kinh tế chính trị Mác – Lênin.";
+  "Luyện theo 6 chương, thi thử 40 câu trong 60 phút và lưu lại toàn bộ tiến độ học tập.";
 
 function parseSiteOrigin(value: string | undefined): string | null {
   if (!value) return null;
