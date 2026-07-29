@@ -4,6 +4,7 @@ import Link from "next/link";
 import { type FormEvent, useState } from "react";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
+import { isE2EBrowserMode } from "@/src/e2e/browser";
 import {
   getAuthErrorMessage,
   signUpStudent,
@@ -90,7 +91,7 @@ export default function RegisterPage() {
         </label>
         {message && <p className="auth-message" role="status">{message}</p>}
         {registeredEmail &&
-        process.env.NEXT_PUBLIC_E2E_MODE === "1" ? (
+        isE2EBrowserMode() ? (
           <Link
             href={`/api/e2e/confirm?email=${encodeURIComponent(registeredEmail)}`}
           >

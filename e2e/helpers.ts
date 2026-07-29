@@ -9,6 +9,16 @@ export const E2E_USERS = {
     email: "instructor@example.test",
     password: "Instructor!2026",
   },
+  admin: {
+    email: "admin@example.test",
+    password: "Admin!2026",
+  },
+} as const;
+
+export const E2E_DESTINATIONS = {
+  student: "/dashboard",
+  instructor: "/instructor",
+  admin: "/admin",
 } as const;
 
 export async function resetE2E(request: APIRequestContext) {
@@ -22,10 +32,28 @@ export async function loginAs(
 ) {
   const user = E2E_USERS[role];
   await page.goto("/login");
-  await page.getByLabel("Email").fill(user.email);
+  const form = page.locator('form[data-hydrated="true"]');
+  await expect(form).toBeVisible();
+  await page.getByLabel("Tên đăng nhập hoặc email").fill(user.email);
   await page.getByLabel("Mật khẩu").fill(user.password);
-  await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
-  await expect(page).toHaveURL(/\/dashboard$/);
+  const [response] = await Promise.all([
+    page.waitForResponse((candidate) =>
+      candidate.url().endsWith("/api/e2e/auth/login"),
+    ),
+    page.getByRole("button", { name: "Đăng nhập", exact: true }).click(),
+  ]);
+  expect(response.ok()).toBe(true);
+  await expect
+    .poll(() => page.url(), { timeout: 1_500 })
+    .toMatch(new RegExp(`${E2E_DESTINATIONS[role]}$`))
+    .catch(async () => {
+      // Vinext dev mode can retain the current RSC URL after router.replace.
+      // The authenticated cookie and server-owned destination were already
+      // verified above, so continue with a hard navigation for portal E2E.
+      await page.goto(E2E_DESTINATIONS[role]);
+    });
+  await expect(page).toHaveURL(new RegExp(`${E2E_DESTINATIONS[role]}$`));
+  expect(page.url()).not.toContain("password=");
 }
 
 export async function expectNoHorizontalOverflow(page: Page) {

@@ -40,6 +40,7 @@ type E2EPracticeAttempt = {
   id: string;
   userId: string;
   chapterId: string;
+  startedAt: string;
   state: PracticeState;
 };
 
@@ -252,7 +253,13 @@ export function startE2EPractice(userId: string, chapterId: string) {
     questions,
     answers: {},
   };
-  fixture.practiceAttempts.set(id, { id, userId, chapterId, state });
+  fixture.practiceAttempts.set(id, {
+    id,
+    userId,
+    chapterId,
+    startedAt: new Date().toISOString(),
+    state,
+  });
   return { attemptId: id };
 }
 
@@ -368,6 +375,63 @@ export function finishE2EPractice(userId: string, attemptId: string) {
   attempt.state.status = "submitted";
   attempt.state.score = score;
   return { status: "submitted" as const, score };
+}
+
+export function getE2EAttemptHistory(userId: string) {
+  assertE2EEnabled();
+  const practice = [...store().practiceAttempts.values()]
+    .filter((attempt) => attempt.userId === userId)
+    .map((attempt) => ({
+      id: attempt.id,
+      userId,
+      courseId: "e2e-course-ktct",
+      courseTitle: "Kinh tế chính trị Mác – Lênin",
+      kind: "practice" as const,
+      status: attempt.state.status,
+      startedAt: attempt.startedAt,
+      submittedAt:
+        attempt.state.status === "submitted" ? attempt.startedAt : null,
+      score: attempt.state.score ?? null,
+      durationSeconds: attempt.state.status === "submitted" ? 0 : null,
+      chapterId: attempt.chapterId,
+      chapterTitle: attempt.state.chapterTitle,
+      questionCount: attempt.state.questions.length,
+      totalCount: 0,
+    }));
+  const exams = [...store().examAttempts.entries()]
+    .filter(([, attempt]) => attempt.userId === userId)
+    .map(([id, attempt]) => ({
+      id,
+      userId,
+      courseId: attempt.state.courseId,
+      courseTitle: attempt.state.courseTitle,
+      kind: "mock_exam" as const,
+      status: attempt.state.status,
+      startedAt: attempt.state.startedAt,
+      submittedAt: attempt.state.submittedAt,
+      score: attempt.state.score,
+      durationSeconds: attempt.state.durationSeconds,
+      chapterId: null,
+      chapterTitle: null,
+      questionCount: attempt.state.questions.length,
+      totalCount: 0,
+    }));
+  const attempts = [...practice, ...exams].sort((left, right) =>
+    right.startedAt.localeCompare(left.startedAt),
+  );
+  return attempts.map((attempt) => ({
+    ...attempt,
+    totalCount: attempts.length,
+  }));
+}
+
+export function getE2EHistoryChapters() {
+  assertE2EEnabled();
+  return Array.from({ length: 6 }, (_, index) => ({
+    id: `e2e-chapter-${index + 1}`,
+    title: `Chương ${index + 1}`,
+    position: index + 1,
+  }));
 }
 
 function examQuestions(): ExamQuestionSnapshot[] {

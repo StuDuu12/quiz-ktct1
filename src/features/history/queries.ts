@@ -1,4 +1,9 @@
 import { requireViewer } from "@/src/features/auth/session";
+import { isE2EEnabled } from "@/src/e2e/guard";
+import {
+  getE2EAttemptHistory,
+  getE2EHistoryChapters,
+} from "@/src/e2e/store";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
 export type AttemptKind = "practice" | "mock_exam";
@@ -149,6 +154,11 @@ export async function getAttemptHistory(
   filters: HistoryFilters,
 ): Promise<AttemptSummary[]> {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) {
+    return getE2EAttemptHistory(
+      viewer.role === "student" ? viewer.id : userId,
+    );
+  }
   const supabase = await createServerSupabaseClient();
   const scopedUserId = viewer.role === "student" ? viewer.id : userId || null;
   const { data, error } = await supabase.rpc("get_attempt_history", {
@@ -264,6 +274,7 @@ export async function getAttemptResult(
 
 export async function getHistoryChapters(): Promise<HistoryChapter[]> {
   await requireViewer(["student", "instructor", "admin"]);
+  if (isE2EEnabled()) return getE2EHistoryChapters();
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("chapters")

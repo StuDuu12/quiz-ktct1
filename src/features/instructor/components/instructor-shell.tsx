@@ -3,9 +3,11 @@
 import { BookOpenText, List, SignOut } from "@phosphor-icons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { InstructorNavigation } from "@/src/features/instructor/components/instructor-navigation";
+
+const subscribeToHydration = () => () => {};
 
 export function InstructorShell({
   email,
@@ -16,8 +18,22 @@ export function InstructorShell({
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const hydrated = useSyncExternalStore(
+    subscribeToHydration,
+    () => true,
+    () => false,
+  );
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [mobileOpen]);
+
   return (
-    <div className="admin-shell">
+    <div className="admin-shell" data-hydrated={hydrated ? "true" : "false"}>
       <a className="admin-skip-link" href="#instructor-main">
         Chuyển đến nội dung
       </a>

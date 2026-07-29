@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, BookOpen } from "@phosphor-icons/react";
-import { useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useFormStatus } from "react-dom";
 
 const subscribeToHydration = () => () => {};
@@ -33,6 +33,12 @@ export function PracticeLaunchForm({
   action: () => Promise<never>;
   chapterTitle: string;
 }) {
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    formRef.current?.setAttribute("data-hydrated", "true");
+  }, []);
+
   return (
     <main className="practice-launch-shell">
       <section className="practice-launch-card" aria-labelledby="practice-launch-title">
@@ -43,7 +49,7 @@ export function PracticeLaunchForm({
           Bắt đầu một lượt mới hoặc tiếp tục lượt đang làm. Lượt luyện tập chỉ
           được tạo sau khi bạn nhấn nút bên dưới.
         </p>
-        <form action={action}>
+        <form ref={formRef} action={action} data-hydrated="false">
           <LaunchButton />
         </form>
       </section>

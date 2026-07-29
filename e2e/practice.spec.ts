@@ -18,6 +18,9 @@ test("practice gives immediate feedback and restores a saved flag after reload",
     "/courses/kinh-te-chinh-tri-mac-lenin/chapters/1/practice",
     { waitUntil: "networkidle" },
   );
+  await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
+  await page.getByRole("button", { name: "Bắt đầu luyện tập" }).click();
+  await expect(page).toHaveURL(/attempt=e2e-practice-/);
 
   const radios = page.locator('input[type="radio"][name="practice-answer"]');
   await expect(radios).toHaveCount(4);
@@ -65,6 +68,8 @@ test("practice navigator is an accessible bottom sheet on a phone", async ({
     "/courses/kinh-te-chinh-tri-mac-lenin/chapters/1/practice",
     { waitUntil: "networkidle" },
   );
+  await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
+  await page.getByRole("button", { name: "Bắt đầu luyện tập" }).click();
   await expectNoHorizontalOverflow(page);
 
   const trigger = page.getByRole("button", { name: /Danh sách câu/ });
@@ -90,9 +95,11 @@ test("practice navigator is an accessible bottom sheet on a phone", async ({
     .toBe("0s");
 
   await page.setViewportSize({ width: 768, height: 900 });
-  await expect(trigger).toBeHidden();
+  await expect(trigger).toBeVisible();
   await expectNoHorizontalOverflow(page);
-  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(trigger).toBeHidden();
+  await expect(page.locator(".practice-navigator-panel")).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 
@@ -104,6 +111,8 @@ test("practice shortcuts do not fire while an editable field has focus", async (
     "/courses/kinh-te-chinh-tri-mac-lenin/chapters/1/practice",
     { waitUntil: "networkidle" },
   );
+  await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
+  await page.getByRole("button", { name: "Bắt đầu luyện tập" }).click();
 
   const editor = page.getByRole("textbox", {
     name: "Kiểm tra phím tắt khi nhập",
@@ -121,4 +130,26 @@ test("practice shortcuts do not fire while an editable field has focus", async (
     page.getByRole("button", { name: /^Đặt cờ\s*F?$/ }),
   ).toHaveAttribute("aria-pressed", "false");
   await expect(page.getByText("Câu 1 / 10")).toBeVisible();
+});
+
+test("practice reviews, finishes, and appears in history", async ({ page }) => {
+  await loginAs(page, "student");
+  await page.goto(
+    "/courses/kinh-te-chinh-tri-mac-lenin/chapters/1/practice",
+  );
+  await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
+  await page.getByRole("button", { name: "Bắt đầu luyện tập" }).click();
+  await expect(page).toHaveURL(/attempt=e2e-practice-/);
+  const attemptUrl = page.url();
+  await page.getByLabel(/Phương án B/).check();
+  await page.getByRole("button", { name: "Đặt cờ" }).click();
+  await page.reload();
+  await expect(page).toHaveURL(attemptUrl);
+  await page.getByRole("button", { name: "Kết thúc" }).first().click();
+  await page.getByRole("button", { name: "Xác nhận hoàn thành" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Lượt luyện tập đã được lưu" }),
+  ).toBeVisible();
+  await page.goto("/history");
+  await expect(page.getByText("Luyện tập theo chương").first()).toBeVisible();
 });

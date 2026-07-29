@@ -29,6 +29,16 @@ describe("LoginPage", () => {
     vi.clearAllMocks();
   });
 
+  it("marks the login form hydrated before it can submit", async () => {
+    render(<LoginPage />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Đăng nhập" }).closest("form"),
+      ).toHaveAttribute("data-hydrated", "true"),
+    );
+  });
+
   it("uses the server-authoritative portal destination after signing in", async () => {
     signIn.mockResolvedValue({
       data: { role: "admin", destination: "/admin" },

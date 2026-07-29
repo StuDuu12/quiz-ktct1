@@ -13,8 +13,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const e2eMode =
+    process.env.E2E_MODE === "1" &&
+    process.env.E2E_TEST_SERVER === "1" &&
+    process.env.NODE_ENV !== "production";
   return (
-    <html lang="vi">
+    <html lang="vi" data-e2e-mode={e2eMode ? "true" : undefined}>
       <body>{children}</body>
     </html>
   );

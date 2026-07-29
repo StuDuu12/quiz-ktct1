@@ -21,6 +21,7 @@ import {
 } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
 
+import { isE2EBrowserMode } from "@/src/e2e/browser";
 import {
   answerPracticeQuestion,
   applyPracticeFeedback,
@@ -365,7 +366,7 @@ export function PracticeSession({
         className="practice-shell"
         inert={reviewOpen || navigatorOpen ? true : undefined}
       >
-        {process.env.NEXT_PUBLIC_E2E_MODE === "1" ? (
+        {isE2EBrowserMode() ? (
           <input
             type="text"
             aria-label="Kiểm tra phím tắt khi nhập"

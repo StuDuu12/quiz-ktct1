@@ -101,9 +101,11 @@ test("mock navigator is a keyboard-safe bottom sheet without phone overflow", as
   await expect(trigger).toBeFocused();
 
   await page.setViewportSize({ width: 768, height: 900 });
-  await expect(trigger).toBeHidden();
+  await expect(trigger).toBeVisible();
   await expectNoHorizontalOverflow(page);
-  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(trigger).toBeHidden();
+  await expect(page.locator(".exam-navigator-panel")).toBeVisible();
   await expectNoHorizontalOverflow(page);
 });
 

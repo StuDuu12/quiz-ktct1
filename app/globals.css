@@ -1168,7 +1168,7 @@ body {
   box-shadow: var(--focus-ring);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .practice-shell { width: min(100% - 1.5rem, 76rem); padding-bottom: 6.5rem; }
   .practice-header { grid-template-columns: auto minmax(0, 1fr) auto; }
   .practice-brand span { display: none; }
@@ -1179,7 +1179,7 @@ body {
     position: fixed;
     z-index: 20;
     right: 1rem;
-    bottom: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
     left: 1rem;
     display: flex;
     min-height: 52px;
@@ -1200,7 +1200,7 @@ body {
   .mobile-navigator-sheet {
     width: 100%;
     max-height: min(78dvh, 38rem);
-    padding: .75rem;
+    padding: .75rem .75rem calc(.75rem + env(safe-area-inset-bottom));
     overflow-y: auto;
     border-radius: 1.25rem 1.25rem 0 0;
     background: var(--color-bg);
@@ -1724,7 +1724,7 @@ body {
   box-shadow: var(--focus-ring);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .exam-shell { width: min(100% - 1.5rem, 82rem); padding-bottom: 6.5rem; }
   .exam-header { grid-template-columns: auto minmax(0, 1fr) auto; }
   .exam-brand span { display: none; }
@@ -1735,7 +1735,7 @@ body {
     position: fixed;
     z-index: 30;
     right: 1rem;
-    bottom: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
     left: 1rem;
     display: flex;
     min-height: 52px;
@@ -1763,7 +1763,7 @@ body {
   .exam-mobile-navigator-sheet {
     width: 100%;
     max-height: min(82dvh, 42rem);
-    padding: .75rem;
+    padding: .75rem .75rem calc(.75rem + env(safe-area-inset-bottom));
     overflow-y: auto;
     border-radius: 1.2rem 1.2rem 0 0;
     background: var(--color-bg);

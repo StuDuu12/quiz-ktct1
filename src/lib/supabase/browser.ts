@@ -1,5 +1,6 @@
 import { createBrowserClient } from "@supabase/ssr";
 
+import { isE2EBrowserMode } from "@/src/e2e/browser";
 import type { PortalDestination } from "@/src/features/auth/destination";
 import type { AppRole } from "@/src/features/auth/roles";
 import type { Database } from "@/src/lib/supabase/database.types";
@@ -50,7 +51,7 @@ export async function signUpStudent({
   password,
   origin,
 }: SignUpStudentInput) {
-  if (process.env.NEXT_PUBLIC_E2E_MODE === "1") {
+  if (isE2EBrowserMode()) {
     const response = await fetch("/api/e2e/auth/register", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -103,7 +104,7 @@ export async function signIn(
   identifier: string,
   password: string,
 ): Promise<SignInResult> {
-  if (process.env.NEXT_PUBLIC_E2E_MODE === "1") {
+  if (isE2EBrowserMode()) {
     const response = await fetch("/api/e2e/auth/login", {
       method: "POST",
       headers: { "content-type": "application/json" },
