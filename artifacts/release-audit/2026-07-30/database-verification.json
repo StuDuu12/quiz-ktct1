@@ -1,0 +1,21 @@
+{
+  "captured_date": "2026-07-30",
+  "verification": "Aggregate SQL result observed after exact disposable-user and smoke-attempt cleanup",
+  "content": {
+    "courses": 1,
+    "chapters": 6,
+    "questions": 497,
+    "published_options": 1988
+  },
+  "active_mock_exam_configuration": {
+    "count": 1,
+    "question_count": 40,
+    "duration_seconds": 3600
+  },
+  "cleanup_invariants": {
+    "attempts_total_after_cleanup": 492,
+    "smoke_profiles": 0,
+    "smoke_auth_users": 0
+  },
+  "review_fix_database_mutations": 0
+}

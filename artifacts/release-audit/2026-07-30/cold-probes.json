@@ -1,0 +1,44 @@
+{
+  "captured_date": "2026-07-30",
+  "production_origin": "https://ktct-luyen-thi-mac-lenin-2026.ktct-chuquangduy.workers.dev",
+  "method": "Authenticated browser navigation observed with Wrangler tail on successive cold Worker versions",
+  "probes": [
+    {
+      "deployment_version_prefix": "0dd07832",
+      "route": "/admin/questions",
+      "http_status": 200,
+      "tail_outcome": "Ok",
+      "error_1102": false
+    },
+    {
+      "deployment_version_prefix": "0f299f04",
+      "route": "/admin/import",
+      "http_status": 200,
+      "tail_outcome": "Ok",
+      "error_1102": false
+    },
+    {
+      "deployment_version_prefix": "d68b9ee4",
+      "route": "/instructor/reports",
+      "http_status": 200,
+      "tail_outcome": "Ok",
+      "error_1102": false
+    }
+  ],
+  "error_1102_count": 0,
+  "source_config_redeploy": {
+    "deployment_version_prefix": "5962c870",
+    "public_routes_http_200": [
+      "/",
+      "/login",
+      "/register",
+      "/forgot-password",
+      "/reset-password"
+    ],
+    "protected_routes_http_307_to_login": [
+      "/dashboard",
+      "/history",
+      "/admin"
+    ]
+  }
+}
