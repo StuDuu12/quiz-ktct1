@@ -37,6 +37,10 @@
 
 - `8d17bd3 feat: add secure account and session flows`
 
-## Concern
+## Deterministic database-security follow-up
 
-The full `npm test` run remains non-deterministic in the pre-existing `tests/database-security.test.ts` test `starts attempts only through the trusted server function`. It expects the shuffled one-question exam to always choose `assignedQuestion`, but sometimes receives the also-published `mutationQuestion`. The database-security file passes repeatedly when run alone (`npm test -- tests/database-security.test.ts`), and the auth-specific tests, typecheck, and build all pass. No database or test files from that suite were changed for Task 3.
+- Reproduced with full `npm test`: the one-question shuffled exam chose the eligible `mutationQuestion`, while the test incorrectly required `assignedQuestion`.
+- Replaced the ID/content assertion with relational invariants: the generated snapshot must have exactly one question, belong to the requested course, be published, preserve the selected question content, contain exactly the matching question-option set, and not expose `is_correct`.
+- The existing direct-insert rejection, server-controlled 1800-second timing, and server-controlled question count assertions remain unchanged.
+- `npm test -- tests/database-security.test.ts` passed three consecutive times (7/7 each).
+- Fresh `npm test` passed 32/32; `npm run typecheck` and `npm run build` exited 0.

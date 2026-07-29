@@ -597,24 +597,50 @@ describe("database security behavior", () => {
 
       const snapshot = await database.query<{
         question_id: string;
-        content: string;
+        snapshot_matches_published_question: boolean;
+        snapshot_options_match_question: boolean;
         exposes_correctness: boolean;
       }>(`
         select
           aq.question_id,
-          aq.question_snapshot ->> 'content' as content,
-          (aq.question_snapshot -> 'options' -> 0) ? 'is_correct'
-            as exposes_correctness
+          exists (
+            select 1
+            from public.questions q
+            join public.chapters ch on ch.id = q.chapter_id
+            where q.id = aq.question_id
+              and ch.course_id = '${ids.assignedCourse}'
+              and q.status = 'published'
+              and aq.question_snapshot ->> 'content' = q.content
+          ) as snapshot_matches_published_question,
+          jsonb_array_length(aq.question_snapshot -> 'options') = (
+            select count(*)
+            from public.question_options qo
+            where qo.question_id = aq.question_id
+          )
+          and not exists (
+            select 1
+            from jsonb_array_elements(aq.question_snapshot -> 'options') so
+            left join public.question_options qo
+              on qo.id = (so ->> 'id')::uuid
+              and qo.question_id = aq.question_id
+            where qo.id is null
+              or so ->> 'label' is distinct from qo.label
+              or so ->> 'content' is distinct from qo.content
+          ) as snapshot_options_match_question,
+          exists (
+            select 1
+            from jsonb_array_elements(aq.question_snapshot -> 'options') so
+            where so ? 'is_correct'
+          ) as exposes_correctness
         from public.attempt_questions aq
         where aq.attempt_id = '${started.rows[0]?.attempt_id}'
       `);
-      expect(snapshot.rows).toEqual([
-        {
-          question_id: ids.assignedQuestion,
-          content: "Assigned question",
-          exposes_correctness: false,
-        },
-      ]);
+      expect(snapshot.rows).toHaveLength(1);
+      expect(snapshot.rows[0]).toMatchObject({
+        snapshot_matches_published_question: true,
+        snapshot_options_match_question: true,
+        exposes_correctness: false,
+      });
     } finally {
       await resetIdentity();
     }
