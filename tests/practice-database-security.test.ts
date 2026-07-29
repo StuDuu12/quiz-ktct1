@@ -22,6 +22,9 @@ const migrationPaths = [
   "202607290004_practice_sessions.sql",
   "202607290005_harden_practice_sessions.sql",
 ].map((file) => path.resolve("supabase/migrations", file));
+const snapshotScopeMigrationPath = path.resolve(
+  "supabase/migrations/202607290006_preserve_practice_snapshot_scope.sql",
+);
 
 describe("secure chapter practice persistence", () => {
   let database: PGlite;
@@ -146,6 +149,7 @@ describe("secure chapter practice persistence", () => {
     `);
     attemptQuestionId = snapshot.rows[0]!.id;
     await resetIdentity();
+    await database.exec(await readFile(snapshotScopeMigrationPath, "utf8"));
   }, 30_000);
 
   afterAll(async () => {
@@ -161,20 +165,80 @@ describe("secure chapter practice persistence", () => {
     expect(questions.rows).toEqual([{ question_id: ids.question }]);
   });
 
-  it("does not expose practice explanations through learner-readable rows", async () => {
+  it("reopens an immutable snapshot after its source question is archived and rejects another chapter", async () => {
+    await assumeIdentity(ids.student);
+    const fresh = await startChapterPractice();
+    await resetIdentity();
+    await database.exec(`
+      update public.questions
+      set status = 'archived'
+      where id = '${ids.question}'
+    `);
+    await assumeIdentity(ids.student);
+
+    try {
+      const reopened = await database.query<{
+        question_id: string;
+        chapter_id: string;
+        has_explanation: boolean;
+      }>(`
+        select
+          question_id,
+          question_snapshot ->> 'chapter_id' as chapter_id,
+          question_snapshot ? 'explanation' as has_explanation
+        from public.load_practice_attempt_questions(
+          '${fresh.attemptId}',
+          '${ids.chapter}'
+        )
+      `);
+      expect(reopened.rows).toEqual([
+        {
+          question_id: ids.question,
+          chapter_id: ids.chapter,
+          has_explanation: false,
+        },
+      ]);
+
+      await expect(
+        database.query(`
+          select *
+          from public.load_practice_attempt_questions(
+            '${fresh.attemptId}',
+            '${ids.otherChapter}'
+          )
+        `),
+      ).rejects.toThrow(/chapter mismatch/i);
+    } finally {
+      await resetIdentity();
+      await database.exec(`
+        update public.questions
+        set status = 'published'
+        where id = '${ids.question}'
+      `);
+      await resetIdentity();
+    }
+  });
+
+  it("backfills immutable chapter scope without exposing practice explanations", async () => {
     await assumeIdentity(ids.student);
     const snapshot = await database.query<{
+      chapter_id: string;
       has_explanation: boolean;
       explanation: string | null;
     }>(`
       select
+        question_snapshot ->> 'chapter_id' as chapter_id,
         question_snapshot ? 'explanation' as has_explanation,
         question_snapshot ->> 'explanation' as explanation
       from public.attempt_questions
       where id = '${attemptQuestionId}'
     `);
     expect(snapshot.rows).toEqual([
-      { has_explanation: false, explanation: null },
+      {
+        chapter_id: ids.chapter,
+        has_explanation: false,
+        explanation: null,
+      },
     ]);
     await expect(
       database.query(`

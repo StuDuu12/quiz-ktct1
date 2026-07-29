@@ -20,8 +20,9 @@ stable with the created attempt ID.
 
 ## Persistence and security
 
-Added migrations `202607290004_practice_sessions.sql` and
-`202607290005_harden_practice_sessions.sql`.
+Added migrations `202607290004_practice_sessions.sql`,
+`202607290005_harden_practice_sessions.sql`, and
+`202607290006_preserve_practice_snapshot_scope.sql`.
 
 - Extended the existing `start_attempt` lifecycle with an optional
   chapter scope while preserving the two-argument mock-exam call.
@@ -49,6 +50,9 @@ Added migrations `202607290004_practice_sessions.sql` and
 - `sync_practice_attempt` uses the database clock to persist and return an
   expired state during reload. Finishing after the deadline likewise persists
   and returns `expired`.
+- Practice snapshots carry a trusted immutable `chapter_id`. Existing
+  snapshots are backfilled, and an owner-checked loader validates the requested
+  chapter from this metadata without consulting current question visibility.
 
 ## TDD evidence
 
@@ -89,11 +93,27 @@ were addressed with focused red/green tests:
 The initial focused run failed at each missing behavior. The focused database,
 engine, and component suites all passed after implementation.
 
+## Review fix round 2
+
+The remaining I4 finding was addressed with a focused database integration
+test. Its initial red run failed because the owner-checked immutable snapshot
+loader did not exist. The completed test:
+
+- creates an attempt before migration 006 and verifies its chapter scope is
+  backfilled;
+- starts a new attempt, archives its source question, and verifies the owner can
+  reopen the saved snapshot;
+- rejects the same attempt when a different chapter is requested;
+- confirms the continued snapshot still contains no explanation.
+
+`loadPracticeSession` now uses the owner-checked snapshot loader and no longer
+queries learner-visible current question rows during continuation.
+
 ## Fresh verification
 
 All commands were run after the final production change:
 
-- `npm test`: 14 test files passed, 81 tests passed.
+- `npm test`: 14 test files passed, 82 tests passed.
 - `npm run typecheck`: exit 0.
 - `npm run lint`: exit 0.
 - `npm run build`: exit 0; both practice routes were detected.

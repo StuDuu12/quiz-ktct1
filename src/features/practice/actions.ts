@@ -181,28 +181,16 @@ export async function loadPracticeSession(
     throw practiceError("PRACTICE_ATTEMPT_NOT_FOUND", attemptError);
   }
 
-  const { data: rows, error: questionError } = await supabase
-    .from("attempt_questions")
-    .select("id, question_id, position, question_snapshot")
-    .eq("attempt_id", attemptId)
-    .order("position");
+  const { data: rows, error: questionError } = await supabase.rpc(
+    "load_practice_attempt_questions",
+    {
+      target_attempt_id: attemptId,
+      target_chapter_id: chapterId,
+    },
+  );
 
   if (questionError || !rows?.length) {
     throw practiceError("Không thể tải câu hỏi luyện tập.", questionError);
-  }
-
-  const questionIds = rows.map(({ question_id }) => question_id);
-  const { data: sourceQuestions, error: sourceError } = await supabase
-    .from("questions")
-    .select("id, chapter_id")
-    .in("id", questionIds);
-  if (
-    sourceError ||
-    !sourceQuestions ||
-    sourceQuestions.length !== rows.length ||
-    sourceQuestions.some((question) => question.chapter_id !== chapterId)
-  ) {
-    throw practiceError("PRACTICE_CHAPTER_MISMATCH", sourceError);
   }
 
   const questions = rows.map((row) =>

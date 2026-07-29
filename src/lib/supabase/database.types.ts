@@ -634,6 +634,13 @@ export type Database = {
         Args: { target_attempt_id: string };
         Returns: Database["public"]["Tables"]["attempts"]["Row"];
       };
+      load_practice_attempt_questions: {
+        Args: {
+          target_attempt_id: string;
+          target_chapter_id: string;
+        };
+        Returns: Database["public"]["Tables"]["attempt_questions"]["Row"][];
+      };
       set_practice_flag: {
         Args: {
           target_attempt_id: string;
