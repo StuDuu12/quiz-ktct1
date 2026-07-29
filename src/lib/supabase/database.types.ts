@@ -663,6 +663,56 @@ export type Database = {
           answered_at: string | null;
         }[];
       };
+      get_attempt_result_details: {
+        Args: { target_attempt_id: string };
+        Returns: {
+          attempt_id: string;
+          attempt_question_id: string;
+          question_position: number;
+          kind: Database["public"]["Enums"]["attempt_kind"];
+          score: number;
+          started_at: string;
+          submitted_at: string;
+          duration_seconds: number;
+          question_snapshot: Json;
+          selected_option_id: string | null;
+          correct_option_id: string;
+          is_correct: boolean;
+          is_flagged: boolean;
+          is_unanswered: boolean;
+          answered_at: string | null;
+          explanation: string;
+        }[];
+      };
+      get_attempt_history: {
+        Args: {
+          target_user_id?: string | null;
+          filter_kind?: Database["public"]["Enums"]["attempt_kind"] | null;
+          filter_chapter_id?: string | null;
+          filter_started_from?: string | null;
+          filter_started_to?: string | null;
+          filter_score_min?: number | null;
+          filter_score_max?: number | null;
+          page_number?: number;
+          page_size?: number;
+        };
+        Returns: {
+          attempt_id: string;
+          user_id: string;
+          course_id: string;
+          course_title: string;
+          kind: Database["public"]["Enums"]["attempt_kind"];
+          status: Database["public"]["Enums"]["attempt_status"];
+          started_at: string;
+          submitted_at: string | null;
+          score: number | null;
+          duration_seconds: number | null;
+          chapter_id: string | null;
+          chapter_title: string | null;
+          question_count: number;
+          total_count: number;
+        }[];
+      };
       get_submitted_practice_progress: {
         Args: { target_course_id: string };
         Returns: {

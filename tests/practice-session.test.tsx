@@ -135,6 +135,9 @@ describe("PracticeSession", () => {
     );
 
     expect(screen.getByText("75%")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /xem chi tiết kết quả/i }),
+    ).toHaveAttribute("href", "/results/attempt-1");
   });
 
   it("reconciles a losing tab to the option already saved by another tab", async () => {

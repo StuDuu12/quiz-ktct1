@@ -527,6 +527,9 @@ describe("ExamSession", () => {
       screen.getByRole("heading", { name: "Bài thi đã được nộp" }),
     ).toBeInTheDocument();
     expect(screen.getByText("87,5%")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /xem chi tiết kết quả/i }),
+    ).toHaveAttribute("href", "/results/attempt-1");
     expect(screen.queryByRole("radio")).not.toBeInTheDocument();
   });
 

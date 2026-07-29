@@ -434,7 +434,12 @@ export function ExamSession({
             Điểm của bạn: <strong>{score}%</strong>. Kết quả đã được lưu trên
             máy chủ.
           </p>
-          <Link href="/dashboard">Trở về tổng quan</Link>
+          <div className="completion-actions">
+            <Link href={`/results/${state.attemptId}`}>
+              Xem chi tiết kết quả
+            </Link>
+            <Link href="/dashboard">Trở về tổng quan</Link>
+          </div>
         </section>
       </main>
     );

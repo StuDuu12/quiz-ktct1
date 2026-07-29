@@ -16,7 +16,7 @@ export function CourseOverview({ dashboard }: { dashboard: CourseDashboard }) {
     <main className="learner-shell">
       <header className="learner-header">
         <Link href="/dashboard" className="brand-mark"><BookOpen size={24} weight="fill" /> Ôn thi KTCT</Link>
-        <nav aria-label="Điều hướng học viên"><Link href="/dashboard" aria-current="page">Tổng quan</Link><Link href="#history">Lịch sử</Link></nav>
+        <nav aria-label="Điều hướng học viên"><Link href="/dashboard" aria-current="page">Tổng quan</Link><Link href="/history">Lịch sử</Link></nav>
       </header>
 
       <section className="course-hero" aria-labelledby="course-title">
@@ -61,7 +61,7 @@ export function CourseOverview({ dashboard }: { dashboard: CourseDashboard }) {
           <div className="empty-state"><ClipboardText size={28} weight="duotone" /><div><h3>Bạn chưa có lượt làm nào</h3><p>Chọn một chương để bắt đầu lưu lịch sử và theo dõi kết quả của bạn.</p></div></div>
         ) : (
           <div className="attempt-list">
-            {recentAttempts.map((attempt) => <article key={attempt.id} className="attempt-row"><div className="attempt-icon"><ClipboardText size={19} weight="duotone" /></div><div><strong>{attempt.kind === "mock_exam" ? "Thi thử tổng hợp" : "Luyện tập theo chương"}</strong><p>{formatDate(attempt.submittedAt ?? attempt.startedAt)}</p></div><span className={`status-pill status-${attempt.status}`}>{attempt.status === "submitted" ? "Đã nộp" : attempt.status === "expired" ? "Hết giờ" : "Đang làm"}</span><strong className="attempt-score">{attempt.score === null ? "—" : `${Math.round(attempt.score)}%`}</strong></article>)}
+            {recentAttempts.map((attempt) => <article key={attempt.id} className="attempt-row"><div className="attempt-icon"><ClipboardText size={19} weight="duotone" /></div><div><strong>{attempt.kind === "mock_exam" ? "Thi thử tổng hợp" : "Luyện tập theo chương"}</strong><p>{formatDate(attempt.submittedAt ?? attempt.startedAt)}</p></div><span className={`status-pill status-${attempt.status}`}>{attempt.status === "submitted" ? "Đã nộp" : attempt.status === "expired" ? "Hết giờ" : "Đang làm"}</span>{attempt.status === "submitted" ? <Link className="attempt-score" href={`/results/${attempt.id}`} aria-label={`Xem kết quả ${Math.round(attempt.score ?? 0)}%`}>{Math.round(attempt.score ?? 0)}%</Link> : <strong className="attempt-score">—</strong>}</article>)}
           </div>
         )}
       </section>

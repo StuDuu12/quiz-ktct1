@@ -329,9 +329,14 @@ export function PracticeSession({
             Kết quả của bạn: <strong>{Math.round(completedScore)}%</strong>.
             Tiến độ chương sẽ được cập nhật trên trang học phần.
           </p>
-          <Link href={`/courses/${state.courseSlug}`}>
-            Trở về học phần <ArrowRight size={18} />
-          </Link>
+          <div className="completion-actions">
+            <Link href={`/results/${state.attemptId}`}>
+              Xem chi tiết kết quả <ArrowRight size={18} />
+            </Link>
+            <Link href={`/courses/${state.courseSlug}`}>
+              Trở về học phần
+            </Link>
+          </div>
         </section>
       </main>
     );
