@@ -12,7 +12,14 @@ import {
   XCircle,
 } from "@phosphor-icons/react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type { MouseEvent as ReactMouseEvent } from "react";
 
 import {
   answerPracticeQuestion,
@@ -35,6 +42,15 @@ type PracticeSessionProps = {
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
+function isEditableTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false;
+  return Boolean(
+    target.closest(
+      'input, textarea, select, [contenteditable]:not([contenteditable="false"])',
+    ),
+  );
+}
+
 export function PracticeSession({
   initialState,
   saveAnswer,
@@ -48,6 +64,9 @@ export function PracticeSession({
   const [navigatorOpen, setNavigatorOpen] = useState(false);
   const [score, setScore] = useState<number | null>(null);
   const [finishing, setFinishing] = useState(false);
+  const dialogRef = useRef<HTMLElement>(null);
+  const closeDialogRef = useRef<HTMLButtonElement>(null);
+  const reviewInvokerRef = useRef<HTMLButtonElement | null>(null);
 
   const currentIndex = state.questions.findIndex(
     (question) => question.id === state.currentQuestionId,
@@ -123,9 +142,19 @@ export function PracticeSession({
     });
   }, [currentQuestion, saveFlag, state.answers, state.attemptId, state.status]);
 
+  const openReview = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    reviewInvokerRef.current = event.currentTarget;
+    setReviewOpen(true);
+  };
+
+  const closeReview = useCallback(() => {
+    setReviewOpen(false);
+  }, []);
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (reviewOpen || state.status !== "in_progress") return;
+      if (isEditableTarget(event.target)) return;
       if (/^[1-4]$/.test(event.key)) {
         const option = currentQuestion.options[Number(event.key) - 1];
         if (option) {
@@ -155,6 +184,43 @@ export function PracticeSession({
     state.status,
     toggleFlag,
   ]);
+
+  useEffect(() => {
+    if (!reviewOpen) return;
+    const invoker = reviewInvokerRef.current;
+    closeDialogRef.current?.focus();
+
+    const onModalKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeReview();
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      const focusable = Array.from(
+        dialogRef.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0]!;
+      const last = focusable[focusable.length - 1]!;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onModalKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onModalKeyDown);
+      invoker?.focus();
+    };
+  }, [closeReview, reviewOpen]);
 
   const navigator = useMemo(
     () => (
@@ -221,14 +287,35 @@ export function PracticeSession({
     try {
       const result = await finish(state.attemptId);
       setScore(result.score);
-      setState((current) => ({ ...current, status: "submitted" }));
-      setReviewOpen(false);
+      setState((current) => ({ ...current, status: result.status }));
+      closeReview();
     } catch {
       setError("Không thể hoàn thành lượt luyện tập. Hãy thử lại.");
     } finally {
       setFinishing(false);
     }
   };
+
+  if (state.status === "expired") {
+    return (
+      <main className="practice-complete practice-expired">
+        <section aria-labelledby="practice-expired-title">
+          <WarningCircle size={54} weight="duotone" />
+          <p className="practice-kicker">PHIÊN ĐÃ HẾT HẠN</p>
+          <h1 id="practice-expired-title">Lượt luyện tập đã hết hạn</h1>
+          <p>
+            Thời hạn do máy chủ xác định. Các câu đã lưu vẫn được giữ trong
+            lịch sử, và bạn có thể bắt đầu một lượt mới cho chương này.
+          </p>
+          <Link
+            href={`/courses/${state.courseSlug}/chapters/${state.chapterPosition}/practice`}
+          >
+            Bắt đầu lượt mới <ArrowRight size={18} />
+          </Link>
+        </section>
+      </main>
+    );
+  }
 
   if (state.status === "submitted" || score !== null) {
     const completedScore = score ?? state.score ?? 0;
@@ -251,7 +338,8 @@ export function PracticeSession({
   }
 
   return (
-    <main className="practice-shell">
+    <>
+    <main className="practice-shell" inert={reviewOpen ? true : undefined}>
       <header className="practice-header">
         <Link
           href={`/courses/${state.courseSlug}`}
@@ -385,7 +473,7 @@ export function PracticeSession({
               <button
                 type="button"
                 className="finish-button"
-                onClick={() => setReviewOpen(true)}
+                onClick={openReview}
               >
                 Kết thúc
               </button>
@@ -394,7 +482,7 @@ export function PracticeSession({
           <button
             type="button"
             className="finish-link"
-            onClick={() => setReviewOpen(true)}
+            onClick={openReview}
           >
             Kết thúc
           </button>
@@ -420,20 +508,23 @@ export function PracticeSession({
           </div>
         </div>
       ) : null}
+    </main>
 
       {reviewOpen ? (
         <div className="practice-modal-backdrop">
           <section
+            ref={dialogRef}
             className="practice-review-modal"
             role="dialog"
             aria-modal="true"
             aria-labelledby="practice-review-title"
           >
             <button
+              ref={closeDialogRef}
               type="button"
               className="icon-button modal-close"
               aria-label="Đóng rà soát"
-              onClick={() => setReviewOpen(false)}
+              onClick={closeReview}
             >
               <X size={21} />
             </button>
@@ -446,7 +537,7 @@ export function PracticeSession({
               <div><strong>{flaggedCount}</strong><span>{flaggedCount} câu đặt cờ</span></div>
             </div>
             <div className="review-actions">
-              <button type="button" onClick={() => setReviewOpen(false)}>
+              <button type="button" onClick={closeReview}>
                 Quay lại kiểm tra
               </button>
               <button
@@ -461,6 +552,6 @@ export function PracticeSession({
           </section>
         </div>
       ) : null}
-    </main>
+    </>
   );
 }

@@ -20,6 +20,7 @@ const migrationPaths = [
   "202607290002_rls_policies.sql",
   "202607290003_learner_progress.sql",
   "202607290004_practice_sessions.sql",
+  "202607290005_harden_practice_sessions.sql",
 ].map((file) => path.resolve("supabase/migrations", file));
 
 describe("secure chapter practice persistence", () => {
@@ -39,6 +40,36 @@ describe("secure chapter practice persistence", () => {
       reset role;
       select set_config('request.jwt.claim.sub', '', false);
     `);
+  };
+
+  const startChapterPractice = async () => {
+    const started = await database.query<{ id: string }>(`
+      select id
+      from public.start_attempt('${ids.course}', null, '${ids.chapter}')
+    `);
+    const attempt = started.rows[0]!.id;
+    const snapshot = await database.query<{ id: string }>(`
+      select id from public.attempt_questions
+      where attempt_id = '${attempt}'
+    `);
+    return {
+      attemptId: attempt,
+      attemptQuestionId: snapshot.rows[0]!.id,
+    };
+  };
+
+  const forceExpired = async (targetAttemptId: string) => {
+    await resetIdentity();
+    await database.exec(`
+      alter table public.attempts disable trigger protect_attempt_submission;
+      update public.attempts
+      set
+        started_at = '2020-01-01 00:00:00+00',
+        expires_at = '2020-01-01 01:00:00+00'
+      where id = '${targetAttemptId}';
+      alter table public.attempts enable trigger protect_attempt_submission;
+    `);
+    await assumeIdentity(ids.student);
   };
 
   beforeAll(async () => {
@@ -130,11 +161,38 @@ describe("secure chapter practice persistence", () => {
     expect(questions.rows).toEqual([{ question_id: ids.question }]);
   });
 
+  it("does not expose practice explanations through learner-readable rows", async () => {
+    await assumeIdentity(ids.student);
+    const snapshot = await database.query<{
+      has_explanation: boolean;
+      explanation: string | null;
+    }>(`
+      select
+        question_snapshot ? 'explanation' as has_explanation,
+        question_snapshot ->> 'explanation' as explanation
+      from public.attempt_questions
+      where id = '${attemptQuestionId}'
+    `);
+    expect(snapshot.rows).toEqual([
+      { has_explanation: false, explanation: null },
+    ]);
+    await expect(
+      database.query(`
+        select explanation
+        from public.questions
+        where id = '${ids.question}'
+      `),
+    ).rejects.toThrow();
+    await resetIdentity();
+  });
+
   it("returns feedback only for the exact first saved answer and locks it", async () => {
     await assumeIdentity(ids.student);
     const feedback = await database.query<{
+      selected_option_id: string;
       is_correct: boolean;
       explanation: string;
+      was_already_locked: boolean;
     }>(`
       select * from public.save_practice_answer(
         '${attemptId}',
@@ -143,19 +201,101 @@ describe("secure chapter practice persistence", () => {
       )
     `);
     expect(feedback.rows).toEqual([
-      { is_correct: false, explanation: "Exact explanation" },
+      {
+        selected_option_id: ids.wrong,
+        is_correct: false,
+        explanation: "Exact explanation",
+        was_already_locked: false,
+      },
     ]);
 
-    await expect(
-      database.query(`
-        select * from public.save_practice_answer(
-          '${attemptId}',
-          '${attemptQuestionId}',
-          '${ids.correct}'
-        )
-      `),
-    ).rejects.toThrow(/ANSWER_LOCKED/);
+    const repeated = await database.query<{
+      selected_option_id: string;
+      is_correct: boolean;
+      explanation: string;
+      was_already_locked: boolean;
+    }>(`
+      select * from public.save_practice_answer(
+        '${attemptId}',
+        '${attemptQuestionId}',
+        '${ids.wrong}'
+      )
+    `);
+    expect(repeated.rows[0]).toMatchObject({
+      selected_option_id: ids.wrong,
+      was_already_locked: true,
+    });
     await resetIdentity();
+  });
+
+  it("reconciles a concurrent different answer to the authoritative first save", async () => {
+    await assumeIdentity(ids.student);
+    const fresh = await startChapterPractice();
+    await database.query(`
+      select * from public.save_practice_answer(
+        '${fresh.attemptId}',
+        '${fresh.attemptQuestionId}',
+        '${ids.wrong}'
+      )
+    `);
+
+    const losingTab = await database.query<{
+      selected_option_id: string;
+      is_correct: boolean;
+      explanation: string;
+      was_already_locked: boolean;
+    }>(`
+      select * from public.save_practice_answer(
+        '${fresh.attemptId}',
+        '${fresh.attemptQuestionId}',
+        '${ids.correct}'
+      )
+    `);
+    expect(losingTab.rows).toEqual([
+      {
+        selected_option_id: ids.wrong,
+        is_correct: false,
+        explanation: "Exact explanation",
+        was_already_locked: true,
+      },
+    ]);
+    await resetIdentity();
+  });
+
+  it("atomically marks an expired practice attempt during reload", async () => {
+    await assumeIdentity(ids.student);
+    const fresh = await startChapterPractice();
+    await forceExpired(fresh.attemptId);
+
+    const loaded = await database.query<{ status: string }>(`
+      select status
+      from public.sync_practice_attempt('${fresh.attemptId}')
+    `);
+    expect(loaded.rows).toEqual([{ status: "expired" }]);
+
+    await resetIdentity();
+    const persisted = await database.query<{ status: string }>(`
+      select status from public.attempts where id = '${fresh.attemptId}'
+    `);
+    expect(persisted.rows).toEqual([{ status: "expired" }]);
+  });
+
+  it("returns and persists expired when finish happens after the deadline", async () => {
+    await assumeIdentity(ids.student);
+    const fresh = await startChapterPractice();
+    await forceExpired(fresh.attemptId);
+
+    const finished = await database.query<{ status: string }>(`
+      select status
+      from public.finish_practice_attempt('${fresh.attemptId}')
+    `);
+    expect(finished.rows).toEqual([{ status: "expired" }]);
+
+    await resetIdentity();
+    const persisted = await database.query<{ status: string }>(`
+      select status from public.attempts where id = '${fresh.attemptId}'
+    `);
+    expect(persisted.rows).toEqual([{ status: "expired" }]);
   });
 
   it("cannot enumerate correctness or read another learner's feedback", async () => {

@@ -165,19 +165,18 @@ export async function loadPracticeSession(
   const viewer = await requireViewer(["student", "instructor", "admin"]);
   const chapter = await getPracticeChapterById(chapterId);
   const supabase = await createServerSupabaseClient();
-  const { data: attempt, error: attemptError } = await supabase
-    .from("attempts")
-    .select("id, user_id, course_id, kind, status, score")
-    .eq("id", attemptId)
-    .eq("user_id", viewer.id)
-    .eq("course_id", chapter.course_id)
-    .eq("kind", "practice")
-    .maybeSingle();
+  const { data: attempt, error: attemptError } = await supabase.rpc(
+    "sync_practice_attempt",
+    { target_attempt_id: attemptId },
+  );
 
   if (
     attemptError ||
     !attempt ||
-    (attempt.status !== "in_progress" && attempt.status !== "submitted")
+    attempt.user_id !== viewer.id ||
+    attempt.course_id !== chapter.course_id ||
+    attempt.kind !== "practice" ||
+    !["in_progress", "submitted", "expired"].includes(attempt.status)
   ) {
     throw practiceError("PRACTICE_ATTEMPT_NOT_FOUND", attemptError);
   }
@@ -258,6 +257,7 @@ export async function loadPracticeSession(
       }
       answer.isCorrect = feedback[0].is_correct;
       answer.explanation = feedback[0].explanation;
+      answer.optionId = feedback[0].selected_option_id;
     }
     answers[question.id] = answer;
   }
@@ -293,8 +293,10 @@ export async function savePracticeAnswer(
     throw practiceError("Không thể lưu đáp án. Hãy thử lại.", error);
   }
   return {
+    optionId: data[0].selected_option_id,
     isCorrect: data[0].is_correct,
     explanation: data[0].explanation,
+    reconciled: data[0].was_already_locked,
   };
 }
 
@@ -319,9 +321,18 @@ export async function finishPractice(attemptId: string) {
   const { data, error } = await supabase.rpc("finish_practice_attempt", {
     target_attempt_id: attemptId,
   });
-  if (error || !data || data.status !== "submitted") {
+  if (error || !data) {
     throw practiceError("Không thể hoàn thành lượt luyện tập.", error);
   }
+  if (data.status === "expired") {
+    return { status: "expired" as const, score: null };
+  }
+  if (data.status !== "submitted") {
+    throw practiceError("Không thể hoàn thành lượt luyện tập.");
+  }
   revalidatePath("/dashboard");
-  return { score: Number(data.score ?? 0) };
+  return {
+    status: "submitted" as const,
+    score: Number(data.score ?? 0),
+  };
 }

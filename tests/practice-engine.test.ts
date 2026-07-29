@@ -68,12 +68,14 @@ describe("practice engine", () => {
   it("merges server-owned correctness without changing the locked option", () => {
     const answered = answerPracticeQuestion(state, "q1", "option-b");
     const next = applyPracticeFeedback(answered, "q1", {
+      optionId: "option-a",
       isCorrect: false,
       explanation: "Phương án A mới đúng.",
+      reconciled: true,
     });
 
     expect(next.answers.q1).toMatchObject({
-      optionId: "option-b",
+      optionId: "option-a",
       isCorrect: false,
       explanation: "Phương án A mới đúng.",
       locked: true,

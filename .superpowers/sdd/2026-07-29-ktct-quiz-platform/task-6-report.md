@@ -20,7 +20,8 @@ stable with the created attempt ID.
 
 ## Persistence and security
 
-Added migration `202607290004_practice_sessions.sql`.
+Added migrations `202607290004_practice_sessions.sql` and
+`202607290005_harden_practice_sessions.sql`.
 
 - Extended the existing `start_attempt` lifecycle with an optional
   chapter scope while preserving the two-argument mock-exam call.
@@ -31,9 +32,9 @@ Added migration `202607290004_practice_sessions.sql`.
   - requires `kind = practice`;
   - requires `status = in_progress` and a non-expired attempt;
   - requires the exact attempt-question and an option belonging to it;
-  - accepts the first answer atomically and rejects changes with
-    `ANSWER_LOCKED`;
-  - returns correctness and explanation only for that exact saved option.
+  - accepts the first answer atomically;
+  - reconciles later or racing requests to the authoritative saved option;
+  - returns correctness and explanation only for that exact saved answer.
 - Added a trigger that prevents changing or deleting a submitted practice
   answer even through direct table operations.
 - Added ownership-scoped `set_practice_flag` and
@@ -41,6 +42,13 @@ Added migration `202607290004_practice_sessions.sql`.
 - Application queries never select `question_options.is_correct` or
   `attempt_answers.is_correct`. The latter is read only inside the exact-answer
   feedback RPC.
+- Practice snapshots are stripped of explanations by a database trigger, and
+  existing practice snapshots are cleaned by the hardening migration.
+- Authenticated table access to `questions` is column-scoped and excludes
+  `explanation`; explanations are available only through the exact-answer RPC.
+- `sync_practice_attempt` uses the database clock to persist and return an
+  expired state during reload. Finishing after the deadline likewise persists
+  and returns `expired`.
 
 ## TDD evidence
 
@@ -62,11 +70,30 @@ Red/green coverage now includes:
 - clean migration application and compatibility with the existing database
   security suite.
 
+## Review fix round 1
+
+The review findings for commit `6670349df86a166c584f7ab45d039360fb3467df`
+were addressed with focused red/green tests:
+
+- learner-readable snapshots and direct authenticated question reads cannot
+  expose explanations;
+- reload and finish both use server-authoritative expiry and persist
+  `expired`;
+- a losing cross-tab answer reconciles its optimistic choice and feedback to
+  the first saved answer;
+- the review modal transfers and traps focus, closes on Escape, makes the
+  background inert, and restores focus to its invoker;
+- keyboard shortcuts are ignored inside inputs, textareas, selects, and
+  content-editable regions.
+
+The initial focused run failed at each missing behavior. The focused database,
+engine, and component suites all passed after implementation.
+
 ## Fresh verification
 
 All commands were run after the final production change:
 
-- `npm test`: 14 test files passed, 72 tests passed.
+- `npm test`: 14 test files passed, 81 tests passed.
 - `npm run typecheck`: exit 0.
 - `npm run lint`: exit 0.
 - `npm run build`: exit 0; both practice routes were detected.

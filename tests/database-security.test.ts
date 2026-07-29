@@ -44,6 +44,7 @@ const migrationPaths = [
   path.resolve("supabase/migrations/202607290002_rls_policies.sql"),
   path.resolve("supabase/migrations/202607290003_learner_progress.sql"),
   path.resolve("supabase/migrations/202607290004_practice_sessions.sql"),
+  path.resolve("supabase/migrations/202607290005_harden_practice_sessions.sql"),
 ];
 
 describe("database security behavior", () => {

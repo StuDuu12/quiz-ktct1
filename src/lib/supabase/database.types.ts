@@ -624,9 +624,15 @@ export type Database = {
           target_option_id: string;
         };
         Returns: {
+          selected_option_id: string;
           is_correct: boolean;
           explanation: string;
+          was_already_locked: boolean;
         }[];
+      };
+      sync_practice_attempt: {
+        Args: { target_attempt_id: string };
+        Returns: Database["public"]["Tables"]["attempts"]["Row"];
       };
       set_practice_flag: {
         Args: {

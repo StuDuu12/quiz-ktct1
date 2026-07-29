@@ -8,6 +8,7 @@ const migrationPaths = [
   path.resolve("supabase/migrations/202607290002_rls_policies.sql"),
   path.resolve("supabase/migrations/202607290003_learner_progress.sql"),
   path.resolve("supabase/migrations/202607290004_practice_sessions.sql"),
+  path.resolve("supabase/migrations/202607290005_harden_practice_sessions.sql"),
 ];
 
 const expectedTables = [
@@ -149,6 +150,8 @@ describe("Supabase database migrations", () => {
         "save_practice_answer",
         "set_practice_flag",
         "finish_practice_attempt",
+        "sync_practice_attempt",
+        "strip_practice_snapshot_explanation",
         "get_attempt_results",
         "write_audit_log",
       ]),

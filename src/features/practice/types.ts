@@ -28,20 +28,22 @@ export type PracticeState = {
   chapterPosition: number;
   chapterTitle: string;
   currentQuestionId: string;
-  status: "in_progress" | "submitted";
+  status: "in_progress" | "submitted" | "expired";
   score?: number | null;
   questions: PracticeQuestion[];
   answers: Record<string, PracticeAnswer>;
 };
 
 export type PracticeFeedback = {
+  optionId: string;
   isCorrect: boolean;
   explanation: string;
+  reconciled: boolean;
 };
 
-export type FinishPracticeResult = {
-  score: number;
-};
+export type FinishPracticeResult =
+  | { status: "submitted"; score: number }
+  | { status: "expired"; score: null };
 
 export type SavePracticeAnswer = (
   attemptId: string,

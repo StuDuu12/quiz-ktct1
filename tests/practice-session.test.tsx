@@ -49,8 +49,10 @@ const initialState: PracticeState = {
 describe("PracticeSession", () => {
   it("submits keyboard answers once and shows immediate feedback", async () => {
     const saveAnswer = vi.fn().mockResolvedValue({
+      optionId: "b1",
       isCorrect: false,
       explanation: "Đáp án A mới đúng.",
+      reconciled: false,
     });
 
     render(
@@ -58,7 +60,7 @@ describe("PracticeSession", () => {
         initialState={initialState}
         saveAnswer={saveAnswer}
         saveFlag={vi.fn().mockResolvedValue(undefined)}
-        finish={vi.fn().mockResolvedValue({ score: 0 })}
+        finish={vi.fn().mockResolvedValue({ status: "submitted", score: 0 })}
       />,
     );
 
@@ -83,7 +85,7 @@ describe("PracticeSession", () => {
         initialState={initialState}
         saveAnswer={vi.fn()}
         saveFlag={saveFlag}
-        finish={vi.fn().mockResolvedValue({ score: 0 })}
+        finish={vi.fn().mockResolvedValue({ status: "submitted", score: 0 })}
       />,
     );
 
@@ -102,7 +104,7 @@ describe("PracticeSession", () => {
   });
 
   it("requires review confirmation before finishing", async () => {
-    const finish = vi.fn().mockResolvedValue({ score: 0 });
+    const finish = vi.fn().mockResolvedValue({ status: "submitted", score: 0 });
 
     render(
       <PracticeSession
@@ -133,5 +135,133 @@ describe("PracticeSession", () => {
     );
 
     expect(screen.getByText("75%")).toBeInTheDocument();
+  });
+
+  it("reconciles a losing tab to the option already saved by another tab", async () => {
+    const saveAnswer = vi.fn().mockResolvedValue({
+      optionId: "a1",
+      isCorrect: true,
+      explanation: "Đáp án A đúng.",
+      reconciled: true,
+    });
+    render(
+      <PracticeSession
+        initialState={initialState}
+        saveAnswer={saveAnswer}
+        saveFlag={vi.fn()}
+        finish={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("radio", { name: /Đáp án B/ }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("radio", { name: /Đáp án A/ })).toHaveAttribute(
+        "aria-checked",
+        "true",
+      ),
+    );
+    expect(screen.getByRole("radio", { name: /Đáp án B/ })).toHaveAttribute(
+      "aria-checked",
+      "false",
+    );
+    expect(screen.getByText("Đáp án A đúng.")).toBeInTheDocument();
+  });
+
+  it("renders an expired reload with a clear start-new path", () => {
+    render(
+      <PracticeSession
+        initialState={{ ...initialState, status: "expired" }}
+        saveAnswer={vi.fn()}
+        saveFlag={vi.fn()}
+        finish={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Lượt luyện tập đã hết hạn" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Bắt đầu lượt mới/ })).toHaveAttribute(
+      "href",
+      "/courses/ktct/chapters/1/practice",
+    );
+  });
+
+  it("renders expiry when the server expires the attempt during finish", async () => {
+    render(
+      <PracticeSession
+        initialState={initialState}
+        saveAnswer={vi.fn()}
+        saveFlag={vi.fn()}
+        finish={vi.fn().mockResolvedValue({ status: "expired", score: null })}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Kết thúc" }));
+    fireEvent.click(screen.getByRole("button", { name: "Xác nhận hoàn thành" }));
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", { name: "Lượt luyện tập đã hết hạn" }),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it("moves focus into the modal, traps it, closes on Escape, and restores focus", () => {
+    render(
+      <PracticeSession
+        initialState={initialState}
+        saveAnswer={vi.fn()}
+        saveFlag={vi.fn()}
+        finish={vi.fn()}
+      />,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Kết thúc" });
+    trigger.focus();
+    fireEvent.click(trigger);
+
+    const dialog = screen.getByRole("dialog", {
+      name: "Rà soát lượt luyện tập",
+    });
+    expect(screen.getByRole("main")).toHaveAttribute("inert");
+    expect(screen.getByRole("button", { name: "Đóng rà soát" })).toHaveFocus();
+
+    const confirm = screen.getByRole("button", { name: "Xác nhận hoàn thành" });
+    confirm.focus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(screen.getByRole("button", { name: "Đóng rà soát" })).toHaveFocus();
+
+    fireEvent.keyDown(dialog, { key: "Escape" });
+    expect(
+      screen.queryByRole("dialog", { name: "Rà soát lượt luyện tập" }),
+    ).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it("ignores answer and flag shortcuts from editable targets", () => {
+    const saveAnswer = vi.fn();
+    const saveFlag = vi.fn();
+    render(
+      <PracticeSession
+        initialState={initialState}
+        saveAnswer={saveAnswer}
+        saveFlag={saveFlag}
+        finish={vi.fn()}
+      />,
+    );
+    const input = document.createElement("input");
+    document.body.appendChild(input);
+    const editor = document.createElement("div");
+    editor.setAttribute("contenteditable", "true");
+    document.body.appendChild(editor);
+
+    fireEvent.keyDown(input, { key: "2" });
+    fireEvent.keyDown(editor, { key: "f" });
+
+    expect(saveAnswer).not.toHaveBeenCalled();
+    expect(saveFlag).not.toHaveBeenCalled();
+    input.remove();
+    editor.remove();
   });
 });
