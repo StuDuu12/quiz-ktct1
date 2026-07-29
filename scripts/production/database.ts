@@ -98,6 +98,56 @@ async function publishedQuestionOptionCount(client: SupabaseClient) {
   return count;
 }
 
+async function scopedCourseContentCounts(
+  client: SupabaseClient,
+  courseId: string,
+) {
+  const chapterResult = await client
+    .from("chapters")
+    .select("id", { count: "exact" })
+    .eq("course_id", courseId);
+  if (chapterResult.error || chapterResult.count === null) {
+    operationFailed("Count production course chapters", chapterResult.error);
+  }
+  const chapterIds = chapterResult.data.map(({ id }) => id);
+  if (!chapterIds.length) {
+    return {
+      chapters: 0,
+      questions: 0,
+      publishedQuestionOptions: 0,
+    };
+  }
+
+  const [questionResult, optionResult] = await Promise.all([
+    client
+      .from("questions")
+      .select("id", { count: "exact", head: true })
+      .in("chapter_id", chapterIds),
+    client
+      .from("question_options")
+      .select(
+        "id,questions!inner(status,chapter_id)",
+        { count: "exact", head: true },
+      )
+      .eq("questions.status", "published")
+      .in("questions.chapter_id", chapterIds),
+  ]);
+  if (questionResult.error || questionResult.count === null) {
+    operationFailed("Count production course questions", questionResult.error);
+  }
+  if (optionResult.error || optionResult.count === null) {
+    operationFailed(
+      "Count production course published question options",
+      optionResult.error,
+    );
+  }
+  return {
+    chapters: chapterResult.count,
+    questions: questionResult.count,
+    publishedQuestionOptions: optionResult.count,
+  };
+}
+
 export function createProductionClient(environment: ProductionEnvironment) {
   return createClient(
     environment.supabaseUrl,
@@ -123,16 +173,15 @@ export async function verifyProductionCounts(
     operationFailed("Resolve production course", targetCourse.error);
   }
   const courseId = targetCourse.data?.id ?? null;
-  const [
-    chapters,
-    questions,
-    publishedQuestionOptions,
-    activeMockExamConfigRows,
-  ] =
+  const [contentCounts, activeMockExamConfigRows] =
     await Promise.all([
-      exactCount(client, "chapters"),
-      exactCount(client, "questions"),
-      publishedQuestionOptionCount(client),
+      courseId
+        ? scopedCourseContentCounts(client, courseId)
+        : Promise.resolve({
+            chapters: 0,
+            questions: 0,
+            publishedQuestionOptions: 0,
+          }),
       courseId
         ? client
             .from("exam_configs")
@@ -151,6 +200,7 @@ export async function verifyProductionCounts(
   }
   const activeMockExamConfigs = activeMockExamConfigRows.data?.length ?? 0;
   const mockExamConfig = activeMockExamConfigRows.data?.[0];
+  const { chapters, questions, publishedQuestionOptions } = contentCounts;
   const counts = {
     courses: courseId ? 1 : 0,
     chapters,

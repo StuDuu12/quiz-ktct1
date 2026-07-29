@@ -35,6 +35,7 @@ class MemoryQuery implements PromiseLike<unknown> {
   private operation: "select" | "insert" | "upsert" | "update" = "select";
   private payload: Row | Row[] | null = null;
   private head = false;
+  private countRequested = false;
   private filters: Array<[string, unknown]> = [];
   private rangeStart = 0;
   private rangeEnd = Number.POSITIVE_INFINITY;
@@ -47,6 +48,7 @@ class MemoryQuery implements PromiseLike<unknown> {
 
   select(_columns?: string, options?: { count?: string; head?: boolean }) {
     this.head = options?.head === true;
+    this.countRequested = options?.count === "exact";
     return this;
   }
 
@@ -114,7 +116,7 @@ class MemoryQuery implements PromiseLike<unknown> {
 
   private matches(row: Row) {
     return this.filters.every(([column, expected]) =>
-      column === "questions.status"
+      column.startsWith("questions.")
         ? true
         :
       expected instanceof Set
@@ -182,13 +184,23 @@ class MemoryQuery implements PromiseLike<unknown> {
     }
 
     let selected = rows.filter((row) => this.matches(row));
-    if (this.table === "question_options" && this.filters.some(([key]) => key === "questions.status")) {
+    if (
+      this.table === "question_options" &&
+      this.filters.some(([key]) => key.startsWith("questions."))
+    ) {
       const questions = this.client.tables.get("questions") ?? [];
       selected = selected.filter((option) =>
         questions.some(
           (question) =>
             question.id === option.question_id &&
-            question.status === "published",
+            this.filters
+              .filter(([column]) => column.startsWith("questions."))
+              .every(([column, expected]) => {
+                const questionColumn = column.slice("questions.".length);
+                return expected instanceof Set
+                  ? expected.has(question[questionColumn])
+                  : question[questionColumn] === expected;
+              }),
         ),
       );
     }
@@ -205,6 +217,7 @@ class MemoryQuery implements PromiseLike<unknown> {
     return {
       data: selected.slice(this.rangeStart, this.rangeEnd + 1),
       error: null,
+      ...(this.countRequested ? { count: selected.length } : {}),
     };
   }
 }
@@ -223,24 +236,34 @@ function populateVerifiedContent(
   ],
 ) {
   client.tables.set("courses", courses);
-  client.tables.set(
-    "chapters",
-    Array.from({ length: 6 }, (_, index) => ({ id: `chapter-${index}` })),
-  );
-  client.tables.set(
-    "questions",
-    Array.from({ length: 497 }, (_, index) => ({
-      id: `question-${index}`,
-      status: "published",
+  appendCourseContent(client, "course-1", "target", 6, 497);
+}
+
+function appendCourseContent(
+  client: MemoryProductionClient,
+  courseId: string,
+  prefix: string,
+  chapterCount: number,
+  questionCount: number,
+) {
+  const chapters = Array.from({ length: chapterCount }, (_, index) => ({
+    id: `${prefix}-chapter-${index}`,
+    course_id: courseId,
+  }));
+  const questions = Array.from({ length: questionCount }, (_, index) => ({
+    id: `${prefix}-question-${index}`,
+    chapter_id: chapters[index % chapters.length]?.id,
+    status: "published",
+  }));
+  const options = questions.flatMap((question, questionIndex) =>
+    Array.from({ length: 4 }, (_, optionIndex) => ({
+      id: `${prefix}-option-${questionIndex}-${optionIndex}`,
+      question_id: question.id,
     })),
   );
-  client.tables.set(
-    "question_options",
-    Array.from({ length: 1_988 }, (_, index) => ({
-      id: `option-${index}`,
-      question_id: `question-${Math.floor(index / 4)}`,
-    })),
-  );
+  client.tables.get("chapters")!.push(...chapters);
+  client.tables.get("questions")!.push(...questions);
+  client.tables.get("question_options")!.push(...options);
 }
 
 describe("production mock exam provisioning", () => {
@@ -363,10 +386,17 @@ describe("production mock exam provisioning", () => {
         is_active: true,
       },
     ]);
+    appendCourseContent(client, "course-2", "other", 6, 497);
 
     await expect(
       verifyProductionCounts(asSupabase(client)),
-    ).resolves.toMatchObject({ courses: 1, activeMockExamConfigs: 1 });
+    ).resolves.toMatchObject({
+      courses: 1,
+      chapters: 6,
+      questions: 497,
+      publishedQuestionOptions: 1_988,
+      activeMockExamConfigs: 1,
+    });
   });
 
   it("does not accept another course's active config for KTCT", async () => {
@@ -388,6 +418,30 @@ describe("production mock exam provisioning", () => {
 
     await expect(verifyProductionCounts(asSupabase(client))).rejects.toThrow(
       /active_mock_exam_configs=0/,
+    );
+  });
+
+  it("does not let another course compensate for missing KTCT content", async () => {
+    const client = new MemoryProductionClient();
+    client.tables.set("courses", [
+      { id: "course-1", slug: "kinh-te-chinh-tri-mac-lenin" },
+      { id: "course-2", slug: "another-course" },
+    ]);
+    appendCourseContent(client, "course-1", "target", 5, 496);
+    appendCourseContent(client, "course-2", "other", 1, 1);
+    client.tables.set("exam_configs", [
+      {
+        id: "config-1",
+        course_id: "course-1",
+        kind: "mock_exam",
+        question_count: 40,
+        duration_seconds: 3_600,
+        is_active: true,
+      },
+    ]);
+
+    await expect(verifyProductionCounts(asSupabase(client))).rejects.toThrow(
+      /chapters=5, questions=496, published_question_options=1984/,
     );
   });
 
