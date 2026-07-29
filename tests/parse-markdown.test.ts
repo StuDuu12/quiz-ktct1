@@ -71,6 +71,28 @@ describe("parseQuestionMarkdown", () => {
     ]);
   });
 
+  it("reports ambiguous joined options instead of splitting label-shaped content", () => {
+    const source = [
+      "Câu 11: Nội dung?",
+      "",
+      "A. Một B. Smith là tác giả B. Hai C. Ba D. Bốn",
+      "",
+      "**Đáp án đúng: B**",
+      "",
+      "**Giải thích:** Giải thích mẫu.",
+    ].join("\n");
+
+    const result = parseQuestionMarkdown(source);
+
+    expect(result.questions).toEqual([]);
+    expect(result.issues).toEqual([
+      expect.objectContaining({
+        code: "ambiguous-option-markers",
+        message: expect.stringContaining("B"),
+      }),
+    ]);
+  });
+
   it("turns the four Chapter 1 subquestions after the Câu 46 lead-in into questions 46–49", () => {
     const source = [
       "Câu 46. Hãy đọc thông tin dưới đây và trả lời câu hỏi",
@@ -104,6 +126,75 @@ describe("parseQuestionMarkdown", () => {
       "“Đây là lời dẫn dùng chung.”",
     );
     expect(result.questions[0].content).toContain("Tiểu câu 1?");
+  });
+
+  it("reports malformed question blocks without turning them into shared lead-ins", () => {
+    const source = [
+      "Câu 9: Câu không có phương án.",
+      "",
+      "Câu 10: Câu chỉ có ba phương án?",
+      "",
+      "A. Một",
+      "",
+      "B. Hai",
+      "",
+      "C. Ba",
+      "",
+      "**Đáp án đúng: B**",
+      "",
+      "**Giải thích:** Thiếu phương án D.",
+      "",
+      completeQuestion({ number: 20 }),
+      "",
+      "| Câu số | Đáp án |",
+      "| --- | --- |",
+      "| 9 | A | Không có câu hợp lệ |",
+      "| 10 | B | Không có câu hợp lệ |",
+      "| 20 | B | Có câu hợp lệ |",
+    ].join("\n");
+
+    const result = parseQuestionMarkdown(source);
+
+    expect(result.questions).toHaveLength(1);
+    expect(result.questions[0].sourceNumber).toBe(20);
+    expect(result.questions[0].content).toBe("Nội dung?");
+    expect(result.issues.map((issue) => issue.code)).toEqual([
+      "optionless-question",
+      "incomplete-question",
+      "orphan-answer-row",
+      "orphan-answer-row",
+    ]);
+    expect(
+      result.issues
+        .filter((issue) => issue.code === "orphan-answer-row")
+        .map((issue) => issue.message),
+    ).toEqual([
+      expect.stringContaining("9"),
+      expect.stringContaining("10"),
+    ]);
+  });
+
+  it("requires all four subquestions before recognizing the Chapter 1 shared lead-in", () => {
+    const source = [
+      "Câu 46. Hãy đọc thông tin dưới đây và trả lời câu hỏi",
+      "",
+      "“Lời dẫn không có đủ bốn tiểu câu.”",
+      "",
+      completeQuestion({ number: 1 }),
+    ].join("\n");
+
+    const result = parseQuestionMarkdown(source);
+
+    expect(result.questions.map((question) => question.sourceNumber)).toEqual([
+      1,
+    ]);
+    expect(result.questions[0].content).toBe("Nội dung?");
+    expect(result.issues).toEqual([
+      expect.objectContaining({
+        code: "optionless-question",
+        message: expect.stringContaining("46"),
+      }),
+    ]);
   });
 
   it("does not import a Markdown answer table into question content", () => {
@@ -250,6 +341,31 @@ describe("verified KTCT sources", () => {
         code: "orphan-answer-row",
       }),
     ]);
+  });
+
+  it("never includes a Markdown answer table in seed question fields", () => {
+    const result = buildKtctSeed(process.cwd());
+    const serializedFields = result.questions.flatMap((question) => [
+      question.content,
+      question.explanation,
+      ...question.options.map((option) => option.content),
+    ]);
+
+    expect(
+      serializedFields.filter(
+        (field) =>
+          /^\|\s*Câu số\s*\|/imu.test(field) ||
+          /^\|\s*\d+\s*\|\s*[A-D]\s*\|/mu.test(field),
+      ),
+    ).toEqual([]);
+
+    const finalChapterSixQuestion = result.questions.at(-1);
+    expect(finalChapterSixQuestion).toMatchObject({
+      chapter: 6,
+      sourceNumber: 50,
+      explanation:
+        "Tổng hợp từ mục 3.b (tác động của cách mạng công nghiệp 4.0, đa tầng nấc) và mục 3.d (hoàn thiện hệ thống pháp luật, cải cách hành chính minh bạch, hoàn thiện pháp luật về tương trợ tư pháp, phòng ngừa tranh chấp).",
+    });
   });
 });
 

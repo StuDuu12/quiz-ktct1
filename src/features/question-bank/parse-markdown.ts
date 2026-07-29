@@ -10,6 +10,8 @@ const INLINE_ANSWER =
   /\*{0,2}\s*Đáp án đúng\s*:\s*([A-Da-d])\s*\*{0,2}/iu;
 const EXPLANATION_MARKER =
   /\*{0,2}\s*Giải thích\s*:\s*\*{0,2}\s*/iu;
+const ANSWER_DATA_BOUNDARY =
+  /^\s*(?:ĐÁP ÁN\s*$|\|\s*Câu số\s*\|\s*Đáp án(?: đúng)?\s*\|)/imu;
 const OPTION_LABELS: OptionLabel[] = ["A", "B", "C", "D"];
 
 type QuestionSegment = {
@@ -26,6 +28,17 @@ type OptionMarker = {
   lineStart: boolean;
 };
 
+type OptionSelection = {
+  markers: OptionMarker[];
+  ambiguousLabels: OptionLabel[];
+};
+
+type SharedLead = {
+  content: string;
+  sourceNumber: number;
+  nextSubquestion: number;
+};
+
 function normalizeMarkdown(value: string): string {
   return value
     .replace(/\r\n?/g, "\n")
@@ -35,6 +48,11 @@ function normalizeMarkdown(value: string): string {
     .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+function beforeAnswerData(value: string): string {
+  const boundary = ANSWER_DATA_BOUNDARY.exec(value);
+  return boundary ? value.slice(0, boundary.index) : value;
 }
 
 function questionSegments(source: string): QuestionSegment[] {
@@ -79,9 +97,10 @@ function optionMarkers(value: string): OptionMarker[] {
   return markers;
 }
 
-function orderedOptionMarkers(value: string): OptionMarker[] {
+function selectOptionMarkers(value: string): OptionSelection {
   const candidates = optionMarkers(value);
   const selected: OptionMarker[] = [];
+  const ambiguousLabels: OptionLabel[] = [];
   let after = -1;
 
   for (const label of OPTION_LABELS) {
@@ -89,23 +108,72 @@ function orderedOptionMarkers(value: string): OptionMarker[] {
       (candidate) =>
         candidate.label === label && candidate.markerStart > after,
     );
-    const marker =
-      candidatesForLabel.find((candidate) => candidate.lineStart) ??
-      candidatesForLabel[0];
+    const lineStartCandidates = candidatesForLabel.filter(
+      (candidate) => candidate.lineStart,
+    );
+
+    if (
+      lineStartCandidates.length > 1 ||
+      (lineStartCandidates.length === 0 && candidatesForLabel.length > 1)
+    ) {
+      ambiguousLabels.push(label);
+      break;
+    }
+
+    const marker = lineStartCandidates[0] ?? candidatesForLabel[0];
 
     if (!marker) {
-      return [];
+      break;
     }
 
     selected.push(marker);
     after = marker.markerStart;
   }
 
-  return selected;
+  return {
+    markers:
+      ambiguousLabels.length === 0 && selected.length === OPTION_LABELS.length
+        ? selected
+        : [],
+    ambiguousLabels,
+  };
+}
+
+function questionArea(segment: QuestionSegment): string {
+  const answerMatch = INLINE_ANSWER.exec(segment.body);
+  return answerMatch
+    ? segment.body.slice(0, answerMatch.index)
+    : segment.body;
+}
+
+function isChapterOneSharedLead(
+  segment: QuestionSegment,
+  subquestions: QuestionSegment[],
+): boolean {
+  if (
+    segment.number !== 46 ||
+    !/^Hãy đọc thông tin dưới đây và trả lời câu hỏi\s*$/iu.test(
+      segment.headerText,
+    ) ||
+    INLINE_ANSWER.test(segment.body) ||
+    subquestions.length !== 4
+  ) {
+    return false;
+  }
+
+  return subquestions.every((subquestion, index) => {
+    const selection = selectOptionMarkers(questionArea(subquestion));
+    return (
+      subquestion.number === index + 1 &&
+      INLINE_ANSWER.test(subquestion.body) &&
+      selection.ambiguousLabels.length === 0 &&
+      selection.markers.length === OPTION_LABELS.length
+    );
+  });
 }
 
 function parseOptions(value: string): ParsedQuestion["options"] {
-  const markers = orderedOptionMarkers(value);
+  const markers = selectOptionMarkers(value).markers;
 
   return markers.map((marker, index) => ({
     label: marker.label,
@@ -124,10 +192,8 @@ function parseQuestion(
   sharedLeadIn: string,
 ): ParsedQuestion | null {
   const answerMatch = INLINE_ANSWER.exec(segment.body);
-  const beforeAnswer = answerMatch
-    ? segment.body.slice(0, answerMatch.index)
-    : segment.body;
-  const markers = orderedOptionMarkers(beforeAnswer);
+  const beforeAnswer = questionArea(segment);
+  const markers = selectOptionMarkers(beforeAnswer).markers;
 
   if (markers.length === 0) {
     return null;
@@ -145,7 +211,7 @@ function parseQuestion(
       )
     : "";
   const explanation = normalizeMarkdown(
-    explanationWithTrailingContent.split(/^\s*ĐÁP ÁN\s*$/imu, 1)[0],
+    beforeAnswerData(explanationWithTrailingContent),
   );
 
   return {
@@ -187,39 +253,82 @@ export function parseQuestionMarkdown(source: string): ParseResult {
   const segments = questionSegments(normalizedSource);
   const sourceQuestionNumbers = new Set<number>();
   const questions: ParsedQuestion[] = [];
-  let sharedLeadIn = "";
-  let sharedLeadNumber = 0;
-  let sharedLeadOffset = 0;
+  const issues: ParseIssue[] = [];
+  let sharedLead: SharedLead | null = null;
 
-  for (const segment of segments) {
-    const markers = orderedOptionMarkers(
-      INLINE_ANSWER.exec(segment.body)
-        ? segment.body.slice(
-            0,
-            INLINE_ANSWER.exec(segment.body)?.index ?? segment.body.length,
-          )
-        : segment.body,
-    );
+  for (const [index, segment] of segments.entries()) {
+    const area = questionArea(segment);
+    const selection = selectOptionMarkers(area);
+    const markers = selection.markers;
+
+    if (selection.ambiguousLabels.length > 0) {
+      issues.push({
+        line: segment.line,
+        code: "ambiguous-option-markers",
+        message: `Question ${segment.number} has ambiguous inline option marker(s): ${selection.ambiguousLabels.join(", ")}.`,
+      });
+      sourceQuestionNumbers.add(segment.number);
+      sharedLead = null;
+      continue;
+    }
 
     if (markers.length === 0) {
-      const leadBody = segment.body.split(/^\s*ĐÁP ÁN\s*$/imu, 1)[0];
-      sharedLeadIn = normalizeMarkdown(
-        `${segment.headerText}\n${leadBody}`,
-      );
-      sharedLeadNumber = segment.number;
-      sharedLeadOffset = 0;
-      sourceQuestionNumbers.add(segment.number);
+      if (
+        isChapterOneSharedLead(
+          segment,
+          segments.slice(index + 1, index + 5),
+        )
+      ) {
+        sharedLead = {
+          content: normalizeMarkdown(
+            `${segment.headerText}\n${beforeAnswerData(segment.body)}`,
+          ),
+          sourceNumber: segment.number,
+          nextSubquestion: 1,
+        };
+        sourceQuestionNumbers.add(segment.number);
+        continue;
+      }
+
+      const hasOptionMarkers = optionMarkers(area).length > 0;
+      issues.push({
+        line: segment.line,
+        code: hasOptionMarkers
+          ? "incomplete-question"
+          : "optionless-question",
+        message: hasOptionMarkers
+          ? `Question ${segment.number} does not contain one unambiguous option for each label A–D.`
+          : `Question ${segment.number} does not contain any options.`,
+      });
+      sharedLead = null;
       continue;
     }
 
     sourceQuestionNumbers.add(segment.number);
-    const sourceNumber = sharedLeadIn
-      ? sharedLeadNumber + sharedLeadOffset++
-      : segment.number;
+    let sourceNumber = segment.number;
+    let sharedLeadContent = "";
+
+    if (
+      sharedLead &&
+      sharedLead.nextSubquestion <= 4 &&
+      segment.number === sharedLead.nextSubquestion
+    ) {
+      sourceNumber =
+        sharedLead.sourceNumber + sharedLead.nextSubquestion - 1;
+      sharedLeadContent = sharedLead.content;
+      sharedLead.nextSubquestion += 1;
+
+      if (sharedLead.nextSubquestion > 4) {
+        sharedLead = null;
+      }
+    } else {
+      sharedLead = null;
+    }
+
     const question = parseQuestion(
       segment,
       sourceNumber,
-      sharedLeadIn,
+      sharedLeadContent,
     );
 
     if (question) {
@@ -229,6 +338,9 @@ export function parseQuestionMarkdown(source: string): ParseResult {
 
   return {
     questions,
-    issues: orphanAnswerIssues(normalizedSource, sourceQuestionNumbers),
+    issues: [
+      ...issues,
+      ...orphanAnswerIssues(normalizedSource, sourceQuestionNumbers),
+    ],
   };
 }
