@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { AuthShell } from "@/src/components/auth/auth-shell";
 import {
   getAuthErrorMessage,
   requestPasswordReset,
@@ -28,21 +29,22 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="app-shell">
-      <h1>Đặt lại mật khẩu</h1>
-      <form action={onSubmit} className="grid gap-4" noValidate>
+    <AuthShell
+      eyebrow="Khôi phục truy cập"
+      title="Đặt lại mật khẩu"
+      description="Nhập email tài khoản. Chúng tôi sẽ gửi cho bạn một liên kết bảo mật."
+      footer={<p><Link href="/login">← Quay lại đăng nhập</Link></p>}
+    >
+      <form action={onSubmit} className="auth-form" noValidate>
         <label>
-          Email
-          <input required name="email" type="email" autoComplete="email" />
+          <span>Email</span>
+          <input required name="email" type="email" autoComplete="email" placeholder="ban@example.com" />
         </label>
-        {message && <p role="status">{message}</p>}
-        <button disabled={isSubmitting} type="submit">
+        {message && <p className="auth-message" role="status">{message}</p>}
+        <button className="auth-submit" disabled={isSubmitting} type="submit">
           {isSubmitting ? "Đang gửi…" : "Gửi liên kết đặt lại"}
         </button>
       </form>
-      <p>
-        <Link href="/login">Quay lại đăng nhập</Link>
-      </p>
-    </main>
+    </AuthShell>
   );
 }

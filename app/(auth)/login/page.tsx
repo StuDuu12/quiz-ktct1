@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { AuthShell } from "@/src/components/auth/auth-shell";
 import { getAuthErrorMessage, signIn } from "@/src/lib/supabase/browser";
 
 export default function LoginPage() {
@@ -28,33 +29,38 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="app-shell">
-      <h1>Đăng nhập</h1>
-      <form action={onSubmit} className="grid gap-4" noValidate>
+    <AuthShell
+      eyebrow="Chào mừng trở lại"
+      title="Đăng nhập"
+      description="Tiếp tục lộ trình học và xem lại những lần làm bài trước."
+      footer={
+        <p>Chưa có tài khoản? <Link href="/register">Đăng ký học viên</Link></p>
+      }
+    >
+      <form action={onSubmit} className="auth-form" noValidate>
         <label>
-          Email
-          <input required name="email" type="email" autoComplete="email" />
+          <span>Email</span>
+          <input required name="email" type="email" autoComplete="email" placeholder="ban@example.com" />
         </label>
         <label>
-          Mật khẩu
+          <span>Mật khẩu</span>
           <input
             required
             name="password"
             type="password"
             autoComplete="current-password"
+            placeholder="Nhập mật khẩu"
           />
         </label>
-        {message && <p role="alert">{message}</p>}
-        <button disabled={isSubmitting} type="submit">
+        <div className="auth-form-meta">
+          <span />
+          <Link href="/forgot-password">Quên mật khẩu?</Link>
+        </div>
+        {message && <p className="auth-message auth-message-error" role="alert">{message}</p>}
+        <button className="auth-submit" disabled={isSubmitting} type="submit">
           {isSubmitting ? "Đang đăng nhập…" : "Đăng nhập"}
         </button>
       </form>
-      <p>
-        <Link href="/forgot-password">Quên mật khẩu?</Link>
-      </p>
-      <p>
-        Chưa có tài khoản? <Link href="/register">Đăng ký học viên</Link>
-      </p>
-    </main>
+    </AuthShell>
   );
 }

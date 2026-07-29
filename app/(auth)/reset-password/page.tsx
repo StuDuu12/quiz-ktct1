@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
+import { AuthShell } from "@/src/components/auth/auth-shell";
 import {
   createBrowserSupabaseClient,
   getAuthErrorMessage,
@@ -40,37 +41,40 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="app-shell">
-      <h1>Chọn mật khẩu mới</h1>
-      <form action={onSubmit} className="grid gap-4" noValidate>
+    <AuthShell
+      eyebrow="Bảo mật tài khoản"
+      title="Chọn mật khẩu mới"
+      description="Dùng ít nhất 8 ký tự và tránh sử dụng lại mật khẩu cũ."
+      footer={<p><Link href="/forgot-password">Yêu cầu liên kết mới</Link></p>}
+    >
+      <form action={onSubmit} className="auth-form" noValidate>
         <label>
-          Mật khẩu mới
+          <span>Mật khẩu mới</span>
           <input
             required
             minLength={8}
             name="password"
             type="password"
             autoComplete="new-password"
+            placeholder="Tối thiểu 8 ký tự"
           />
         </label>
         <label>
-          Xác nhận mật khẩu mới
+          <span>Xác nhận mật khẩu mới</span>
           <input
             required
             minLength={8}
             name="confirmPassword"
             type="password"
             autoComplete="new-password"
+            placeholder="Nhập lại mật khẩu"
           />
         </label>
-        {message && <p role="alert">{message}</p>}
-        <button disabled={isSubmitting} type="submit">
+        {message && <p className="auth-message auth-message-error" role="alert">{message}</p>}
+        <button className="auth-submit" disabled={isSubmitting} type="submit">
           {isSubmitting ? "Đang cập nhật…" : "Cập nhật mật khẩu"}
         </button>
       </form>
-      <p>
-        <Link href="/forgot-password">Yêu cầu liên kết mới</Link>
-      </p>
-    </main>
+    </AuthShell>
   );
 }

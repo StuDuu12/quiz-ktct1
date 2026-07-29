@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { AuthShell } from "@/src/components/auth/auth-shell";
 import {
   getAuthErrorMessage,
   signUpStudent,
@@ -46,42 +47,48 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="app-shell">
-      <h1>Đăng ký học viên</h1>
-      <form action={onSubmit} className="grid gap-4" noValidate>
+    <AuthShell
+      eyebrow="Bắt đầu hành trình"
+      title="Đăng ký học viên"
+      description="Tạo tài khoản để lưu tiến độ, lịch sử và kết quả của bạn."
+      footer={<p>Đã có tài khoản? <Link href="/login">Đăng nhập</Link></p>}
+    >
+      <form action={onSubmit} className="auth-form" noValidate>
         <label>
-          Họ và tên
-          <input required name="fullName" autoComplete="name" />
+          <span>Họ và tên</span>
+          <input required name="fullName" autoComplete="name" placeholder="Nguyễn Văn A" />
         </label>
         <label>
-          Email
-          <input required name="email" type="email" autoComplete="email" />
+          <span>Email</span>
+          <input required name="email" type="email" autoComplete="email" placeholder="ban@example.com" />
         </label>
         <label>
-          Mật khẩu
+          <span>Mật khẩu</span>
           <input
             required
             minLength={8}
             name="password"
             type="password"
             autoComplete="new-password"
+            placeholder="Tối thiểu 8 ký tự"
           />
         </label>
         <label>
-          Xác nhận mật khẩu
+          <span>Xác nhận mật khẩu</span>
           <input
             required
             minLength={8}
             name="confirmPassword"
             type="password"
             autoComplete="new-password"
+            placeholder="Nhập lại mật khẩu"
           />
         </label>
-        <label>
-          <input required name="terms" type="checkbox" /> Tôi đồng ý với điều
-          khoản sử dụng.
+        <label className="auth-check">
+          <input required name="terms" type="checkbox" />
+          <span>Tôi đồng ý với điều khoản sử dụng.</span>
         </label>
-        {message && <p role="status">{message}</p>}
+        {message && <p className="auth-message" role="status">{message}</p>}
         {registeredEmail &&
         process.env.NEXT_PUBLIC_E2E_MODE === "1" ? (
           <Link
@@ -90,13 +97,10 @@ export default function RegisterPage() {
             Xác minh email thử nghiệm
           </Link>
         ) : null}
-        <button disabled={isSubmitting} type="submit">
+        <button className="auth-submit" disabled={isSubmitting} type="submit">
           {isSubmitting ? "Đang tạo tài khoản…" : "Đăng ký"}
         </button>
       </form>
-      <p>
-        Đã có tài khoản? <Link href="/login">Đăng nhập</Link>
-      </p>
-    </main>
+    </AuthShell>
   );
 }
