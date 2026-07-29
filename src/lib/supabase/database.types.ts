@@ -702,6 +702,44 @@ export type Database = {
         Args: { target_attempt_id: string };
         Returns: Database["public"]["Tables"]["attempts"]["Row"];
       };
+      save_mock_exam_answer: {
+        Args: {
+          target_attempt_id: string;
+          target_attempt_question_id: string;
+          target_option_id: string;
+        };
+        Returns: {
+          selected_option_id: string;
+          is_flagged: boolean;
+        }[];
+      };
+      set_mock_exam_flag: {
+        Args: {
+          target_attempt_id: string;
+          target_attempt_question_id: string;
+          target_flagged: boolean;
+        };
+        Returns: undefined;
+      };
+      submit_mock_exam_attempt: {
+        Args: { target_attempt_id: string };
+        Returns: Database["public"]["Tables"]["attempts"]["Row"];
+      };
+      sync_mock_exam_attempt: {
+        Args: { target_attempt_id: string };
+        Returns: {
+          id: string;
+          user_id: string;
+          course_id: string;
+          status: Database["public"]["Enums"]["attempt_status"];
+          started_at: string;
+          expires_at: string;
+          submitted_at: string | null;
+          score: number | null;
+          duration_seconds: number | null;
+          server_now: string;
+        }[];
+      };
       write_audit_log: {
         Args: {
           audit_action: string;

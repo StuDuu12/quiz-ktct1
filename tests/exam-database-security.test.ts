@@ -31,6 +31,7 @@ const migrationPaths = [
   "202607290005_harden_practice_sessions.sql",
   "202607290006_preserve_practice_snapshot_scope.sql",
   "202607290007_balanced_mock_exams.sql",
+  "202607290008_resilient_mock_exam_sessions.sql",
 ].map((file) => path.resolve("supabase/migrations", file));
 
 function uuid(prefix: number, sequence: number) {
@@ -529,12 +530,9 @@ describe("secure balanced mock-exam creation", () => {
     expect(secretAfter.rows).toEqual(secretBefore.rows);
 
     await assumeIdentity(ids.student);
-    await database.exec(`
-      insert into public.attempt_answers (
-        attempt_question_id,
-        selected_option_id
-      )
-      values (
+    await database.query(`
+      select * from public.save_mock_exam_answer(
+        '${balancedAttemptId}',
         '${original.attempt_question_id}',
         '${secretBefore.rows[0]!.correct_option_id}'
       )
@@ -546,5 +544,306 @@ describe("secure balanced mock-exam creation", () => {
       where attempt_question_id = '${original.attempt_question_id}'
     `);
     expect(graded.rows).toEqual([{ is_correct: true }]);
+  });
+
+  it("lets only the owner change answers and flags on an active mock exam", async () => {
+    await assumeIdentity(ids.student);
+    const attempt = await startAttempt(ids.balancedCourse, ids.balancedConfig);
+    const question = await database.query<{
+      attempt_question_id: string;
+      first_option_id: string;
+      second_option_id: string;
+    }>(`
+      select
+        aq.id as attempt_question_id,
+        aq.question_snapshot -> 'options' -> 0 ->> 'id' as first_option_id,
+        aq.question_snapshot -> 'options' -> 1 ->> 'id' as second_option_id
+      from public.attempt_questions aq
+      where aq.attempt_id = '${attempt.id}'
+      order by aq.position
+      limit 1
+    `);
+    const target = question.rows[0]!;
+
+    const firstSave = await database.query<{
+      selected_option_id: string;
+      is_flagged: boolean;
+    }>(`
+      select * from public.save_mock_exam_answer(
+        '${attempt.id}',
+        '${target.attempt_question_id}',
+        '${target.first_option_id}'
+      )
+    `);
+    expect(firstSave.rows).toEqual([
+      { selected_option_id: target.first_option_id, is_flagged: false },
+    ]);
+
+    const changed = await database.query<{
+      selected_option_id: string;
+      is_flagged: boolean;
+    }>(`
+      select * from public.save_mock_exam_answer(
+        '${attempt.id}',
+        '${target.attempt_question_id}',
+        '${target.second_option_id}'
+      )
+    `);
+    expect(changed.rows).toEqual([
+      { selected_option_id: target.second_option_id, is_flagged: false },
+    ]);
+    await database.query(`
+      select public.set_mock_exam_flag(
+        '${attempt.id}',
+        '${target.attempt_question_id}',
+        true
+      )
+    `);
+    const persisted = await database.query<{
+      selected_option_id: string;
+      is_flagged: boolean;
+    }>(`
+      select selected_option_id, is_flagged
+      from public.attempt_answers
+      where attempt_question_id = '${target.attempt_question_id}'
+    `);
+    expect(persisted.rows).toEqual([
+      { selected_option_id: target.second_option_id, is_flagged: true },
+    ]);
+    await resetIdentity();
+
+    await assumeIdentity(ids.stranger);
+    await expect(
+      database.query(`
+        select * from public.save_mock_exam_answer(
+          '${attempt.id}',
+          '${target.attempt_question_id}',
+          '${target.first_option_id}'
+        )
+      `),
+    ).rejects.toThrow(/owned|not found/i);
+    await expect(
+      database.query(`
+        select public.set_mock_exam_flag(
+          '${attempt.id}',
+          '${target.attempt_question_id}',
+          false
+        )
+      `),
+    ).rejects.toThrow(/owned|not found/i);
+    await resetIdentity();
+  });
+
+  it("submits idempotently and scores against the immutable secret snapshot", async () => {
+    await assumeIdentity(ids.student);
+    const attempt = await startAttempt(ids.balancedCourse, ids.balancedConfig);
+    const question = await database.query<{
+      attempt_question_id: string;
+      question_id: string;
+    }>(`
+      select id as attempt_question_id, question_id
+      from public.attempt_questions
+      where attempt_id = '${attempt.id}'
+      order by position
+      limit 1
+    `);
+    const target = question.rows[0]!;
+    await resetIdentity();
+    const secret = await database.query<{ correct_option_id: string }>(`
+      select correct_option_id
+      from public.attempt_question_secrets
+      where attempt_question_id = '${target.attempt_question_id}'
+    `);
+    const replacement = await database.query<{ id: string }>(`
+      select id
+      from public.question_options
+      where question_id = '${target.question_id}'
+        and id <> '${secret.rows[0]!.correct_option_id}'
+      order by id
+      limit 1
+    `);
+    await database.exec(`
+      update public.question_options
+      set is_correct = (id = '${replacement.rows[0]!.id}')
+      where question_id = '${target.question_id}'
+    `);
+
+    await assumeIdentity(ids.student);
+    await database.query(`
+      select * from public.save_mock_exam_answer(
+        '${attempt.id}',
+        '${target.attempt_question_id}',
+        '${secret.rows[0]!.correct_option_id}'
+      )
+    `);
+    const first = await database.query<{
+      id: string;
+      status: string;
+      submitted_at: string;
+      score: number;
+      duration_seconds: number;
+    }>(`
+      select
+        id,
+        status,
+        submitted_at,
+        score::double precision as score,
+        duration_seconds
+      from public.submit_mock_exam_attempt('${attempt.id}')
+    `);
+    const repeated = await database.query<{
+      id: string;
+      status: string;
+      submitted_at: string;
+      score: number;
+      duration_seconds: number;
+    }>(`
+      select
+        id,
+        status,
+        submitted_at,
+        score::double precision as score,
+        duration_seconds
+      from public.submit_mock_exam_attempt('${attempt.id}')
+    `);
+
+    expect(first.rows).toEqual([
+      expect.objectContaining({
+        id: attempt.id,
+        status: "submitted",
+        score: 2.5,
+      }),
+    ]);
+    expect(repeated.rows).toEqual(first.rows);
+    await expect(
+      database.query(`
+        select * from public.save_mock_exam_answer(
+          '${attempt.id}',
+          '${target.attempt_question_id}',
+          '${replacement.rows[0]!.id}'
+        )
+      `),
+    ).rejects.toThrow(/in progress/i);
+    await resetIdentity();
+  });
+
+  it("rejects late saves but submits saved answers when the server deadline passes", async () => {
+    await assumeIdentity(ids.student);
+    const attempt = await startAttempt(ids.balancedCourse, ids.balancedConfig);
+    const question = await database.query<{
+      attempt_question_id: string;
+      option_id: string;
+    }>(`
+      select
+        aq.id as attempt_question_id,
+        aq.question_snapshot -> 'options' -> 0 ->> 'id' as option_id
+      from public.attempt_questions aq
+      where aq.attempt_id = '${attempt.id}'
+      order by aq.position
+      limit 1
+    `);
+    const target = question.rows[0]!;
+    await database.query(`
+      select * from public.save_mock_exam_answer(
+        '${attempt.id}',
+        '${target.attempt_question_id}',
+        '${target.option_id}'
+      )
+    `);
+    await resetIdentity();
+    await database.exec(`
+      alter table public.attempts disable trigger protect_attempt_submission;
+      update public.attempts
+      set
+        started_at = clock_timestamp() - interval '2 hours',
+        expires_at = clock_timestamp() - interval '1 hour'
+      where id = '${attempt.id}';
+      alter table public.attempts enable trigger protect_attempt_submission;
+    `);
+
+    await assumeIdentity(ids.student);
+    await expect(
+      database.query(`
+        select * from public.save_mock_exam_answer(
+          '${attempt.id}',
+          '${target.attempt_question_id}',
+          '${target.option_id}'
+        )
+      `),
+    ).rejects.toThrow(/in progress/i);
+    await expect(
+      database.query(`
+        select public.set_mock_exam_flag(
+          '${attempt.id}',
+          '${target.attempt_question_id}',
+          true
+        )
+      `),
+    ).rejects.toThrow(/in progress/i);
+
+    const submitted = await database.query<{
+      status: string;
+      submitted_at: string;
+      score: number;
+    }>(`
+      select
+        status,
+        submitted_at,
+        score::double precision as score
+      from public.sync_mock_exam_attempt('${attempt.id}')
+    `);
+    expect(submitted.rows).toEqual([
+      expect.objectContaining({ status: "submitted" }),
+    ]);
+    const repeated = await database.query<{
+      status: string;
+      submitted_at: string;
+      score: number;
+    }>(`
+      select
+        status,
+        submitted_at,
+        score::double precision as score
+      from public.submit_mock_exam_attempt('${attempt.id}')
+    `);
+    expect(repeated.rows).toEqual(submitted.rows);
+    await resetIdentity();
+  });
+
+  it("removes direct learner writes so all mock-exam mutations cross the RPC boundary", async () => {
+    await assumeIdentity(ids.student);
+    const attempt = await startAttempt(ids.balancedCourse, ids.balancedConfig);
+    const question = await database.query<{
+      attempt_question_id: string;
+      option_id: string;
+    }>(`
+      select
+        aq.id as attempt_question_id,
+        aq.question_snapshot -> 'options' -> 0 ->> 'id' as option_id
+      from public.attempt_questions aq
+      where aq.attempt_id = '${attempt.id}'
+      order by aq.position
+      limit 1
+    `);
+    await expect(
+      database.exec(`
+        insert into public.attempt_answers (
+          attempt_question_id,
+          selected_option_id
+        )
+        values (
+          '${question.rows[0]!.attempt_question_id}',
+          '${question.rows[0]!.option_id}'
+        )
+      `),
+    ).rejects.toThrow();
+    await expect(
+      database.exec(`
+        update public.attempts
+        set status = 'submitted'
+        where id = '${attempt.id}'
+      `),
+    ).rejects.toThrow();
+    await resetIdentity();
   });
 });
