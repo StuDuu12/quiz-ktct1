@@ -99,6 +99,10 @@ export function validateQuestionForStatus(
 
 const statusSchema = z.enum(["draft", "published", "archived"]);
 const uuidSchema = z.string().uuid();
+const userRoleSchema = z.object({
+  userId: z.string().uuid(),
+  role: z.enum(["student", "instructor", "admin"]),
+});
 const courseSchema = z.object({
   id: uuidSchema.nullable(),
   slug: z
@@ -298,6 +302,22 @@ export async function setUserActiveForm(formData: FormData) {
     target_active: String(formData.get("active")) === "true",
   });
   rpcError(error, "USER_STATUS_SAVE_FAILED");
+  revalidatePath("/admin/users");
+}
+
+export async function setUserRoleForm(formData: FormData): Promise<void> {
+  "use server";
+  await requireViewer(["admin"]);
+  const input = userRoleSchema.parse({
+    userId: formData.get("user_id"),
+    role: formData.get("role"),
+  });
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("admin_set_user_role", {
+    target_user_id: input.userId,
+    target_role: input.role,
+  });
+  rpcError(error, "USER_ROLE_SAVE_FAILED");
   revalidatePath("/admin/users");
 }
 

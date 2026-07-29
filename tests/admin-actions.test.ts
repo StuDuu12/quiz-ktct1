@@ -1,9 +1,21 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const { createServerSupabaseClient, requireViewer, revalidatePath } =
+  vi.hoisted(() => ({
+    createServerSupabaseClient: vi.fn(),
+    requireViewer: vi.fn(),
+    revalidatePath: vi.fn(),
+  }));
+
+vi.mock("@/src/features/auth/session", () => ({ requireViewer }));
+vi.mock("@/src/lib/supabase/server", () => ({ createServerSupabaseClient }));
+vi.mock("next/cache", () => ({ revalidatePath }));
 
 import {
   assertCourseManagementScope,
   assertUserAdministrationRole,
   previewImport,
+  setUserRoleForm,
   validateQuestionForStatus,
 } from "@/src/features/admin/actions";
 
@@ -57,6 +69,39 @@ describe("admin authorization boundaries", () => {
         assignedCourseIds: [],
       }),
     ).not.toThrow();
+  });
+});
+
+describe("user role administration", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    requireViewer.mockResolvedValue(undefined);
+  });
+
+  it("sends a validated role change through the guarded RPC", async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: null, error: null });
+    createServerSupabaseClient.mockResolvedValue({ rpc });
+    const formData = new FormData();
+    formData.set("user_id", "00000000-0000-4000-8000-000000000777");
+    formData.set("role", "admin");
+
+    await setUserRoleForm(formData);
+
+    expect(requireViewer).toHaveBeenCalledWith(["admin"]);
+    expect(rpc).toHaveBeenCalledWith("admin_set_user_role", {
+      target_user_id: "00000000-0000-4000-8000-000000000777",
+      target_role: "admin",
+    });
+    expect(revalidatePath).toHaveBeenCalledWith("/admin/users");
+  });
+
+  it("does not send unsupported roles to the database", async () => {
+    const formData = new FormData();
+    formData.set("user_id", "00000000-0000-4000-8000-000000000777");
+    formData.set("role", "owner");
+
+    await expect(setUserRoleForm(formData)).rejects.toThrow();
+    expect(createServerSupabaseClient).not.toHaveBeenCalled();
   });
 });
 

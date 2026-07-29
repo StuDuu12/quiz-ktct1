@@ -769,6 +769,13 @@ export type Database = {
         };
         Returns: undefined;
       };
+      admin_set_user_role: {
+        Args: {
+          target_user_id: string;
+          target_role: Database["public"]["Enums"]["app_role"];
+        };
+        Returns: undefined;
+      };
       admin_set_user_active: {
         Args: {
           target_user_id: string;
