@@ -1,33 +1,52 @@
-function hashSeed(seed: string): number {
+const utf8Encoder = new TextEncoder();
+
+export function seededHash32(value: string): number {
   let hash = 2_166_136_261;
-  for (let index = 0; index < seed.length; index += 1) {
-    hash ^= seed.charCodeAt(index);
+  for (const byte of utf8Encoder.encode(value)) {
+    hash ^= byte;
     hash = Math.imul(hash, 16_777_619);
   }
   return hash >>> 0;
 }
 
-function nextRandom(state: number): [number, number] {
-  const nextState = (state + 0x6d2b79f5) >>> 0;
-  let value = nextState;
-  value = Math.imul(value ^ (value >>> 15), value | 1);
-  value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
-  return [nextState, ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296];
+function defaultRankKey(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (
+    typeof value === "number" ||
+    typeof value === "bigint" ||
+    typeof value === "boolean"
+  ) {
+    return String(value);
+  }
+  const serialized = JSON.stringify(value);
+  if (serialized === undefined) throw new Error("Unsupported seeded rank value");
+  return serialized;
+}
+
+export function rankBySeed<T>(
+  items: readonly T[],
+  seed: string,
+  keyOf: (item: T) => string = defaultRankKey,
+): T[] {
+  return items
+    .map((item, index) => {
+      const key = keyOf(item);
+      return {
+        item,
+        index,
+        key,
+        rank: seededHash32(`${seed}:${key}`),
+      };
+    })
+    .sort(
+      (left, right) =>
+        left.rank - right.rank ||
+        (left.key < right.key ? -1 : left.key > right.key ? 1 : 0) ||
+        left.index - right.index,
+    )
+    .map(({ item }) => item);
 }
 
 export function seededShuffle<T>(items: readonly T[], seed: string): T[] {
-  const shuffled = [...items];
-  let state = hashSeed(seed);
-
-  for (let index = shuffled.length - 1; index > 0; index -= 1) {
-    let random: number;
-    [state, random] = nextRandom(state);
-    const otherIndex = Math.floor(random * (index + 1));
-    [shuffled[index], shuffled[otherIndex]] = [
-      shuffled[otherIndex]!,
-      shuffled[index]!,
-    ];
-  }
-
-  return shuffled;
+  return rankBySeed(items, seed);
 }

@@ -92,12 +92,50 @@ Focused behavioral coverage now includes:
 - snapshot reopening after source edits;
 - grading against the original correct-option snapshot.
 
+## Review fix round 1
+
+The parity finding in `task-7-review.md` was reproduced: the TypeScript
+allocator used FNV-seeded Mulberry permutations while production independently
+ranked MD5 values, so a common seed could not reproduce an attempt exactly.
+
+The remediation defines one canonical rank contract in both runtimes:
+
+- FNV-1a over UTF-8 bytes;
+- unsigned 32-bit rank values;
+- stage-specific strings for chapter remainder, per-chapter quota selection,
+  backfill, final question order, and per-question option order;
+- stable source-ID tie-breaking.
+
+The protected, fully revoked
+`allocate_mock_exam_questions(course_id, allocation_seed)` SQL function is now
+the production allocator called by `start_attempt`. The learner cannot invoke
+this internal function. `seededHash32`, `rankBySeed`, `seededShuffle`, and
+`allocateExamQuestions` implement the identical contract in TypeScript.
+
+The parity test initially failed because the production allocator did not
+exist. It now supplies a controllable seed and compares every returned question
+position, chapter, and option order against the TypeScript helper for:
+
+- a fully supplied six-chapter bank, exercising remainder quota assignment and
+  final ordering;
+- a short-chapter bank, exercising deterministic unused-question backfill.
+
+The review's two minor recommendations are also covered behaviorally:
+
+- a five-chapter course is rejected;
+- an active config storing `13` questions and `17` seconds still creates
+  exactly 40 snapshots with a 3,600-second expiry.
+
+The internal allocator/hash functions are represented in
+`database.types.ts`, and all PGlite suites continue to apply migrations
+sequentially from scratch.
+
 ## Fresh verification
 
 All commands were run after the final production change:
 
-- focused tests: 7 test files passed, 41 tests passed;
-- `npm test`: 17 test files passed, 95 tests passed;
+- review-focused tests: 7 test files passed, 44 tests passed;
+- `npm test`: 17 test files passed, 98 tests passed;
 - `npm run typecheck`: exit 0;
 - `npm run lint`: exit 0;
 - `npm run build`: exit 0.

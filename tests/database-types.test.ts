@@ -44,5 +44,16 @@ describe("generated Supabase database types", () => {
     expectTypeOf<
       Database["public"]["Functions"]["get_attempt_results"]["Returns"][number]["is_correct"]
     >().toEqualTypeOf<boolean | null>();
+    expectTypeOf<
+      Database["public"]["Functions"]["seeded_hash32"]["Returns"]
+    >().toEqualTypeOf<number>();
+    expectTypeOf<
+      Database["public"]["Functions"]["allocate_mock_exam_questions"]["Returns"][number]
+    >().toEqualTypeOf<{
+      question_position: number;
+      question_id: string;
+      chapter_id: string;
+      option_order: Json;
+    }>();
   });
 });

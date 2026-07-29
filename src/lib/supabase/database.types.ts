@@ -610,6 +610,18 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      allocate_mock_exam_questions: {
+        Args: {
+          target_course_id: string;
+          allocation_seed: string;
+        };
+        Returns: {
+          question_position: number;
+          question_id: string;
+          chapter_id: string;
+          option_order: Json;
+        }[];
+      };
       can_manage_course: {
         Args: { target_course_id: string };
         Returns: boolean;
@@ -662,6 +674,10 @@ export type Database = {
           explanation: string;
           was_already_locked: boolean;
         }[];
+      };
+      seeded_hash32: {
+        Args: { value: string };
+        Returns: number;
       };
       sync_practice_attempt: {
         Args: { target_attempt_id: string };

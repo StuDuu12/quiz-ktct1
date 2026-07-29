@@ -3,6 +3,9 @@ import path from "node:path";
 import { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { allocateExamQuestions } from "@/src/features/exam/allocate";
+import { seededShuffle } from "@/src/features/exam/shuffle";
+
 const ids = {
   student: "00000000-0000-0000-0000-000000000021",
   stranger: "00000000-0000-0000-0000-000000000022",
@@ -10,12 +13,14 @@ const ids = {
   shortageCourse: "10000000-0000-0000-0000-000000000022",
   insufficientCourse: "10000000-0000-0000-0000-000000000023",
   draftCourse: "10000000-0000-0000-0000-000000000024",
+  fiveChapterCourse: "10000000-0000-0000-0000-000000000025",
   balancedConfig: "50000000-0000-0000-0000-000000000021",
   shortageConfig: "50000000-0000-0000-0000-000000000022",
   insufficientConfig: "50000000-0000-0000-0000-000000000023",
   inactiveConfig: "50000000-0000-0000-0000-000000000024",
   practiceConfig: "50000000-0000-0000-0000-000000000025",
   draftCourseConfig: "50000000-0000-0000-0000-000000000026",
+  fiveChapterConfig: "50000000-0000-0000-0000-000000000027",
 };
 
 const migrationPaths = [
@@ -138,6 +143,7 @@ describe("secure balanced mock-exam creation", () => {
       buildCourseBank(ids.shortageCourse, 2, [2, 12, 12, 12, 12, 12]),
       buildCourseBank(ids.insufficientCourse, 3, [6, 6, 6, 6, 6, 6]),
       buildCourseBank(ids.draftCourse, 4, [7, 7, 7, 7, 7, 7], "draft"),
+      buildCourseBank(ids.fiveChapterCourse, 5, [10, 10, 10, 10, 10]),
     ];
 
     await database.exec(`
@@ -151,7 +157,8 @@ describe("secure balanced mock-exam creation", () => {
         ('${ids.balancedCourse}', 'balanced', 'Balanced', 'published', '${ids.student}'),
         ('${ids.shortageCourse}', 'shortage', 'Shortage', 'published', '${ids.student}'),
         ('${ids.insufficientCourse}', 'insufficient', 'Insufficient', 'published', '${ids.student}'),
-        ('${ids.draftCourse}', 'draft-course', 'Draft course', 'draft', '${ids.student}');
+        ('${ids.draftCourse}', 'draft-course', 'Draft course', 'draft', '${ids.student}'),
+        ('${ids.fiveChapterCourse}', 'five-chapters', 'Five chapters', 'published', '${ids.student}');
 
       insert into public.chapters (id, course_id, position, title)
       values ${banks.flatMap((bank) => bank.chapterRows).join(",\n")};
@@ -178,12 +185,13 @@ describe("secure balanced mock-exam creation", () => {
         is_active, created_by
       )
       values
-        ('${ids.balancedConfig}', '${ids.balancedCourse}', 'Balanced mock', 'mock_exam', 40, 3600, true, '${ids.student}'),
+        ('${ids.balancedConfig}', '${ids.balancedCourse}', 'Balanced mock', 'mock_exam', 13, 17, true, '${ids.student}'),
         ('${ids.shortageConfig}', '${ids.shortageCourse}', 'Shortage mock', 'mock_exam', 40, 3600, true, '${ids.student}'),
         ('${ids.insufficientConfig}', '${ids.insufficientCourse}', 'Insufficient mock', 'mock_exam', 40, 3600, true, '${ids.student}'),
         ('${ids.inactiveConfig}', '${ids.balancedCourse}', 'Inactive mock', 'mock_exam', 40, 3600, false, '${ids.student}'),
         ('${ids.practiceConfig}', '${ids.balancedCourse}', 'Practice config', 'practice', 40, 3600, true, '${ids.student}'),
-        ('${ids.draftCourseConfig}', '${ids.draftCourse}', 'Draft course mock', 'mock_exam', 40, 3600, true, '${ids.student}');
+        ('${ids.draftCourseConfig}', '${ids.draftCourse}', 'Draft course mock', 'mock_exam', 40, 3600, true, '${ids.student}'),
+        ('${ids.fiveChapterConfig}', '${ids.fiveChapterCourse}', 'Five chapter mock', 'mock_exam', 40, 3600, true, '${ids.student}');
     `);
   }, 30_000);
 
@@ -258,6 +266,89 @@ describe("secure balanced mock-exam creation", () => {
     await resetIdentity();
   });
 
+  it("matches the TypeScript allocator exactly for a controllable production seed", async () => {
+    const seed = "parity-seed-2026";
+    for (const courseId of [ids.balancedCourse, ids.shortageCourse]) {
+      const chapters = await database.query<{ id: string }>(`
+        select id
+        from public.chapters
+        where course_id = '${courseId}'
+        order by position
+      `);
+      const pool = await database.query<{ id: string; chapter_id: string }>(`
+        select q.id, q.chapter_id
+        from public.questions q
+        join public.chapters ch on ch.id = q.chapter_id
+        where ch.course_id = '${courseId}'
+          and q.status = 'published'
+        order by q.id
+      `);
+      const options = await database.query<{
+        id: string;
+        question_id: string;
+      }>(`
+        select qo.id, qo.question_id
+        from public.question_options qo
+        join public.questions q on q.id = qo.question_id
+        join public.chapters ch on ch.id = q.chapter_id
+        where ch.course_id = '${courseId}'
+        order by qo.id
+      `);
+
+      const selected = allocateExamQuestions(
+        pool.rows.map((question) => ({
+          id: question.id,
+          chapterId: question.chapter_id,
+        })),
+        chapters.rows.map(({ id }) => id),
+        40,
+        seed,
+      );
+      const expected = selected.map((question, index) => ({
+        position: index + 1,
+        question_id: question.id,
+        chapter_id: question.chapterId,
+        option_order: seededShuffle(
+          options.rows
+            .filter((option) => option.question_id === question.id)
+            .map((option) => option.id),
+          `${seed}:option:${question.id}`,
+        ),
+      }));
+
+      const production = await database.query<{
+        position: number;
+        question_id: string;
+        chapter_id: string;
+        option_order: string[];
+      }>(`
+        select
+          question_position as position,
+          question_id,
+          chapter_id,
+          option_order
+        from public.allocate_mock_exam_questions(
+          '${courseId}',
+          '${seed}'
+        )
+        order by question_position
+      `);
+      expect(production.rows).toEqual(expected);
+    }
+
+    await assumeIdentity(ids.student);
+    await expect(
+      database.query(`
+        select *
+        from public.allocate_mock_exam_questions(
+          '${ids.balancedCourse}',
+          '${seed}'
+        )
+      `),
+    ).rejects.toThrow();
+    await resetIdentity();
+  });
+
   it("backfills a short chapter to 40 without duplicate questions", async () => {
     await assumeIdentity(ids.student);
     const attempt = await startAttempt(ids.shortageCourse, ids.shortageConfig);
@@ -287,6 +378,39 @@ describe("secure balanced mock-exam creation", () => {
     await expect(
       startAttempt(ids.insufficientCourse, ids.insufficientConfig),
     ).rejects.toThrow(/enough published questions/i);
+    await resetIdentity();
+  });
+
+  it("rejects a mock-exam course that does not contain six chapters", async () => {
+    await assumeIdentity(ids.student);
+    await expect(
+      startAttempt(ids.fiveChapterCourse, ids.fiveChapterConfig),
+    ).rejects.toThrow(/exactly six chapters/i);
+    await resetIdentity();
+  });
+
+  it("overrides mutable config count and duration with the fixed 40/3600 contract", async () => {
+    await assumeIdentity(ids.student);
+    const stored = await database.query<{
+      question_count: number;
+      duration_seconds: number;
+    }>(`
+      select question_count, duration_seconds
+      from public.exam_configs
+      where id = '${ids.balancedConfig}'
+    `);
+    expect(stored.rows).toEqual([
+      { question_count: 13, duration_seconds: 17 },
+    ]);
+
+    const attempt = await startAttempt(ids.balancedCourse, ids.balancedConfig);
+    const snapshots = await database.query<{ count: number }>(`
+      select count(*)::integer as count
+      from public.attempt_questions
+      where attempt_id = '${attempt.id}'
+    `);
+    expect(attempt.duration_seconds).toBe(3600);
+    expect(snapshots.rows).toEqual([{ count: 40 }]);
     await resetIdentity();
   });
 

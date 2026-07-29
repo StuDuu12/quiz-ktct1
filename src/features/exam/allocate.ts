@@ -1,4 +1,7 @@
-import { seededShuffle } from "@/src/features/exam/shuffle";
+import {
+  rankBySeed,
+  seededShuffle,
+} from "@/src/features/exam/shuffle";
 import type { ExamQuestion } from "@/src/features/exam/types";
 
 export function allocateExamQuestions<T extends ExamQuestion>(
@@ -41,9 +44,10 @@ export function allocateExamQuestions<T extends ExamQuestion>(
   const selectedIds = new Set<string>();
 
   for (const chapterId of uniqueChapterIds) {
-    const chapterPool = seededShuffle(
+    const chapterPool = rankBySeed(
       eligible.filter((question) => question.chapterId === chapterId),
       `${seed}:chapter:${chapterId}`,
+      (question) => question.id,
     );
     const quota = quotaByChapter.get(chapterId)!;
     for (const question of chapterPool.slice(0, quota)) {
@@ -54,12 +58,13 @@ export function allocateExamQuestions<T extends ExamQuestion>(
 
   const shortfall = total - selected.length;
   if (shortfall > 0) {
-    const backfill = seededShuffle(
+    const backfill = rankBySeed(
       eligible.filter((question) => !selectedIds.has(question.id)),
       `${seed}:backfill`,
+      (question) => question.id,
     ).slice(0, shortfall);
     selected.push(...backfill);
   }
 
-  return seededShuffle(selected, `${seed}:questions`);
+  return rankBySeed(selected, `${seed}:questions`, (question) => question.id);
 }

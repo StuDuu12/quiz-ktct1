@@ -189,6 +189,173 @@ begin
 end;
 $$;
 
+-- Canonical cross-runtime ranking contract: FNV-1a over UTF-8 bytes, returned
+-- as an unsigned 32-bit integer represented in bigint.
+create function public.seeded_hash32(value text)
+returns bigint
+language plpgsql
+immutable
+strict
+set search_path = ''
+as $$
+declare
+  bytes bytea := convert_to(value, 'UTF8');
+  hash_value bigint := 2166136261;
+  byte_index integer;
+begin
+  if octet_length(bytes) > 0 then
+    for byte_index in 0..octet_length(bytes) - 1 loop
+      hash_value := (
+        (hash_value # get_byte(bytes, byte_index)::bigint) * 16777619
+      ) % 4294967296;
+    end loop;
+  end if;
+  return hash_value;
+end;
+$$;
+
+revoke all on function public.seeded_hash32(text)
+from public, anon, authenticated;
+
+-- One authoritative allocator supplies start_attempt and deterministic
+-- production-level parity tests. It is deliberately unavailable to learners.
+create function public.allocate_mock_exam_questions(
+  target_course_id uuid,
+  allocation_seed text
+)
+returns table (
+  question_position integer,
+  question_id uuid,
+  chapter_id uuid,
+  option_order jsonb
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  with chapter_count as (
+    select count(*)::integer as value
+    from public.chapters ch
+    where ch.course_id = target_course_id
+  ),
+  chapter_allocations as (
+    select
+      ch.id as chapter_id,
+      row_number() over (
+        order by
+          public.seeded_hash32(
+            allocation_seed || ':chapters:' || ch.id::text
+          ),
+          ch.id
+      ) as allocation_rank
+    from public.chapters ch
+    where ch.course_id = target_course_id
+  ),
+  chapter_quotas as (
+    select
+      ca.chapter_id,
+      (40 / cc.value)
+        + case
+            when ca.allocation_rank <= (40 % cc.value) then 1
+            else 0
+          end as quota
+    from chapter_allocations ca
+    cross join chapter_count cc
+    where cc.value > 0
+  ),
+  ranked_questions as (
+    select
+      q.id as question_id,
+      q.chapter_id,
+      cq.quota,
+      row_number() over (
+        partition by q.chapter_id
+        order by
+          public.seeded_hash32(
+            allocation_seed || ':chapter:' || q.chapter_id::text
+            || ':' || q.id::text
+          ),
+          q.id
+      ) as chapter_rank
+    from public.questions q
+    join chapter_quotas cq on cq.chapter_id = q.chapter_id
+    where q.status = 'published'
+  ),
+  quota_selection as (
+    select question_id, chapter_id
+    from ranked_questions
+    where chapter_rank <= quota
+  ),
+  quota_count as (
+    select count(*) as selected_count
+    from quota_selection
+  ),
+  backfill_candidates as (
+    select
+      rq.question_id,
+      rq.chapter_id,
+      row_number() over (
+        order by
+          public.seeded_hash32(
+            allocation_seed || ':backfill:' || rq.question_id::text
+          ),
+          rq.question_id
+      ) as backfill_rank
+    from ranked_questions rq
+    where rq.chapter_rank > rq.quota
+  ),
+  backfill_selection as (
+    select bc.question_id, bc.chapter_id
+    from backfill_candidates bc
+    cross join quota_count qc
+    where bc.backfill_rank <= 40 - qc.selected_count
+  ),
+  selected as (
+    select question_id, chapter_id from quota_selection
+    union all
+    select question_id, chapter_id from backfill_selection
+  ),
+  ordered_selection as (
+    select
+      row_number() over (
+        order by
+          public.seeded_hash32(
+            allocation_seed || ':questions:' || selected.question_id::text
+          ),
+          selected.question_id
+      )::integer as position,
+      selected.question_id,
+      selected.chapter_id
+    from selected
+  )
+  select
+    os.position as question_position,
+    os.question_id,
+    os.chapter_id,
+    (
+      select coalesce(
+        jsonb_agg(
+          to_jsonb(qo.id)
+          order by
+            public.seeded_hash32(
+              allocation_seed || ':option:' || os.question_id::text
+              || ':' || qo.id::text
+            ),
+            qo.id
+        ),
+        '[]'::jsonb
+      )
+      from public.question_options qo
+      where qo.question_id = os.question_id
+    ) as option_order
+  from ordered_selection os
+  order by os.position
+$$;
+
+revoke all on function public.allocate_mock_exam_questions(uuid, text)
+from public, anon, authenticated;
+
 -- Mock exams are generated inside the authenticated database boundary. The
 -- attempt UUID is the server-created seed, so chapter quotas, backfill,
 -- question order, and option order are fixed for the lifetime of the attempt.
@@ -288,84 +455,23 @@ begin
         using errcode = '22023';
     end if;
 
-    with chapter_allocations as (
-      select
-        ch.id as chapter_id,
-        row_number() over (
-          order by
-            md5(attempt_seed || ':chapter:' || ch.id::text),
-            ch.id
-        ) as allocation_rank
-      from public.chapters ch
-      where ch.course_id = target_course_id
-    ),
-    chapter_quotas as (
-      select
-        chapter_id,
-        (selected_question_count / course_chapter_count)
-          + case
-              when allocation_rank
-                <= (selected_question_count % course_chapter_count)
-              then 1
-              else 0
-            end as quota
-      from chapter_allocations
-    ),
-    ranked_questions as (
-      select
-        q.id as question_id,
-        q.chapter_id,
-        cq.quota,
-        row_number() over (
-          partition by q.chapter_id
-          order by
-            md5(attempt_seed || ':question:' || q.id::text),
-            q.id
-        ) as chapter_rank
-      from public.questions q
-      join chapter_quotas cq on cq.chapter_id = q.chapter_id
-      where q.status = 'published'
-    ),
-    quota_selection as (
-      select question_id
-      from ranked_questions
-      where chapter_rank <= quota
-    ),
-    quota_count as (
-      select count(*) as selected_count
-      from quota_selection
-    ),
-    backfill_candidates as (
-      select
-        rq.question_id,
-        row_number() over (
-          order by
-            md5(attempt_seed || ':backfill:' || rq.question_id::text),
-            rq.question_id
-        ) as backfill_rank
-      from ranked_questions rq
-      where rq.chapter_rank > rq.quota
-    ),
-    backfill_selection as (
-      select bc.question_id
-      from backfill_candidates bc
-      cross join quota_count qc
-      where bc.backfill_rank
-        <= selected_question_count - qc.selected_count
-    ),
-    selected as (
-      select question_id from quota_selection
-      union all
-      select question_id from backfill_selection
-    )
-    select array_agg(
-      question_id
-      order by
-        md5(attempt_seed || ':order:' || question_id::text),
-        question_id
-    )
-    into selected_question_ids
-    from selected;
+    select
+      array_agg(
+        allocated.question_id order by allocated.question_position
+      ),
+      coalesce(
+        jsonb_object_agg(
+          allocated.question_id::text,
+          allocated.option_order
+          order by allocated.question_position
+        ),
+        '{}'::jsonb
+      )
+    into selected_question_ids, option_order_snapshot
+    from public.allocate_mock_exam_questions(
+      target_course_id,
+      attempt_seed
+    ) allocated;
   else
     selected_kind := 'practice';
     selected_duration_seconds := 60 * 60;
@@ -405,33 +511,25 @@ begin
 
   question_order_snapshot := to_jsonb(selected_question_ids);
 
-  for question_position in 1..array_length(selected_question_ids, 1) loop
-    select coalesce(
-      jsonb_agg(to_jsonb(ordered.id) order by ordered.sort_key, ordered.id),
-      '[]'::jsonb
-    )
-    into current_option_order
-    from (
-      select
-        qo.id,
-        case
-          when selected_kind = 'mock_exam'::public.attempt_kind
-          then md5(
-            attempt_seed || ':option:'
-            || selected_question_ids[question_position]::text
-            || ':' || qo.id::text
-          )
-          else md5(random()::text)
-        end as sort_key
-      from public.question_options qo
-      where qo.question_id = selected_question_ids[question_position]
-    ) ordered;
+  if selected_kind = 'practice'::public.attempt_kind then
+    for question_position in 1..array_length(selected_question_ids, 1) loop
+      select coalesce(
+        jsonb_agg(to_jsonb(ordered.id) order by ordered.sort_key, ordered.id),
+        '[]'::jsonb
+      )
+      into current_option_order
+      from (
+        select qo.id, md5(random()::text) as sort_key
+        from public.question_options qo
+        where qo.question_id = selected_question_ids[question_position]
+      ) ordered;
 
-    option_order_snapshot := option_order_snapshot || jsonb_build_object(
-      selected_question_ids[question_position]::text,
-      current_option_order
-    );
-  end loop;
+      option_order_snapshot := option_order_snapshot || jsonb_build_object(
+        selected_question_ids[question_position]::text,
+        current_option_order
+      );
+    end loop;
+  end if;
 
   insert into public.attempts (
     id,
