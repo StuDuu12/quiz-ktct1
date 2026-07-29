@@ -12,6 +12,18 @@ type LoginRequest = {
   password: string;
 };
 
+function jsonWithResponseCookies(
+  response: NextResponse,
+  body: object,
+  init?: ResponseInit,
+) {
+  const output = NextResponse.json(body, init);
+  for (const cookie of response.cookies.getAll()) {
+    output.cookies.set(cookie);
+  }
+  return output;
+}
+
 export async function POST(request: Request) {
   const { identifier, password } = (await request.json()) as LoginRequest;
   const response = NextResponse.json({ error: null });
@@ -29,19 +41,17 @@ export async function POST(request: Request) {
   }
 
   if (result.error) {
-    const errorResponse = NextResponse.json(
+    return jsonWithResponseCookies(
+      response,
       { error: result.error.message },
       { status: 401 },
     );
-    for (const cookie of response.cookies.getAll()) {
-      errorResponse.cookies.set(cookie);
-    }
-    return errorResponse;
   }
 
   const userId = result.data.user?.id;
   if (!userId) {
-    return NextResponse.json(
+    return jsonWithResponseCookies(
+      response,
       { error: "Không xác định được người dùng." },
       { status: 403 },
     );
@@ -54,26 +64,24 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (profileError || !profile) {
-    return NextResponse.json(
+    return jsonWithResponseCookies(
+      response,
       { error: "Không tìm thấy hồ sơ người dùng." },
       { status: 403 },
     );
   }
 
   if (!profile.is_active) {
-    return NextResponse.json(
+    return jsonWithResponseCookies(
+      response,
       { error: "Tài khoản đã bị vô hiệu hóa." },
       { status: 403 },
     );
   }
 
-  const successResponse = NextResponse.json({
+  return jsonWithResponseCookies(response, {
     error: null,
     role: profile.role,
     destination: portalDestinationForRole(profile.role),
   });
-  for (const cookie of response.cookies.getAll()) {
-    successResponse.cookies.set(cookie);
-  }
-  return successResponse;
 }

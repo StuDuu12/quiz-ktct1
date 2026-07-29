@@ -144,6 +144,46 @@ describe("POST /api/auth/login", () => {
     });
   });
 
+  it.each([
+    ["missing", { data: null, error: null }],
+    [
+      "inactive",
+      { data: { role: "student", is_active: false }, error: null },
+    ],
+  ])(
+    "preserves the cleared session cookie when orphan-JWT recovery finds a %s profile",
+    async (_profileState, profileResult) => {
+      createServerSupabaseClient.mockImplementation(async (response) => {
+        signOut.mockImplementation(async () => {
+          response.cookies.set("sb-auth-token", "", {
+            maxAge: 0,
+            path: "/",
+          });
+          return { error: null };
+        });
+        return { auth: { signInWithPassword, signOut }, from };
+      });
+      signInWithPassword
+        .mockResolvedValueOnce({
+          data: { session: null, user: null },
+          error: { message: "User from sub claim in JWT does not exist" },
+        })
+        .mockResolvedValueOnce({
+          data: { session: null, user: { id: "student-id" } },
+          error: null,
+        });
+      maybeSingle.mockResolvedValue(profileResult);
+
+      const response = await POST(loginRequest("student@example.com", "1"));
+
+      expect(response.status).toBe(403);
+      expect(response.cookies.get("sb-auth-token")).toMatchObject({
+        maxAge: 0,
+        value: "",
+      });
+    },
+  );
+
   it("returns the Supabase error with an unauthorized status", async () => {
     signInWithPassword.mockResolvedValue({
       data: { session: null, user: null },
