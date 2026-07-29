@@ -110,4 +110,15 @@ describe("public entry experience", () => {
       cleanup();
     }
   });
+
+  it("does not present an outdated eight-character password policy", () => {
+    for (const Page of [RegisterPage, ResetPasswordPage]) {
+      render(<Page />);
+
+      expect(screen.queryByText(/8 ký tự/i)).not.toBeInTheDocument();
+      expect(screen.queryByPlaceholderText(/tối thiểu 8/i)).not.toBeInTheDocument();
+
+      cleanup();
+    }
+  });
 });

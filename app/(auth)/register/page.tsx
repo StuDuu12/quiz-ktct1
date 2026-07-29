@@ -71,7 +71,7 @@ export default function RegisterPage() {
             name="password"
             type="password"
             autoComplete="new-password"
-            placeholder="Tối thiểu 8 ký tự"
+            placeholder="Nhập mật khẩu"
           />
         </label>
         <label>

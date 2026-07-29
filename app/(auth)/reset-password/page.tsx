@@ -46,7 +46,7 @@ export default function ResetPasswordPage() {
     <AuthShell
       eyebrow="Bảo mật tài khoản"
       title="Chọn mật khẩu mới"
-      description="Dùng ít nhất 8 ký tự và tránh sử dụng lại mật khẩu cũ."
+      description="Chọn mật khẩu mới và tránh sử dụng lại mật khẩu cũ."
       footer={<p><Link href="/forgot-password">Yêu cầu liên kết mới</Link></p>}
     >
       <form onSubmit={onSubmit} className="auth-form" noValidate>
@@ -57,7 +57,7 @@ export default function ResetPasswordPage() {
             name="password"
             type="password"
             autoComplete="new-password"
-            placeholder="Tối thiểu 8 ký tự"
+            placeholder="Nhập mật khẩu mới"
           />
         </label>
         <label>
