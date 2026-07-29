@@ -44,3 +44,10 @@
 - The existing direct-insert rejection, server-controlled 1800-second timing, and server-controlled question count assertions remain unchanged.
 - `npm test -- tests/database-security.test.ts` passed three consecutive times (7/7 each).
 - Fresh `npm test` passed 32/32; `npm run typecheck` and `npm run build` exited 0.
+
+## Review fix I1 — callback open redirect
+
+- RED: added `tests/auth-callback.test.ts`; `npm test -- tests/auth-callback.test.ts` failed because `next=/\\evil.example` produced `Location: https://evil.example/`.
+- GREEN: the callback now rejects any backslash, parses destinations against the request origin, requires an exact origin match, and returns only `pathname + search + hash`.
+- Regression coverage verifies rejection of an absolute external URL, `//evil.example`, and `/\\evil.example`, while preserving a same-origin relative path.
+- Verification: focused callback tests passed 4/4; fresh `npm test` passed 36/36; `npm run typecheck`, `npm run lint`, and `npm run build` exited 0.
