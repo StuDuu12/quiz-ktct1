@@ -110,6 +110,7 @@ Relevant Cloudflare documentation:
 QA screenshots:
 
 - [Administrator portal at 375 viewport](../../../artifacts/release-audit/2026-07-30/production-admin-375.png)
+- [375 viewport loaded-state metadata](../../../artifacts/release-audit/2026-07-30/production-admin-375.metadata.json)
 - [Administrator portal at 1440 viewport](../../../artifacts/release-audit/2026-07-30/production-admin-1440.png)
 
 Durable release evidence:

@@ -1,0 +1,24 @@
+{
+  "captured_date": "2026-07-30",
+  "production_route": "/admin",
+  "deployment_version_prefix": "5962c870",
+  "capture": {
+    "type": "page-only Playwright screenshot",
+    "image_width_pixels": 375,
+    "image_height_pixels": 812,
+    "window_inner_width": 375,
+    "window_inner_height": 812,
+    "device_scale_factor": 1
+  },
+  "loaded_state": {
+    "h1": "Chào buổi làm việc",
+    "mobile_header_visible": true,
+    "mobile_drawer_state": "closed",
+    "horizontal_overflow": false
+  },
+  "privacy": {
+    "disposable_identifier_visible": false,
+    "redaction_required": false,
+    "geometry_modified": false
+  }
+}
