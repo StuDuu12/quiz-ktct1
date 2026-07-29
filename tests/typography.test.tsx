@@ -14,6 +14,28 @@ vi.mock("next/font/google", () => ({
 
 import RootLayout from "@/app/layout";
 
+function contrastRatio(foreground: string, background: string): number {
+  const luminance = (color: string) => {
+    const channels = color.match(/\d+(?:\.\d+)?/g)?.slice(0, 3).map(Number);
+    if (!channels || channels.length !== 3) {
+      throw new Error(`Unsupported computed color: ${color}`);
+    }
+    const linear = channels.map((channel) => {
+      const normalized = channel / 255;
+      return normalized <= 0.03928
+        ? normalized / 12.92
+        : ((normalized + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+  };
+  const first = luminance(foreground);
+  const second = luminance(background);
+  return (
+    (Math.max(first, second) + 0.05) /
+    (Math.min(first, second) + 0.05)
+  );
+}
+
 describe("Vietnamese typography", () => {
   let browser: Browser;
 
@@ -129,6 +151,71 @@ describe("Vietnamese typography", () => {
         selector,
       ).toBeGreaterThanOrEqual(-0.02);
     }
+
+    await page.close();
+  });
+
+  it("keeps dark landing navigation and CTAs readable for hover and keyboard focus", async () => {
+    const styles = await readFile(
+      path.resolve("src/features/public/landing-page.module.css"),
+      "utf8",
+    );
+    const page = await browser.newPage({
+      viewport: { width: 1024, height: 800 },
+      colorScheme: "dark",
+    });
+    await page.setContent(`
+      <style>${styles}</style>
+      <main class="page">
+        <header class="header">
+          <nav class="navigation">
+            <a class="sectionLink" href="#gioi-thieu">Giới thiệu</a>
+            <a class="loginLink" href="/login">Đăng nhập</a>
+          </nav>
+        </header>
+        <section class="hero">
+          <div class="heroActions">
+            <a class="primaryAction" href="/login">Đăng nhập</a>
+          </div>
+        </section>
+      </main>
+    `);
+
+    async function expectContrast(selector: string) {
+      const colors = await page.locator(selector).evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          foreground: style.color,
+          background: style.backgroundColor,
+        };
+      });
+      expect(
+        contrastRatio(colors.foreground, colors.background),
+        `${selector}: ${colors.foreground} on ${colors.background}`,
+      ).toBeGreaterThanOrEqual(4.5);
+    }
+
+    await expectContrast(".loginLink");
+    await expectContrast(".primaryAction");
+
+    await page.locator(".sectionLink").hover();
+    await expectContrast(".sectionLink");
+
+    await page.locator(".sectionLink").focus();
+    expect(
+      await page.locator(".sectionLink").evaluate((element) =>
+        element.matches(":focus-visible"),
+      ),
+    ).toBe(true);
+    await expectContrast(".sectionLink");
+
+    await page.locator(".loginLink").focus();
+    expect(
+      await page.locator(".loginLink").evaluate((element) =>
+        element.matches(":focus-visible"),
+      ),
+    ).toBe(true);
+    await expectContrast(".loginLink");
 
     await page.close();
   });

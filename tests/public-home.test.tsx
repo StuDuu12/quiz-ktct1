@@ -99,7 +99,7 @@ describe("public learning landing", () => {
   });
 
   it("uses the approved study image with reserved dimensions and Vietnamese alt text", () => {
-    render(<Home />);
+    const { container } = render(<Home />);
 
     const image = screen.getByRole("img", {
       name: "Hai sinh viên đang cùng ôn tập trong thư viện",
@@ -110,6 +110,23 @@ describe("public learning landing", () => {
     expect(image).toHaveAttribute("sizes");
     expect(image).toHaveAttribute("data-priority", "true");
     expect(image).toHaveAttribute("data-unoptimized", "true");
+
+    const responsiveSource = container.querySelector(
+      'picture source[type="image/webp"]',
+    );
+    expect(responsiveSource).toHaveAttribute(
+      "srcset",
+      [
+        "/images/ktct-study-hero-480.webp 480w",
+        "/images/ktct-study-hero-768.webp 768w",
+        "/images/ktct-study-hero-1152.webp 1152w",
+        "/images/ktct-study-hero-1536.webp 1536w",
+      ].join(", "),
+    );
+    expect(responsiveSource).toHaveAttribute(
+      "sizes",
+      "(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) 52vw, 54vw",
+    );
   });
 
   it("contains no visible em dash or en dash characters", () => {

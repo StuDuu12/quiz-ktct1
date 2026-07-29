@@ -188,6 +188,12 @@
   object-position: center;
 }
 
+.heroImage picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .facts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -505,6 +511,16 @@
 
   .navigation a {
     color: #b8cec8;
+  }
+
+  .navigation .loginLink,
+  .primaryAction {
+    background: #277c6d;
+  }
+
+  .navigation .sectionLink:hover,
+  .navigation .sectionLink:focus-visible {
+    color: #9adbd0;
   }
 
   .heroActions .secondaryAction,

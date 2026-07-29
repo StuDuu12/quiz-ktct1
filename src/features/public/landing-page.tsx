@@ -53,15 +53,27 @@ export function LandingPage() {
         </div>
 
         <div className={styles.heroImage}>
-          <Image
-            src="/images/ktct-study-hero.png"
-            alt="Hai sinh viên đang cùng ôn tập trong thư viện"
-            width={1536}
-            height={1024}
-            priority
-            unoptimized
-            sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) 52vw, 54vw"
-          />
+          <picture>
+            <source
+              type="image/webp"
+              srcSet={[
+                "/images/ktct-study-hero-480.webp 480w",
+                "/images/ktct-study-hero-768.webp 768w",
+                "/images/ktct-study-hero-1152.webp 1152w",
+                "/images/ktct-study-hero-1536.webp 1536w",
+              ].join(", ")}
+              sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) 52vw, 54vw"
+            />
+            <Image
+              src="/images/ktct-study-hero.png"
+              alt="Hai sinh viên đang cùng ôn tập trong thư viện"
+              width={1536}
+              height={1024}
+              priority
+              unoptimized
+              sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) 52vw, 54vw"
+            />
+          </picture>
         </div>
       </section>
 
