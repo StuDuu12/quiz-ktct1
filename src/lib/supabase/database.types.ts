@@ -945,6 +945,7 @@ export type Database = {
           is_correct: boolean;
           explanation: string;
           was_already_locked: boolean;
+          correct_option_id: string;
         }[];
       };
       seeded_hash32: {
@@ -963,12 +964,15 @@ export type Database = {
         Returns: Database["public"]["Tables"]["attempt_questions"]["Row"][];
       };
       load_practice_answer_feedback: {
-        Args: { target_attempt_id: string };
+        Args: {
+          target_attempt_id: string;
+        };
         Returns: {
           attempt_question_id: string;
           selected_option_id: string;
           is_correct: boolean;
           explanation: string;
+          correct_option_id: string;
         }[];
       };
       set_practice_flag: {

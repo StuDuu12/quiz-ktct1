@@ -19,6 +19,7 @@ export type PracticeAnswer = {
   showFeedback: boolean;
   isCorrect?: boolean;
   explanation?: string;
+  correctOptionId?: string;
 };
 
 export type PracticeState = {
@@ -39,6 +40,7 @@ export type PracticeFeedback = {
   isCorrect: boolean;
   explanation: string;
   reconciled: boolean;
+  correctOptionId?: string;
 };
 
 export type FinishPracticeResult =

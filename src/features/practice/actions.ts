@@ -309,6 +309,7 @@ export async function loadPracticeSession(
       answer.isCorrect = feedback.is_correct;
       answer.explanation = feedback.explanation;
       answer.optionId = feedback.selected_option_id;
+      answer.correctOptionId = feedback.correct_option_id;
     }
     answers[question.id] = answer;
   }
@@ -362,6 +363,7 @@ export async function savePracticeAnswer(
     isCorrect: data[0].is_correct,
     explanation: data[0].explanation,
     reconciled: data[0].was_already_locked,
+    correctOptionId: data[0].correct_option_id,
   };
 }
 

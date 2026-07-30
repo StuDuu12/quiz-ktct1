@@ -2717,3 +2717,34 @@ body {
     line-height: 1.5;
   }
 }
+
+.global-back-button {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 9999;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border, #e5e7eb);
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg, #111827);
+  transition: all 0.2s ease;
+}
+
+.global-back-button:hover {
+  background: var(--bg-hover, #f3f4f6);
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .global-back-button {
+    bottom: 1rem;
+    left: 1rem;
+    padding: 10px;
+  }
+}

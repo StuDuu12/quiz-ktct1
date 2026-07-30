@@ -468,6 +468,11 @@ export function PracticeSession({
               <div>
                 <strong>{currentAnswer.isCorrect ? "Chính xác" : "Chưa chính xác"}</strong>
                 <p>{currentAnswer.explanation || "Chưa có lời giải cho câu hỏi này."}</p>
+                {!currentAnswer.isCorrect && currentAnswer.correctOptionId ? (
+                  <p style={{ marginTop: '0.5rem', fontWeight: 600 }}>
+                    Đáp án đúng là: {currentQuestion.options.find(o => o.id === currentAnswer.correctOptionId)?.content}
+                  </p>
+                ) : null}
               </div>
             </section>
           ) : null}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { buildSiteMetadata } from "@/src/lib/site-metadata";
+import { GlobalBackButton } from "@/src/components/global-back-button";
 
 import "./globals.css";
 
@@ -19,7 +20,10 @@ export default function RootLayout({
     process.env.NODE_ENV !== "production";
   return (
     <html lang="vi" data-e2e-mode={e2eMode ? "true" : undefined}>
-      <body>{children}</body>
+      <body>
+        <GlobalBackButton />
+        {children}
+      </body>
     </html>
   );
 }
