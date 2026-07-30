@@ -3,6 +3,7 @@
 import { WarningCircle } from "@phosphor-icons/react";
 
 export default function AdminError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
