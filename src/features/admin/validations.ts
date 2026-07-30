@@ -6,17 +6,20 @@ export function assertUserAdministrationRole(role: AppRole) {
 }
 
 export function assertCourseManagementScope({
-  role,
+  actorRole,
   courseId,
-  allowedCourseIds,
+  assignedCourseIds,
 }: {
-  role: AppRole;
+  actorRole: AppRole;
   courseId: string;
-  allowedCourseIds: string[];
+  assignedCourseIds: string[];
 }) {
-  if (role === "admin") return;
-  if (role === "instructor" && allowedCourseIds.includes(courseId)) return;
-  throw new Error("FORBIDDEN");
+  if (
+    actorRole !== "admin" &&
+    (actorRole !== "instructor" || !assignedCourseIds.includes(courseId))
+  ) {
+    throw new Error("FORBIDDEN");
+  }
 }
 
 export function validateQuestionForStatus(
@@ -24,25 +27,38 @@ export function validateQuestionForStatus(
 ): AdminValidationIssue[] {
   const issues: AdminValidationIssue[] = [];
   if (!question.content.trim()) {
-    issues.push({ path: ["content"], message: "Nội dung câu hỏi không được để trống" });
-  }
-  if (question.options.length < 2) {
-    issues.push({ path: ["options"], message: "Cần ít nhất 2 lựa chọn" });
-  }
-  const correctCount = question.options.filter((o) => o.isCorrect).length;
-  if (correctCount !== 1) {
     issues.push({
-      path: ["options"],
-      message: "Cần chọn đúng 1 đáp án đúng",
+      code: "missing-content",
+      message: "Nội dung câu hỏi không được để trống.",
     });
   }
-  for (let i = 0; i < question.options.length; i++) {
-    if (!question.options[i].content.trim()) {
-      issues.push({
-        path: ["options", i, "content"],
-        message: "Nội dung lựa chọn không được để trống",
-      });
-    }
+  if (question.status !== "published") return issues;
+
+  const labels = question.options.map((option) => option.label);
+  const hasExactlyFour =
+    question.options.length === 4 &&
+    ["A", "B", "C", "D"].every(
+      (label) =>
+        labels.filter((candidate) => candidate === label).length === 1 &&
+        question.options.find((option) => option.label === label)?.content.trim(),
+    );
+  if (!hasExactlyFour) {
+    issues.push({
+      code: "exactly-four-options",
+      message: "Câu xuất bản phải có đúng bốn phương án A–D.",
+    });
+  }
+  if (question.options.filter((option) => option.isCorrect).length !== 1) {
+    issues.push({
+      code: "exactly-one-correct",
+      message: "Câu xuất bản phải có đúng một đáp án đúng.",
+    });
+  }
+  if (!question.explanation.trim()) {
+    issues.push({
+      code: "missing-explanation",
+      message: "Câu xuất bản phải có lời giải.",
+    });
   }
   return issues;
 }
