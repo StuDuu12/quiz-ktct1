@@ -12,10 +12,12 @@ import {
   revokeInstructorForm,
   setUserActiveForm,
   setUserRoleStateAction,
+} from "@/src/features/admin/actions";
+import {
   createUserStateAction,
   deleteUserForm,
   editUserForm,
-} from "@/src/features/admin/actions";
+} from "@/src/features/admin/user-actions";
 import { InviteInstructorForm } from "@/src/features/admin/components/invite-instructor-form";
 import { CreateUserForm } from "@/src/features/admin/components/create-user-form";
 import { UserRoleForm } from "@/src/features/admin/components/user-role-form";

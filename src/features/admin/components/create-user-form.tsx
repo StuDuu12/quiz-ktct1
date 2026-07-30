@@ -3,7 +3,7 @@
 import { UserPlus, SpinnerGap } from "@phosphor-icons/react";
 import { useActionState, useEffect, useState } from "react";
 
-import type { CreateUserResult } from "@/src/features/admin/actions";
+import type { CreateUserResult } from "@/src/features/admin/user-actions";
 
 const initialState: CreateUserResult = {
   status: "unavailable",
