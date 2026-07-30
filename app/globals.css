@@ -2508,7 +2508,9 @@ body {
 }
 .admin-inline-warning, .admin-action-result.is-unavailable { color: #7c582c; background: #fff0df; }
 .admin-action-result.is-failed { color: #8c4242; background: #fae8e8; }
-.admin-action-result.is-sent { color: #186444; background: #e3f4ea; }
+.admin-action-result.is-sent, .admin-action-result.is-success { color: #186444; background: #e3f4ea; }
+
+.admin-action-result:empty { display: none; }
 .admin-checkbox-grid { display: grid; gap: .45rem; }
 .admin-checkbox-grid label {
   display: flex;

@@ -13,6 +13,8 @@ import {
   setUserActiveForm,
   setUserRoleStateAction,
   createUserStateAction,
+  deleteUserForm,
+  editUserForm,
 } from "@/src/features/admin/actions";
 import { InviteInstructorForm } from "@/src/features/admin/components/invite-instructor-form";
 import { CreateUserForm } from "@/src/features/admin/components/create-user-form";
@@ -146,6 +148,30 @@ export default async function AdminUsersPage() {
                             </button>
                           </form>
                         ) : null}
+
+                        <hr />
+                        
+                        <form action={editUserForm} className="admin-form-grid" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
+                          <input type="hidden" name="user_id" value={user.id} />
+                          <label>
+                            Đổi tên hiển thị
+                            <input name="full_name" defaultValue={user.fullName} required />
+                          </label>
+                          <label>
+                            Đổi mật khẩu (ít nhất 6 ký tự, để trống nếu không đổi)
+                            <input name="password" type="text" minLength={6} />
+                          </label>
+                          <button className="admin-secondary-button" type="submit" disabled={!deliveryAvailable}>
+                            Cập nhật hồ sơ
+                          </button>
+                        </form>
+
+                        <form action={deleteUserForm}>
+                          <input type="hidden" name="user_id" value={user.id} />
+                          <button className="admin-text-button is-danger" type="submit" disabled={!deliveryAvailable}>
+                            Xóa vĩnh viễn người dùng
+                          </button>
+                        </form>
                       </div>
                     </details>
                   </article>

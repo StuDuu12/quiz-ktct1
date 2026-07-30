@@ -597,3 +597,45 @@ export async function createUserStateAction(
     };
   }
 }
+
+export async function deleteUserForm(formData: FormData) {
+  "use server";
+  await requireViewer(["admin"]);
+  const userId = uuidSchema.parse(formData.get("user_id"));
+  const adminClient = createOptionalAdminSupabaseClient();
+  if (!adminClient) {
+    throw new Error("Chưa cấu hình khóa Admin Supabase.");
+  }
+  
+  const { error } = await adminClient.auth.admin.deleteUser(userId);
+  rpcError(error, "Xóa người dùng thất bại.");
+  
+  revalidatePath("/admin/users");
+}
+
+export async function editUserForm(formData: FormData) {
+  "use server";
+  await requireViewer(["admin"]);
+  const userId = uuidSchema.parse(formData.get("user_id"));
+  const fullName = String(formData.get("full_name") ?? "").trim();
+  const password = String(formData.get("password") ?? "").trim();
+  
+  const adminClient = createOptionalAdminSupabaseClient();
+  if (!adminClient) {
+    throw new Error("Chưa cấu hình khóa Admin Supabase.");
+  }
+  
+  const updates: any = { user_metadata: { full_name: fullName } };
+  if (password.length >= 6) {
+    updates.password = password;
+  }
+  
+  const { error } = await adminClient.auth.admin.updateUserById(userId, updates);
+  rpcError(error, "Cập nhật tài khoản thất bại.");
+  
+  const supabase = await createServerSupabaseClient();
+  const updateProfile = await supabase.from("profiles").update({ full_name: fullName }).eq("id", userId);
+  rpcError(updateProfile.error, "Cập nhật hồ sơ thất bại.");
+  
+  revalidatePath("/admin/users");
+}
