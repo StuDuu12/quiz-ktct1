@@ -265,6 +265,10 @@ export async function getAdminUsers(): Promise<AdminUser[]> {
     supabase.from("course_instructors").select("course_id, instructor_id"),
   ]);
   if (profiles.error || assignments.error) {
+    console.error("ADMIN_USERS_LOAD_FAILED details:", {
+      profilesError: profiles.error,
+      assignmentsError: assignments.error,
+    });
     throw new Error("ADMIN_USERS_LOAD_FAILED");
   }
   const byUser = new Map<string, string[]>();

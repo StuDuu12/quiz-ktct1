@@ -13,7 +13,7 @@ export default function AdminError({
       <WarningCircle size={30} weight="duotone" aria-hidden="true" />
       <div>
         <h2>Không thể hoàn tất yêu cầu</h2>
-        <p>Không có dữ liệu giả hoặc thông báo thành công giả được hiển thị.</p>
+        <p>{error.message || "Không thể tải trang quản trị. Vui lòng thử lại sau."}</p>
         <button className="admin-secondary-button" type="button" onClick={reset}>
           Thử lại
         </button>
