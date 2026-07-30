@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, ClipboardText, Clock, Target, TrendUp } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, BookOpen, ClipboardText, Clock, Target, TrendUp } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 
 import { ChapterRow } from "@/src/features/catalog/components/chapter-row";

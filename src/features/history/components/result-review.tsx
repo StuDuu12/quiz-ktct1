@@ -3,7 +3,7 @@ import {
   Flag,
   MinusCircle,
   XCircle,
-} from "@phosphor-icons/react/dist/ssr";
+} from "@phosphor-icons/react/ssr";
 
 import type {
   AttemptResult,

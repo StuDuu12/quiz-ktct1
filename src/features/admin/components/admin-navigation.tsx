@@ -5,7 +5,7 @@ import {
   Gauge,
   Question,
   UsersThree,
-} from "@phosphor-icons/react/dist/ssr";
+} from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 
 import type { AppRole } from "@/src/features/auth/roles";

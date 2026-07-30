@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, CheckCircle, Clock } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, BookOpen, CheckCircle, Clock } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 
 import type { ChapterSummary } from "@/src/features/catalog/queries";

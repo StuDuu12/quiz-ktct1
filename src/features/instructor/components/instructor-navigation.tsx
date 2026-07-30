@@ -4,7 +4,7 @@ import {
   FileArrowUp,
   Gauge,
   Question,
-} from "@phosphor-icons/react/dist/ssr";
+} from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 
 const items = [

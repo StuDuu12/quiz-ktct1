@@ -5,7 +5,7 @@ import {
   Clock,
   FileText,
   WarningCircle,
-} from "@phosphor-icons/react/dist/ssr";
+} from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 
 import type { AttemptSummary } from "@/src/features/history/queries";
