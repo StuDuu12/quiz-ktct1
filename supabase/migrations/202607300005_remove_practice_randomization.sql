@@ -1,5 +1,4 @@
-﻿
-> create or replace function public.start_attempt(
+create or replace function public.start_attempt(
     target_course_id uuid,
     target_exam_config_id uuid default null,
     target_chapter_id uuid default null
@@ -253,6 +252,7 @@
   from public, anon;
   grant execute on function public.start_attempt(uuid, uuid, uuid)
   to authenticated;
+
 
 
 
