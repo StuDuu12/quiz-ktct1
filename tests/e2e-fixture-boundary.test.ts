@@ -12,6 +12,7 @@ import * as fixtureStore from "@/src/e2e/store";
 const fixtureActionNames = [
   "authenticateE2EUser",
   "confirmE2EEmail",
+  "deleteE2EQuestion",
   "expireE2EExam",
   "finishE2EPractice",
   "getE2EAdminAudits",

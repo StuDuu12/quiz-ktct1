@@ -5,6 +5,7 @@ import { requireViewer } from "@/src/features/auth/session";
 import { assertCourseManagementScope, validateQuestionForStatus } from "@/src/features/admin/validations";
 import { isE2EEnabled } from "@/src/e2e/guard";
 import {
+  deleteE2EQuestion,
   saveE2EQuestion,
   setE2EUserActive,
   setE2EUserRole,
@@ -212,6 +213,32 @@ export async function saveQuestionForm(formData: FormData) {
   revalidatePath("/instructor");
   revalidatePath("/instructor/questions");
   void data;
+}
+
+export async function deleteQuestionForm(formData: FormData) {
+  "use server";
+  const viewer = await requireViewer(["admin", "instructor"]);
+  const questionId = String(formData.get("id") ?? "");
+  if (!questionId) throw new Error("MISSING_QUESTION_ID");
+
+  if (isE2EEnabled()) {
+    deleteE2EQuestion(viewer, questionId);
+    revalidatePath("/admin");
+    revalidatePath("/admin/questions");
+    revalidatePath("/instructor");
+    revalidatePath("/instructor/questions");
+    return;
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("admin_delete_question", {
+    target_question_id: questionId,
+  });
+  rpcError(error, "QUESTION_DELETE_FAILED");
+  revalidatePath("/admin");
+  revalidatePath("/admin/questions");
+  revalidatePath("/instructor");
+  revalidatePath("/instructor/questions");
 }
 
 export async function approveInstructor(
