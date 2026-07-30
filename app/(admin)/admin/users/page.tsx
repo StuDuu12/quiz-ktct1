@@ -12,8 +12,10 @@ import {
   revokeInstructorForm,
   setUserActiveForm,
   setUserRoleStateAction,
+  createUserStateAction,
 } from "@/src/features/admin/actions";
 import { InviteInstructorForm } from "@/src/features/admin/components/invite-instructor-form";
+import { CreateUserForm } from "@/src/features/admin/components/create-user-form";
 import { UserRoleForm } from "@/src/features/admin/components/user-role-form";
 import {
   getAdminCatalog,
@@ -160,7 +162,11 @@ export default async function AdminUsersPage() {
             )}
           </section>
 
-          <aside>
+          <aside style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            <CreateUserForm
+              deliveryAvailable={deliveryAvailable}
+              action={createUserStateAction}
+            />
             <InviteInstructorForm
               courses={loaded[1].courses.map(({ id, title }) => ({ id, title }))}
               deliveryAvailable={deliveryAvailable}

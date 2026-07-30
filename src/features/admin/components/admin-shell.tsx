@@ -7,6 +7,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { AdminNavigation } from "@/src/features/admin/components/admin-navigation";
 import { AccessDeniedNotice } from "@/src/features/auth/components/access-denied-notice";
+import { SignOutButton } from "@/src/features/auth/components/sign-out-button";
 
 const subscribeToHydration = () => () => {};
 
@@ -49,10 +50,12 @@ export function AdminShell({
         <AdminNavigation role="admin" currentPath={pathname} />
         <div className="admin-sidebar-footer">
           <span title={email}>{email}</span>
-          <Link href="/dashboard">
-            <SignOut size={18} aria-hidden="true" />
-            Về trang học
-          </Link>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "1rem" }}>
+            <Link href="/dashboard" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+              Về trang học
+            </Link>
+            <SignOutButton />
+          </div>
         </div>
       </aside>
       {mobileOpen ? (

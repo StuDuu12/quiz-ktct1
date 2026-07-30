@@ -1,5 +1,6 @@
 import { ArrowRight, BookOpen, ClipboardText, Clock, Target, TrendUp } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
+import { SignOutButton } from "@/src/features/auth/components/sign-out-button";
 
 import { ChapterRow } from "@/src/features/catalog/components/chapter-row";
 import type { AppRole } from "@/src/features/auth/roles";
@@ -32,7 +33,12 @@ export function CourseOverview({
       <AccessDeniedNotice />
       <header className="learner-header">
         <Link href="/dashboard" className="brand-mark"><BookOpen size={24} weight="fill" /> Ôn thi KTCT</Link>
-        <nav aria-label="Điều hướng học viên"><Link href="/dashboard" aria-current="page">Tổng quan</Link><Link href="/history">Lịch sử</Link>{viewerRole === "admin" ? <Link href="/admin">Trang quản trị</Link> : null}</nav>
+        <nav aria-label="Điều hướng học viên">
+          <Link href="/dashboard" aria-current="page">Tổng quan</Link>
+          <Link href="/history">Lịch sử</Link>
+          {viewerRole === "admin" ? <Link href="/admin">Trang quản trị</Link> : null}
+          <SignOutButton className="primary-action" showIcon={false} />
+        </nav>
       </header>
 
       <section className="course-hero" aria-labelledby="course-title">
