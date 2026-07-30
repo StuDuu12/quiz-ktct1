@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { type FormEvent, useState } from "react";
+import { Suspense, type FormEvent, useState } from "react";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
 import {
@@ -10,7 +10,7 @@ import {
   getAuthErrorMessage,
 } from "@/src/lib/supabase/browser";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [message, setMessage] = useState(
@@ -76,5 +76,13 @@ export default function ResetPasswordPage() {
         </button>
       </form>
     </AuthShell>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Đang tải...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
