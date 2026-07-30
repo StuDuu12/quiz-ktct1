@@ -1,13 +1,17 @@
-import { env } from "cloudflare:workers";
-import { drizzle } from "drizzle-orm/d1";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "./schema";
 
 export function getDb() {
-  if (!env.DB) {
+  const connectionString = process.env.DATABASE_URL;
+
+  if (!connectionString) {
     throw new Error(
-      "Cloudflare D1 binding `DB` is unavailable. Set the `d1` field in .openai/hosting.json to `DB` or let your control plane inject the real binding values before using the database."
+      "DATABASE_URL is missing in environment variables. Please add it to your .env.local file."
     );
   }
 
-  return drizzle(env.DB, { schema });
+  // Disable prefetch as it is not supported for "Transaction" pool mode
+  const client = postgres(connectionString, { prepare: false });
+  return drizzle(client, { schema });
 }
