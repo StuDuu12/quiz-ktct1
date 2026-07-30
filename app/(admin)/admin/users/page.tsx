@@ -153,17 +153,19 @@ export default async function AdminUsersPage() {
 
                         <hr />
                         
-                        <form action={editUserForm} className="admin-form-grid" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
+                        <form action={editUserForm} className="admin-form" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
                           <input type="hidden" name="user_id" value={user.id} />
-                          <label>
-                            Đổi tên hiển thị
-                            <input name="full_name" defaultValue={user.fullName} required />
-                          </label>
-                          <label>
-                            Đổi mật khẩu (ít nhất 6 ký tự, để trống nếu không đổi)
-                            <input name="password" type="text" minLength={6} />
-                          </label>
-                          <button className="admin-secondary-button" type="submit" disabled={!deliveryAvailable}>
+                          <div className="admin-form-grid">
+                            <label>
+                              Đổi tên hiển thị
+                              <input name="full_name" defaultValue={user.fullName} required />
+                            </label>
+                            <label>
+                              Đổi mật khẩu (ít nhất 6 ký tự, để trống nếu không đổi)
+                              <input name="password" type="text" minLength={6} />
+                            </label>
+                          </div>
+                          <button className="admin-secondary-button" type="submit" disabled={!deliveryAvailable} style={{ marginTop: '0.75rem' }}>
                             Cập nhật hồ sơ
                           </button>
                         </form>
