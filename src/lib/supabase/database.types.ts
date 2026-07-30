@@ -817,6 +817,12 @@ export type Database = {
         };
         Returns: string;
       };
+      admin_delete_question: {
+        Args: {
+          target_question_id: string;
+        };
+        Returns: boolean;
+      };
       allocate_mock_exam_questions: {
         Args: {
           target_course_id: string;
