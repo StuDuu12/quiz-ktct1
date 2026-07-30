@@ -12,13 +12,15 @@ vi.mock("@/src/lib/supabase/server", () => ({ createServerSupabaseClient }));
 vi.mock("next/cache", () => ({ revalidatePath }));
 
 import {
-  assertCourseManagementScope,
-  assertUserAdministrationRole,
-  previewImport,
   setUserRoleForm,
   setUserRoleStateAction,
-  validateQuestionForStatus,
 } from "@/src/features/admin/actions";
+import {
+  assertCourseManagementScope,
+  assertUserAdministrationRole,
+  validateQuestionForStatus,
+} from "@/src/features/admin/validations";
+import { previewImport } from "@/src/features/admin/import-preview";
 
 const validMarkdownQuestion = (number: number, answer: "A" | "B" | "C" | "D" = "B") =>
   [
