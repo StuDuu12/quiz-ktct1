@@ -1,3 +1,5 @@
+"use server";
+
 import type { AppRole } from "@/src/features/auth/roles";
 import { requireViewer } from "@/src/features/auth/session";
 import { isE2EEnabled } from "@/src/e2e/guard";
