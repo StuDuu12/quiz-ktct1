@@ -326,7 +326,13 @@ export function PracticeSession({
     setFinishing(true);
     setError("");
     try {
-      const result = await finish(state.attemptId);
+      const total = state.questions.length;
+      const correctAnswers = Object.values(state.answers).filter(
+        (a) => a.isCorrect
+      ).length;
+      const score =
+        total === 0 ? 0 : Math.round((correctAnswers * 100) / total * 100) / 100;
+      const result = await finish(state.attemptId, score);
       setScore(result.score);
       setState((current) => ({ ...current, status: result.status }));
       closeReview();
