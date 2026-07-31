@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   ArrowLeft,
@@ -260,7 +260,10 @@ export function PracticeSession({
           {state.questions.map((question, index) => {
             const answer = state.answers[question.id];
             const current = question.id === currentQuestion.id;
-            const status = answer?.optionId ? "đã trả lời" : "chưa trả lời";
+            const isCorrect = answer?.showFeedback && answer?.isCorrect === true;
+            const isWrong = answer?.showFeedback && answer?.isCorrect === false;
+            const isAnswered = answer?.optionId && !isCorrect && !isWrong;
+            const status = isCorrect ? "trả lời đúng" : isWrong ? "trả lời sai" : answer?.optionId ? "đã trả lời" : "chưa trả lời";
             const flagLabel = answer?.flagged ? ", đặt cờ" : "";
             return (
               <button
@@ -268,7 +271,9 @@ export function PracticeSession({
                 type="button"
                 className={[
                   "navigator-item",
-                  answer?.optionId ? "is-answered" : "",
+                  isCorrect ? "is-correct" : "",
+                  isWrong ? "is-wrong" : "",
+                  isAnswered ? "is-answered" : "",
                   answer?.flagged ? "is-flagged" : "",
                   current ? "is-current" : "",
                 ].filter(Boolean).join(" ")}
@@ -285,6 +290,8 @@ export function PracticeSession({
         <div className="navigator-legend" aria-label="Chú thích trạng thái">
           <span><i className="legend-current" /> Hiện tại</span>
           <span><i className="legend-answered" /> Đã trả lời</span>
+          <span><i className="legend-correct" /> Đúng</span>
+          <span><i className="legend-wrong" /> Sai</span>
           <span><i className="legend-flagged" /> Đặt cờ</span>
         </div>
       </nav>
@@ -424,8 +431,9 @@ export function PracticeSession({
             <legend className="visually-hidden">Các phương án trả lời</legend>
             {currentQuestion.options.map((option, index) => {
               const selected = currentAnswer?.optionId === option.id;
+              const isActuallyCorrect = currentAnswer?.showFeedback && currentAnswer?.correctOptionId === option.id;
               const correctness =
-                selected && currentAnswer?.isCorrect === true
+                (selected && currentAnswer?.isCorrect === true) || isActuallyCorrect
                   ? " is-correct"
                   : selected && currentAnswer?.isCorrect === false
                     ? " is-incorrect"
@@ -524,13 +532,22 @@ export function PracticeSession({
               </button>
             )}
           </footer>
-          <button
-            type="button"
-            className="finish-link"
-            onClick={openReview}
-          >
-            Kết thúc
-          </button>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginTop: '16px' }}>
+            <button
+              type="button"
+              className="finish-link"
+              onClick={openReview}
+            >
+              Kết thúc
+            </button>
+            <Link
+              href={`/courses/${state.courseSlug}`}
+              className="save-link"
+              style={{ fontWeight: 500, color: 'var(--text-secondary)' }}
+            >
+              Lưu & thoát
+            </Link>
+          </div>
         </section>
 
         <aside className="practice-navigator-panel">{navigator}</aside>
@@ -613,3 +630,7 @@ export function PracticeSession({
     </>
   );
 }
+
+
+
+

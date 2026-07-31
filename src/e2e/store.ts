@@ -780,6 +780,15 @@ export function saveE2EQuestion(
   return id;
 }
 
+export function deleteE2EQuestion(viewer: Viewer, questionId: string) {
+  assertE2EEnabled();
+  const question = store().questions.get(questionId);
+  if (question) {
+    getE2EAdminQuestions(viewer, question.courseId);
+    store().questions.delete(questionId);
+  }
+}
+
 function requireE2EAdmin(viewer: Viewer) {
   if (viewer.role !== "admin") throw new Error("FORBIDDEN");
 }

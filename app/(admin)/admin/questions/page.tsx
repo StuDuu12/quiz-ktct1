@@ -7,6 +7,7 @@ import {
 import Link from "next/link";
 
 import { saveQuestionForm } from "@/src/features/admin/actions";
+import { ChapterQuestionManager } from "@/src/features/admin/components/chapter-question-manager";
 import {
   getAdminCatalog,
   getAdminQuestions,
@@ -39,8 +40,8 @@ export default async function AdminQuestionsPage({ searchParams }: PageProps) {
       <header className="admin-page-header">
         <div>
           <p className="admin-kicker">NGÂN HÀNG CÂU HỎI</p>
-          <h1>Biên soạn và xuất bản</h1>
-          <p>Đáp án đúng chỉ đi qua RPC có kiểm tra phạm vi, không lộ ở truy vấn học viên.</p>
+          <h1>Biên soạn và quản lý theo chương</h1>
+          <p>Phân loại câu hỏi theo 6 chương, chỉnh sửa và xóa câu hỏi an toàn.</p>
         </div>
         <Link className="admin-header-action is-secondary" href={`${portalPath}/import`}>
           Nhập Markdown
@@ -57,11 +58,11 @@ export default async function AdminQuestionsPage({ searchParams }: PageProps) {
         </section>
       ) : (
         <div className="admin-content-grid admin-question-layout">
-          <section className="admin-panel">
+          <section className="admin-panel space-y-4">
             <header className="admin-table-toolbar">
               <div>
-                <p className="admin-kicker">DANH SÁCH</p>
-                <h2>{questions.length} câu hỏi</h2>
+                <p className="admin-kicker">QUẢN LÝ CÂU HỎI THEO CHƯƠNG</p>
+                <h2>{questions.length} câu hỏi tổng cộng</h2>
               </div>
               <form method="get" className="admin-inline-filter">
                 <label>
@@ -79,175 +80,9 @@ export default async function AdminQuestionsPage({ searchParams }: PageProps) {
                 </button>
               </form>
             </header>
+
             {questions.length ? (
-              <>
-                <div className="admin-table-scroll">
-                  <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Câu hỏi</th>
-                      <th scope="col">Chương</th>
-                      <th scope="col">Độ khó</th>
-                      <th scope="col">Trạng thái</th>
-                      <th scope="col">Cập nhật</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {questions.map((question) => (
-                      <tr key={question.id}>
-                        <td>
-                          <strong>
-                            {question.sourceNumber
-                              ? `Câu ${question.sourceNumber}: `
-                              : ""}
-                            {question.content}
-                          </strong>
-                          <span>
-                            {question.options.length} phương án ·{" "}
-                            {question.options.filter((option) => option.isCorrect).length} đáp án đúng
-                          </span>
-                        </td>
-                        <td>{question.chapterTitle}</td>
-                        <td>Mức {question.difficulty}</td>
-                        <td>
-                          <span className={`admin-status is-${question.status}`}>
-                            {question.status === "published"
-                              ? "Công khai"
-                              : question.status === "archived"
-                                ? "Lưu trữ"
-                                : "Bản nháp"}
-                          </span>
-                        </td>
-                        <td>
-                          {new Intl.DateTimeFormat("vi-VN", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          }).format(new Date(question.updatedAt))}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  </table>
-                </div>
-                <div className="admin-question-edit-list">
-                  {questions.map((question) => (
-                    <details key={question.id}>
-                      <summary>
-                        Chỉnh sửa{" "}
-                        {question.sourceNumber
-                          ? `câu ${question.sourceNumber}`
-                          : question.content.slice(0, 45)}
-                      </summary>
-                      <form className="admin-form" action={saveQuestionForm}>
-                        <input type="hidden" name="id" value={question.id} />
-                        <label>
-                          Chương
-                          <select
-                            name="chapter_id"
-                            required
-                            defaultValue={question.chapterId}
-                          >
-                            {chapters.map((chapter) => (
-                              <option key={chapter.id} value={chapter.id}>
-                                Chương {chapter.position}: {chapter.title}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <div className="admin-form-grid">
-                          <label>
-                            Số nguồn
-                            <input
-                              name="source_number"
-                              type="number"
-                              min={1}
-                              defaultValue={question.sourceNumber ?? ""}
-                            />
-                          </label>
-                          <label>
-                            Độ khó
-                            <select
-                              name="difficulty"
-                              defaultValue={question.difficulty}
-                            >
-                              <option value="1">1 · Dễ</option>
-                              <option value="2">2 · Vừa</option>
-                              <option value="3">3 · Khó</option>
-                              <option value="4">4 · Nâng cao</option>
-                            </select>
-                          </label>
-                        </div>
-                        <label>
-                          Nội dung
-                          <textarea
-                            name="content"
-                            rows={4}
-                            required
-                            defaultValue={question.content}
-                          />
-                        </label>
-                        <fieldset className="admin-options-fieldset">
-                          <legend>Bốn phương án A–D</legend>
-                          {(["A", "B", "C", "D"] as const).map((label) => (
-                            <label key={label}>
-                              <span>{label}</span>
-                              <input
-                                name={`option_${label}`}
-                                required
-                                defaultValue={
-                                  question.options.find(
-                                    (option) => option.label === label,
-                                  )?.content ?? ""
-                                }
-                              />
-                            </label>
-                          ))}
-                        </fieldset>
-                        <label>
-                          Đáp án đúng
-                          <select
-                            name="correct_label"
-                            required
-                            defaultValue={
-                              question.options.find((option) => option.isCorrect)
-                                ?.label ?? ""
-                            }
-                          >
-                            <option value="" disabled>
-                              Chọn một phương án
-                            </option>
-                            {["A", "B", "C", "D"].map((label) => (
-                              <option key={label} value={label}>
-                                Phương án {label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label>
-                          Lời giải
-                          <textarea
-                            name="explanation"
-                            rows={4}
-                            defaultValue={question.explanation}
-                          />
-                        </label>
-                        <label>
-                          Trạng thái
-                          <select name="status" defaultValue={question.status}>
-                            <option value="draft">Bản nháp</option>
-                            <option value="published">Công khai</option>
-                            <option value="archived">Lưu trữ</option>
-                          </select>
-                        </label>
-                        <button className="admin-secondary-button" type="submit">
-                          Lưu phiên bản mới
-                        </button>
-                      </form>
-                    </details>
-                  ))}
-                </div>
-              </>
+              <ChapterQuestionManager questions={questions} chapters={chapters} />
             ) : (
               <div className="admin-empty">
                 <Question size={30} weight="duotone" aria-hidden="true" />
@@ -287,10 +122,10 @@ export default async function AdminQuestionsPage({ searchParams }: PageProps) {
                 <label>
                   Độ khó
                   <select name="difficulty" defaultValue="2">
-                    <option value="1">1 · Dễ</option>
-                    <option value="2">2 · Vừa</option>
-                    <option value="3">3 · Khó</option>
-                    <option value="4">4 · Nâng cao</option>
+                    <option value="1">1 · Nhận biết</option>
+                    <option value="2">2 · Thông hiểu</option>
+                    <option value="3">3 · Vận dụng</option>
+                    <option value="4">4 · Vận dụng cao</option>
                   </select>
                 </label>
               </div>
