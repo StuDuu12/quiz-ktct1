@@ -80,6 +80,47 @@ export function PracticeSession({
   finish,
 }: PracticeSessionProps) {
   const [state, setState] = useState(initialState);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(`practice_state_${initialState.attemptId}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && typeof parsed === 'object') {
+          setState((prev) => ({
+            ...prev,
+            answers: parsed.answers || prev.answers,
+            currentQuestionId: parsed.currentQuestionId || prev.currentQuestionId,
+          }));
+        }
+      }
+    } catch (e) {
+      // Ignore
+    }
+    setHydrated(true);
+  }, [initialState.attemptId]);
+
+  useEffect(() => {
+    if (hydrated && state.status === "in_progress") {
+      try {
+        localStorage.setItem(
+          `practice_state_${state.attemptId}`,
+          JSON.stringify({
+            answers: state.answers,
+            currentQuestionId: state.currentQuestionId,
+          })
+        );
+      } catch (e) {
+        // Ignore
+      }
+    } else if (hydrated && state.status !== "in_progress") {
+      try {
+        localStorage.removeItem(`practice_state_${state.attemptId}`);
+      } catch (e) {}
+    }
+  }, [hydrated, state.attemptId, state.answers, state.currentQuestionId, state.status]);
+
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [error, setError] = useState("");
   const [reviewOpen, setReviewOpen] = useState(false);
