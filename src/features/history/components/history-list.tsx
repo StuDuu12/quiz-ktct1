@@ -7,6 +7,7 @@ import {
   WarningCircle,
 } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
+import { DeleteAttemptButton } from "@/src/features/catalog/components/delete-attempt-button";
 
 import type { AttemptSummary } from "@/src/features/history/queries";
 
@@ -113,14 +114,17 @@ export function HistoryList({
                   : `${Math.round(attempt.score * 100) / 100}%`}
               </strong>
             </div>
-            {attempt.status === "submitted" ? (
-              <Link
-                className="history-result-link"
-                href={`/results/${attempt.id}`}
-              >
-                Xem kết quả <ArrowRight size={17} aria-hidden="true" />
-              </Link>
-            ) : null}
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginLeft: 'auto' }}>
+              {attempt.status === "submitted" ? (
+                <Link
+                  className="history-result-link"
+                  href={`/results/${attempt.id}`}
+                >
+                  Xem kết quả <ArrowRight size={17} aria-hidden="true" />
+                </Link>
+              ) : null}
+              <DeleteAttemptButton attemptId={attempt.id} />
+            </div>
           </article>
         ))}
       </div>
