@@ -332,7 +332,19 @@ export function PracticeSession({
       ).length;
       const score =
         total === 0 ? 0 : Math.round((correctAnswers * 100) / total * 100) / 100;
-      const result = await finish(state.attemptId, score);
+        
+      const answersToSave = Object.entries(state.answers)
+        .filter(([, answer]) => !!answer.optionId || answer.flagged)
+        .map(([questionId, answer]) => {
+          const q = state.questions.find((q) => q.id === questionId);
+          return {
+            attemptQuestionId: q!.attemptQuestionId,
+            optionId: answer.optionId || null,
+            flagged: !!answer.flagged,
+          };
+        });
+
+      const result = await finish(state.attemptId, score, answersToSave);
       setScore(result.score);
       setState((current) => ({ ...current, status: result.status }));
       closeReview();

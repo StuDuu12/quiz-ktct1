@@ -396,10 +396,31 @@ export async function savePracticeFlag(
   if (error) throw practiceError("Không thể lưu cờ câu hỏi.", error);
 }
 
-export async function finishPractice(attemptId: string, score: number) {
+export async function finishPractice(
+  attemptId: string,
+  score: number,
+  answersToSave: { attemptQuestionId: string; optionId: string | null; flagged: boolean }[]
+) {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
-  if (isE2EEnabled()) return finishE2EPractice(viewer.id, attemptId);
+  if (isE2EEnabled()) return finishE2EPractice(viewer.id, attemptId, answersToSave);
   const supabase = await createServerSupabaseClient();
+  
+  if (answersToSave && answersToSave.length > 0) {
+    const { error: insertError } = await supabase
+      .from("attempt_answers")
+      .upsert(
+        answersToSave.map((a) => ({
+          attempt_question_id: a.attemptQuestionId,
+          selected_option_id: a.optionId || null,
+          is_flagged: a.flagged
+        })),
+        { onConflict: "attempt_question_id" }
+      );
+    if (insertError) {
+      console.error("Failed to bulk save practice answers:", insertError);
+    }
+  }
+
   const { data, error } = await supabase
     .from("attempts")
     .update({ status: "submitted", score })

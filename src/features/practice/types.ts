@@ -62,4 +62,5 @@ export type SavePracticeFlag = (
 export type FinishPractice = (
   attemptId: string,
   score: number,
+  answersToSave: { attemptQuestionId: string, optionId: string | null, flagged: boolean }[]
 ) => Promise<FinishPracticeResult>;
