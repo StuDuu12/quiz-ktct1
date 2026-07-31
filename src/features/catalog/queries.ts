@@ -62,9 +62,12 @@ export async function getCourseDashboard(
     if (courseError) return { data: null, error: "Không thể tải học phần lúc này." };
     if (!course) return { data: null, error: null };
 
+    // Run ALL queries in parallel — no sequential waits
     const [
       { data: chapters, error: chaptersError },
-      { data: attempts, error: attemptsError },
+      { data: chapterSummaryRows, error: summaryError },
+      { data: submittedProgress, error: progressError },
+      { data: recentAttempts, error: recentError },
       { data: mockExamConfigs, error: mockExamConfigError },
     ] =
       await Promise.all([
@@ -73,14 +76,20 @@ export async function getCourseDashboard(
           .select("id, position, title, questions(id)")
           .eq("course_id", course.id)
           .order("position"),
+        // @ts-expect-error generated types may not include new RPC yet
+        supabase.rpc("get_dashboard_chapter_summaries", {
+          target_course_id: course.id,
+        }),
+        supabase.rpc("get_submitted_practice_progress", {
+          target_course_id: course.id,
+        }),
         supabase
           .from("attempts")
-          .select(
-            "id, kind, status, score, submitted_at, started_at, expires_at, attempt_questions(question_snapshot)",
-          )
+          .select("id, kind, status, score, submitted_at, started_at")
           .eq("course_id", course.id)
           .eq("user_id", viewer.id)
-          .order("started_at", { ascending: false }),
+          .order("started_at", { ascending: false })
+          .limit(5),
         supabase
           .from("exam_configs")
           .select("id, question_count, duration_seconds")
@@ -90,7 +99,7 @@ export async function getCourseDashboard(
           .limit(2),
       ]);
 
-    if (chaptersError || attemptsError || mockExamConfigError) {
+    if (chaptersError || summaryError || progressError || recentError || mockExamConfigError) {
       return { data: null, error: "Không thể tải tiến độ học tập lúc này." };
     }
 
@@ -100,23 +109,36 @@ export async function getCourseDashboard(
       title: string;
       questions: { id: string }[] | null;
     }>;
-    const typedAttempts = (attempts ?? []) as Array<{
-      id: string;
-      kind: "practice" | "mock_exam";
-      status: "submitted" | "in_progress" | "expired";
-      score: number | null;
-      submitted_at: string | null;
-      started_at: string;
-      expires_at: string;
-      attempt_questions:
-        | Array<{ question_snapshot: unknown }>
-        | null;
+
+    // Build chapter attempt data from the lightweight RPC
+    const summaryRows = ((chapterSummaryRows ?? []) as unknown) as Array<{
+      chapter_id: string;
+      active_attempt_id: string | null;
+      attempt_id: string;
+      attempt_score: number | null;
+      attempt_status: "submitted" | "in_progress" | "expired";
+      attempt_submitted_at: string | null;
+      attempt_started_at: string;
     }>;
-    const { data: submittedProgress, error: progressError } = await supabase.rpc(
-      "get_submitted_practice_progress",
-      { target_course_id: course.id },
-    );
-    if (progressError) return { data: null, error: "Không thể tải kết quả luyện tập lúc này." };
+
+    const activeAttemptByChapter = new Map<string, string>();
+    const historyByChapter = new Map<string, Array<{ id: string; score: number | null; submittedAt: string; status: "submitted" | "in_progress" | "expired" }>>();
+    for (const row of summaryRows) {
+      if (row.active_attempt_id && !activeAttemptByChapter.has(row.chapter_id)) {
+        activeAttemptByChapter.set(row.chapter_id, row.active_attempt_id);
+      }
+      let history = historyByChapter.get(row.chapter_id);
+      if (!history) {
+        history = [];
+        historyByChapter.set(row.chapter_id, history);
+      }
+      history.push({
+        id: row.attempt_id,
+        score: row.attempt_score,
+        submittedAt: row.attempt_submitted_at ?? row.attempt_started_at,
+        status: row.attempt_status,
+      });
+    }
 
     const attemptProgress: ProgressAttempt[] = (submittedProgress ?? []).map((row) => ({
       chapterId: row.chapter_id,
@@ -129,57 +151,6 @@ export async function getCourseDashboard(
       const currentLatest = latestByChapter.get(row.chapter_id);
       if (!currentLatest || new Date(row.submitted_at) > new Date(currentLatest)) {
         latestByChapter.set(row.chapter_id, row.submitted_at);
-      }
-    }
-    const activeAttemptByChapter = new Map<string, string>();
-    const historyByChapter = new Map<string, Array<{ id: string; score: number | null; submittedAt: string; status: "submitted" | "in_progress" | "expired" }>>();
-    const now = Date.now();
-    for (const attempt of typedAttempts) {
-      if (attempt.kind !== "practice") continue;
-
-      const chapterIds = new Set(
-        (attempt.attempt_questions ?? [])
-          .map(({ question_snapshot }) => {
-            if (
-              typeof question_snapshot !== "object" ||
-              question_snapshot === null ||
-              Array.isArray(question_snapshot)
-            ) {
-              return null;
-            }
-            const chapterId = (
-              question_snapshot as { chapter_id?: unknown }
-            ).chapter_id;
-            return typeof chapterId === "string" ? chapterId : null;
-          })
-          .filter((chapterId): chapterId is string => chapterId !== null),
-      );
-      if (chapterIds.size !== 1) continue;
-
-      const chapterId = chapterIds.values().next().value;
-      if (!chapterId) continue;
-
-      let history = historyByChapter.get(chapterId);
-      if (!history) {
-        history = [];
-        historyByChapter.set(chapterId, history);
-      }
-      history.push({
-        id: attempt.id,
-        score: attempt.score,
-        submittedAt: attempt.submitted_at ?? attempt.started_at,
-        status: attempt.status,
-      });
-
-      if (
-        attempt.status !== "in_progress" ||
-        new Date(attempt.expires_at).getTime() <= now
-      ) {
-        continue;
-      }
-
-      if (!activeAttemptByChapter.has(chapterId)) {
-        activeAttemptByChapter.set(chapterId, attempt.id);
       }
     }
 
@@ -201,11 +172,20 @@ export async function getCourseDashboard(
       ? Math.round(completed.reduce((sum, chapter) => sum + (chapter.accuracy ?? 0), 0) / completed.length)
       : null;
 
+    const typedRecent = (recentAttempts ?? []) as Array<{
+      id: string;
+      kind: "practice" | "mock_exam";
+      status: "submitted" | "in_progress" | "expired";
+      score: number | null;
+      submitted_at: string | null;
+      started_at: string;
+    }>;
+
     return {
       data: {
         course,
         chapters: chapterSummaries,
-        recentAttempts: typedAttempts.slice(0, 5).map((attempt) => ({
+        recentAttempts: typedRecent.map((attempt) => ({
           id: attempt.id,
           kind: attempt.kind,
           status: attempt.status,
