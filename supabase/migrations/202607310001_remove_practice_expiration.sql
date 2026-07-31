@@ -139,13 +139,13 @@ begin
             )
             order by o.label
           )
-          from public.options o
+          from public.question_options o
           where o.question_id = q.id
         )
       ),
       (
         select jsonb_agg(o.id order by o.label)
-        from public.options o
+        from public.question_options o
         where o.question_id = q.id
       )
     into current_question_snapshot, current_option_order

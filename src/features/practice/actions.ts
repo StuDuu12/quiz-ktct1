@@ -349,21 +349,26 @@ export async function savePracticeAnswer(
     );
   }
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase.rpc("save_practice_answer", {
-    target_attempt_id: attemptId,
-    target_attempt_question_id: attemptQuestionId,
-    target_option_id: optionId,
-  });
+  const { data, error } = await supabase
+    .from("attempt_questions")
+    .select("id, attempt_id, attempts!inner(user_id), attempt_question_secrets(correct_option_id, explanation)")
+    .eq("id", attemptQuestionId)
+    .eq("attempt_id", attemptId)
+    .eq("attempts.user_id", viewer.id)
+    .maybeSingle();
 
-  if (error || !data?.[0]) {
-    throw practiceError("Không thể lưu đáp án. Hãy thử lại.", error);
+  if (error || !data || !data.attempt_question_secrets) {
+    throw practiceError("Không thể kiểm tra đáp án. Hãy thử lại.", error);
   }
+
+  const secret = data.attempt_question_secrets;
+  
   return {
-    optionId: data[0].selected_option_id,
-    isCorrect: data[0].is_correct,
-    explanation: data[0].explanation,
-    reconciled: data[0].was_already_locked,
-    correctOptionId: data[0].correct_option_id,
+    optionId,
+    isCorrect: secret.correct_option_id === optionId,
+    explanation: secret.explanation,
+    reconciled: false,
+    correctOptionId: secret.correct_option_id,
   };
 }
 
@@ -391,13 +396,19 @@ export async function savePracticeFlag(
   if (error) throw practiceError("Không thể lưu cờ câu hỏi.", error);
 }
 
-export async function finishPractice(attemptId: string) {
+export async function finishPractice(attemptId: string, score: number) {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
   if (isE2EEnabled()) return finishE2EPractice(viewer.id, attemptId);
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase.rpc("finish_practice_attempt", {
-    target_attempt_id: attemptId,
-  });
+  const { data, error } = await supabase
+    .from("attempts")
+    .update({ status: "submitted", score })
+    .eq("id", attemptId)
+    .eq("user_id", viewer.id)
+    .eq("kind", "practice")
+    .select("status, score")
+    .maybeSingle();
+
   if (error || !data) {
     throw practiceError("Không thể hoàn thành lượt luyện tập.", error);
   }
