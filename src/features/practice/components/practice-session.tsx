@@ -655,6 +655,11 @@ export function PracticeSession({
               <div><strong>{unansweredCount}</strong><span>{unansweredCount} câu chưa trả lời</span></div>
               <div><strong>{flaggedCount}</strong><span>{flaggedCount} câu đặt cờ</span></div>
             </div>
+            {error ? (
+              <div className="practice-error" role="alert" style={{ marginBottom: "1rem", color: "var(--ktct-danger)" }}>
+                <span>{error}</span>
+              </div>
+            ) : null}
             <div className="review-actions">
               <button type="button" onClick={closeReview}>
                 Quay lại kiểm tra
