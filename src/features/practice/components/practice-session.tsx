@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   ArrowLeft,
@@ -53,6 +53,26 @@ function isEditableTarget(target: EventTarget | null) {
   );
 }
 
+function getPassage(content: string) {
+  if (content.includes("Hãy đọc thông tin dưới đây và trả lời câu hỏi") || content.includes("(Nguồn:")) {
+    const blocks = content.split(/\n\s*\n/);
+    if (blocks.length >= 2) {
+      return blocks.slice(0, blocks.length - 1).join('\n\n');
+    }
+  }
+  return null;
+}
+
+function getQuestionText(content: string) {
+  if (content.includes("Hãy đọc thông tin dưới đây và trả lời câu hỏi") || content.includes("(Nguồn:")) {
+    const blocks = content.split(/\n\s*\n/);
+    if (blocks.length >= 2) {
+      return blocks[blocks.length - 1];
+    }
+  }
+  return content;
+}
+
 export function PracticeSession({
   initialState,
   saveAnswer,
@@ -77,7 +97,39 @@ export function PracticeSession({
     (question) => question.id === state.currentQuestionId,
   );
   const currentQuestion = state.questions[currentIndex]!;
-  const currentAnswer = state.answers[currentQuestion.id];
+  
+  const visibleQuestions = useMemo(() => {
+    if (!currentQuestion) return [];
+    const passage = getPassage(currentQuestion.content);
+    if (!passage) return [currentQuestion];
+
+    let start = currentIndex;
+    while (start > 0) {
+      const prevQ = state.questions[start - 1]!;
+      if (getPassage(prevQ.content) === passage) {
+        start--;
+      } else {
+        break;
+      }
+    }
+
+    let end = currentIndex;
+    while (end < state.questions.length - 1) {
+      const nextQ = state.questions[end + 1]!;
+      if (getPassage(nextQ.content) === passage) {
+        end++;
+      } else {
+        break;
+      }
+    }
+
+    return state.questions.slice(start, end + 1);
+  }, [currentQuestion, currentIndex, state.questions]);
+
+  const visiblePassage = getPassage(currentQuestion?.content || "");
+  const currentGroupStart = state.questions.findIndex(q => q.id === (visibleQuestions[0]?.id || state.currentQuestionId));
+  const currentGroupEnd = state.questions.findIndex(q => q.id === (visibleQuestions[visibleQuestions.length - 1]?.id || state.currentQuestionId));
+
   const answeredCount = state.questions.filter(
     (question) => Boolean(state.answers[question.id]?.optionId),
   ).length;
@@ -117,35 +169,40 @@ export function PracticeSession({
   );
 
   const chooseOption = useCallback(
-    (optionId: string) => {
-      const answer = state.answers[currentQuestion.id];
+    (questionId: string, optionId: string) => {
+      const answer = state.answers[questionId];
       if (answer?.locked || state.status !== "in_progress") return;
+      const question = state.questions.find((q) => q.id === questionId);
+      if (!question) return;
+
       setState((current) =>
-        answerPracticeQuestion(current, currentQuestion.id, optionId),
+        answerPracticeQuestion(current, questionId, optionId),
       );
       void persistAnswer(
-        currentQuestion.id,
-        currentQuestion.attemptQuestionId,
+        questionId,
+        question.attemptQuestionId,
         optionId,
       );
     },
-    [currentQuestion, persistAnswer, state.answers, state.status],
+    [persistAnswer, state.answers, state.status, state.questions],
   );
 
-  const toggleFlag = useCallback(() => {
+  const toggleFlag = useCallback((questionId: string) => {
     if (state.status !== "in_progress") return;
-    const flagged = !Boolean(state.answers[currentQuestion.id]?.flagged);
-    setState((current) => togglePracticeFlag(current, currentQuestion.id));
+    const flagged = !Boolean(state.answers[questionId]?.flagged);
+    setState((current) => togglePracticeFlag(current, questionId));
     setError("");
+    const question = state.questions.find((q) => q.id === questionId);
+    if (!question) return;
     void saveFlag(
       state.attemptId,
-      currentQuestion.attemptQuestionId,
+      question.attemptQuestionId,
       flagged,
     ).catch(() => {
-      setState((current) => togglePracticeFlag(current, currentQuestion.id));
+      setState((current) => togglePracticeFlag(current, questionId));
       setError("Chưa lưu được cờ câu hỏi. Hãy thử lại.");
     });
-  }, [currentQuestion, saveFlag, state.answers, state.attemptId, state.status]);
+  }, [saveFlag, state.answers, state.attemptId, state.status, state.questions]);
 
   const openReview = (event: ReactMouseEvent<HTMLButtonElement>) => {
     reviewInvokerRef.current = event.currentTarget;
@@ -172,122 +229,82 @@ export function PracticeSession({
       if (reviewOpen || state.status !== "in_progress") return;
       if (isEditableTarget(event.target)) return;
       if (/^[1-4]$/.test(event.key)) {
+        if (visibleQuestions.length > 1) return; // Disable shortcut for grouped questions
         const option = currentQuestion.options[Number(event.key) - 1];
         if (option) {
           event.preventDefault();
-          chooseOption(option.id);
+          chooseOption(currentQuestion.id, option.id);
         }
       } else if (event.key.toLowerCase() === "f") {
+        if (visibleQuestions.length > 1) return; // Disable shortcut for grouped questions
         event.preventDefault();
-        toggleFlag();
-      } else if (event.key === "ArrowRight" && currentIndex < state.questions.length - 1) {
+        toggleFlag(currentQuestion.id);
+      } else if (event.key === "ArrowRight" && currentGroupEnd < state.questions.length - 1) {
         event.preventDefault();
-        goToQuestion(currentIndex + 1);
-      } else if (event.key === "ArrowLeft" && currentIndex > 0) {
+        goToQuestion(currentGroupEnd + 1);
+      } else if (event.key === "ArrowLeft" && currentGroupStart > 0) {
         event.preventDefault();
-        goToQuestion(currentIndex - 1);
+        goToQuestion(currentGroupStart - 1);
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [
     chooseOption,
-    currentIndex,
-    currentQuestion.options,
+    currentGroupEnd,
+    currentGroupStart,
+    currentQuestion,
     goToQuestion,
     reviewOpen,
     state.questions.length,
     state.status,
     toggleFlag,
+    visibleQuestions.length,
   ]);
-
-  useEffect(() => {
-    if (!reviewOpen) return;
-    const invoker = reviewInvokerRef.current;
-    closeDialogRef.current?.focus();
-
-    const onModalKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        closeReview();
-        return;
-      }
-      if (event.key !== "Tab") return;
-
-      const focusable = Array.from(
-        dialogRef.current?.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
-        ) ?? [],
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0]!;
-      const last = focusable[focusable.length - 1]!;
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", onModalKeyDown);
-    return () => {
-      document.removeEventListener("keydown", onModalKeyDown);
-      invoker?.focus();
-    };
-  }, [closeReview, reviewOpen]);
 
   const navigator = useMemo(
     () => (
-      <nav className="question-navigator" aria-label="Danh sách câu hỏi">
-        <div className="navigator-heading">
-          <div>
-            <span>Tiến độ</span>
-            <strong>{answeredCount}/{state.questions.length} câu</strong>
-          </div>
+      <nav aria-label="Điều hướng câu hỏi">
+        <div className="navigator-header">
           <button
             ref={navigatorCloseRef}
-            className="icon-button navigator-close"
             type="button"
-            aria-label="Đóng danh sách câu hỏi"
+            className="icon-button modal-close"
+            aria-label="Đóng danh sách"
             onClick={closeNavigator}
           >
-            <X size={20} />
+            <X size={21} />
           </button>
+          <span>Danh sách câu hỏi</span>
         </div>
         <div className="navigator-grid">
-          {state.questions.map((question, index) => {
-            const answer = state.answers[question.id];
-            const current = question.id === currentQuestion.id;
-            const isCorrect = answer?.showFeedback && answer?.isCorrect === true;
-            const isWrong = answer?.showFeedback && answer?.isCorrect === false;
-            const isAnswered = answer?.optionId && !isCorrect && !isWrong;
-            const status = isCorrect ? "trả lời đúng" : isWrong ? "trả lời sai" : answer?.optionId ? "đã trả lời" : "chưa trả lời";
-            const flagLabel = answer?.flagged ? ", đặt cờ" : "";
+          {state.questions.map((q, index) => {
+            const id = q.id;
+            const qState = state.answers[id];
+            const isCurrent = visibleQuestions.some(q => q.id === id);
+            let stateClass = "";
+            if (qState?.isCorrect === true) {
+              stateClass = " is-correct";
+            } else if (qState?.isCorrect === false) {
+              stateClass = " is-incorrect";
+            } else if (qState?.optionId) {
+              stateClass = " is-answered";
+            }
             return (
               <button
-                key={question.id}
+                key={id}
                 type="button"
-                className={[
-                  "navigator-item",
-                  isCorrect ? "is-correct" : "",
-                  isWrong ? "is-wrong" : "",
-                  isAnswered ? "is-answered" : "",
-                  answer?.flagged ? "is-flagged" : "",
-                  current ? "is-current" : "",
-                ].filter(Boolean).join(" ")}
-                aria-label={`Câu ${index + 1}, ${status}${flagLabel}`}
-                aria-current={current ? "step" : undefined}
+                className={`navigator-item${isCurrent ? " is-current" : ""}${stateClass}${qState?.flagged ? " is-flagged" : ""}`}
+                aria-current={isCurrent ? "step" : undefined}
+                aria-label={`Câu ${index + 1}`}
                 onClick={() => goToQuestion(index)}
               >
                 {index + 1}
-                {answer?.flagged ? <Flag size={11} weight="fill" aria-hidden="true" /> : null}
               </button>
             );
           })}
         </div>
-        <div className="navigator-legend" aria-label="Chú thích trạng thái">
+        <div className="navigator-legend">
           <span><i className="legend-current" /> Hiện tại</span>
           <span><i className="legend-answered" /> Đã trả lời</span>
           <span><i className="legend-correct" /> Đúng</span>
@@ -297,12 +314,11 @@ export function PracticeSession({
       </nav>
     ),
     [
-      answeredCount,
       closeNavigator,
-      currentQuestion.id,
       goToQuestion,
       state.answers,
       state.questions,
+      visibleQuestions,
     ],
   );
 
@@ -409,116 +425,138 @@ export function PracticeSession({
           className="practice-question-card"
           aria-labelledby="practice-question-title"
         >
-          <div className="question-toolbar">
-            <span>Câu {currentIndex + 1} / {state.questions.length}</span>
-            <button
-              type="button"
-              className={currentAnswer?.flagged ? "flag-button is-active" : "flag-button"}
-              aria-pressed={Boolean(currentAnswer?.flagged)}
-              onClick={toggleFlag}
-            >
-              <Flag
-                size={18}
-                weight={currentAnswer?.flagged ? "fill" : "regular"}
-              />
-              {currentAnswer?.flagged ? "Đã đặt cờ" : "Đặt cờ"}
-              <kbd>F</kbd>
-            </button>
-          </div>
-
-          <h1 id="practice-question-title">{currentQuestion.content}</h1>
-          <fieldset className="option-list">
-            <legend className="visually-hidden">Các phương án trả lời</legend>
-            {currentQuestion.options.map((option, index) => {
-              const selected = currentAnswer?.optionId === option.id;
-              const isActuallyCorrect = currentAnswer?.showFeedback && currentAnswer?.correctOptionId === option.id;
-              const correctness =
-                (selected && currentAnswer?.isCorrect === true) || isActuallyCorrect
-                  ? " is-correct"
-                  : selected && currentAnswer?.isCorrect === false
-                    ? " is-incorrect"
-                    : "";
-              return (
-                <label
-                  key={option.id}
-                  className={`practice-option${selected ? " is-selected" : ""}${correctness}${currentAnswer?.locked ? " is-disabled" : ""}`}
-                >
-                  <input
-                    className="native-option-input"
-                    type="radio"
-                    name="practice-answer"
-                      value={option.id}
-                      aria-label={`Phương án ${option.label}: ${option.content}`}
-                      aria-checked={selected}
-                      checked={selected}
-                    disabled={Boolean(currentAnswer?.locked)}
-                    onChange={() => chooseOption(option.id)}
-                  />
-                  <span className="option-key">{index + 1}</span>
-                  <span className="option-label">{option.content}</span>
-                  <span className="option-letter">{option.label}</span>
-                </label>
-              );
-            })}
-          </fieldset>
-
-          {currentAnswer?.showFeedback &&
-          typeof currentAnswer.isCorrect === "boolean" ? (
-            <section
-              className={currentAnswer.isCorrect ? "feedback feedback-correct" : "feedback feedback-incorrect"}
-              aria-live="polite"
-            >
-              {currentAnswer.isCorrect ? (
-                <CheckCircle size={23} weight="fill" />
-              ) : (
-                <XCircle size={23} weight="fill" />
-              )}
-              <div>
-                <strong>{currentAnswer.isCorrect ? "Chính xác" : "Chưa chính xác"}</strong>
-                <p>{currentAnswer.explanation || "Chưa có lời giải cho câu hỏi này."}</p>
-                {!currentAnswer.isCorrect && currentAnswer.correctOptionId ? (
-                  <p style={{ marginTop: '0.5rem', fontWeight: 600 }}>
-                    Đáp án đúng là: {currentQuestion.options.find(o => o.id === currentAnswer.correctOptionId)?.content}
-                  </p>
-                ) : null}
-              </div>
-            </section>
+          {visibleQuestions.length > 1 && visiblePassage ? (
+            <div className="prose mb-6 p-4 bg-slate-50 border border-slate-200 rounded-lg whitespace-pre-wrap text-[15px] leading-relaxed text-slate-800">
+              {visiblePassage}
+            </div>
           ) : null}
 
-          {error ? (
+          {visibleQuestions.map((q, vIdx) => {
+            const answer = state.answers[q.id];
+            const qIndex = state.questions.findIndex(question => question.id === q.id);
+            const isGrouped = visibleQuestions.length > 1;
+            const questionText = isGrouped ? getQuestionText(q.content) : q.content;
+
+            return (
+              <div key={q.id} className={isGrouped ? "mb-12 border-b border-slate-200 pb-8 last:border-0 last:pb-0" : ""}>
+                <div className="question-toolbar">
+                  <span>Câu {qIndex + 1} / {state.questions.length}</span>
+                  <button
+                    type="button"
+                    className={answer?.flagged ? "flag-button is-active" : "flag-button"}
+                    aria-pressed={Boolean(answer?.flagged)}
+                    onClick={() => toggleFlag(q.id)}
+                  >
+                    <Flag
+                      size={18}
+                      weight={answer?.flagged ? "fill" : "regular"}
+                    />
+                    {answer?.flagged ? "Đã đặt cờ" : "Đặt cờ"}
+                    {!isGrouped && <kbd>F</kbd>}
+                  </button>
+                </div>
+
+                <h1 id={`practice-question-title-${q.id}`}>{questionText}</h1>
+                <fieldset className="option-list">
+                  <legend className="visually-hidden">Các phương án trả lời</legend>
+                  {q.options.map((option, index) => {
+                    const selected = answer?.optionId === option.id;
+                    const isActuallyCorrect = answer?.showFeedback && answer?.correctOptionId === option.id;
+                    const correctness =
+                      (selected && answer?.isCorrect === true) || isActuallyCorrect
+                        ? " is-correct"
+                        : selected && answer?.isCorrect === false
+                          ? " is-incorrect"
+                          : "";
+                    return (
+                      <label
+                        key={option.id}
+                        className={`practice-option${selected ? " is-selected" : ""}${correctness}${answer?.locked ? " is-disabled" : ""}`}
+                      >
+                        <input
+                          className="native-option-input"
+                          type="radio"
+                          name={`practice-answer-${q.id}`}
+                          value={option.id}
+                          aria-label={`Phương án ${option.label}: ${option.content}`}
+                          aria-checked={selected}
+                          checked={selected}
+                          disabled={Boolean(answer?.locked)}
+                          onChange={() => chooseOption(q.id, option.id)}
+                        />
+                        <span className="option-key">{index + 1}</span>
+                        <span className="option-label">{option.content}</span>
+                        <span className="option-letter">{option.label}</span>
+                      </label>
+                    );
+                  })}
+                </fieldset>
+
+                {answer?.showFeedback &&
+                typeof answer.isCorrect === "boolean" ? (
+                  <section
+                    className={answer.isCorrect ? "feedback feedback-correct" : "feedback feedback-incorrect"}
+                    aria-live="polite"
+                  >
+                    {answer.isCorrect ? (
+                      <CheckCircle size={23} weight="fill" />
+                    ) : (
+                      <XCircle size={23} weight="fill" />
+                    )}
+                    <div>
+                      <strong>{answer.isCorrect ? "Chính xác" : "Chưa chính xác"}</strong>
+                      <p>{answer.explanation || "Chưa có lời giải cho câu hỏi này."}</p>
+                      {!answer.isCorrect && answer.correctOptionId ? (
+                        <p style={{ marginTop: '0.5rem', fontWeight: 600 }}>
+                          Đáp án đúng là: {q.options.find(o => o.id === answer.correctOptionId)?.content}
+                        </p>
+                      ) : null}
+                    </div>
+                  </section>
+                ) : null}
+
+                {error && answer?.optionId && saveStatus === "error" ? (
+                  <div className="practice-error" role="alert">
+                    <WarningCircle size={20} />
+                    <span>{error}</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        void persistAnswer(
+                          q.id,
+                          q.attemptQuestionId,
+                          answer.optionId!
+                        )
+                      }
+                    >
+                      Thử lại
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
+
+          {!error && saveStatus === "error" ? (
             <div className="practice-error" role="alert">
-              <WarningCircle size={20} />
-              <span>{error}</span>
-              {saveStatus === "error" && currentAnswer?.optionId ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    void persistAnswer(
-                      currentQuestion.id,
-                      currentQuestion.attemptQuestionId,
-                      currentAnswer.optionId!,
-                    )
-                  }
-                >
-                  Thử lại
-                </button>
-              ) : null}
+               <WarningCircle size={20} />
+               <span>Chưa lưu được đáp án. Kiểm tra kết nối và thử lại.</span>
             </div>
           ) : null}
 
           <footer className="question-actions">
             <button
               type="button"
-              disabled={currentIndex === 0}
-              onClick={() => goToQuestion(currentIndex - 1)}
+              disabled={currentGroupStart === 0}
+              onClick={() => goToQuestion(currentGroupStart - 1)}
             >
               <ArrowLeft size={18} /> Câu trước
             </button>
-            {currentIndex < state.questions.length - 1 ? (
+            {currentGroupEnd < state.questions.length - 1 ? (
               <button
                 type="button"
                 className="next-button"
-                onClick={() => goToQuestion(currentIndex + 1)}
+                onClick={() => goToQuestion(currentGroupEnd + 1)}
               >
                 Câu tiếp <ArrowRight size={18} />
               </button>
@@ -630,7 +668,3 @@ export function PracticeSession({
     </>
   );
 }
-
-
-
-

@@ -13,6 +13,7 @@ export type ChapterSummary = {
   accuracy: number | null;
   latestAttemptAt: string | null;
   activeAttemptId: string | null;
+  history: Array<{ id: string; score: number | null; submittedAt: string; status: "submitted" | "in_progress" | "expired" }>;
 };
 
 export type RecentAttempt = {
@@ -131,15 +132,10 @@ export async function getCourseDashboard(
       }
     }
     const activeAttemptByChapter = new Map<string, string>();
+    const historyByChapter = new Map<string, Array<{ id: string; score: number | null; submittedAt: string; status: "submitted" | "in_progress" | "expired" }>>();
     const now = Date.now();
     for (const attempt of typedAttempts) {
-      if (
-        attempt.kind !== "practice" ||
-        attempt.status !== "in_progress" ||
-        new Date(attempt.expires_at).getTime() <= now
-      ) {
-        continue;
-      }
+      if (attempt.kind !== "practice") continue;
 
       const chapterIds = new Set(
         (attempt.attempt_questions ?? [])
@@ -161,7 +157,28 @@ export async function getCourseDashboard(
       if (chapterIds.size !== 1) continue;
 
       const chapterId = chapterIds.values().next().value;
-      if (chapterId && !activeAttemptByChapter.has(chapterId)) {
+      if (!chapterId) continue;
+
+      let history = historyByChapter.get(chapterId);
+      if (!history) {
+        history = [];
+        historyByChapter.set(chapterId, history);
+      }
+      history.push({
+        id: attempt.id,
+        score: attempt.score,
+        submittedAt: attempt.submitted_at ?? attempt.started_at,
+        status: attempt.status,
+      });
+
+      if (
+        attempt.status !== "in_progress" ||
+        new Date(attempt.expires_at).getTime() <= now
+      ) {
+        continue;
+      }
+
+      if (!activeAttemptByChapter.has(chapterId)) {
         activeAttemptByChapter.set(chapterId, attempt.id);
       }
     }
@@ -176,6 +193,7 @@ export async function getCourseDashboard(
         ...progress,
         latestAttemptAt: latestByChapter.get(chapter.id) ?? null,
         activeAttemptId: activeAttemptByChapter.get(chapter.id) ?? null,
+        history: historyByChapter.get(chapter.id) ?? [],
       };
     });
     const completed = chapterSummaries.filter((chapter) => chapter.accuracy !== null);

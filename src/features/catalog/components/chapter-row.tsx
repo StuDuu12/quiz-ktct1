@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, CheckCircle, Clock } from "@phosphor-icons/react/ssr";
+import { ArrowRight, BookOpen, CheckCircle, Clock, CaretDown, ClipboardText } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 
 import type { ChapterSummary } from "@/src/features/catalog/queries";
@@ -16,7 +16,8 @@ export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; c
     ? `/courses/${courseSlug}/chapters/${chapter.position}/practice?attempt=${chapter.activeAttemptId}`
     : `/courses/${courseSlug}/chapters/${chapter.position}/practice`;
   return (
-    <article className="chapter-row">
+    <details className="chapter-accordion">
+      <summary className="chapter-row">
       <div className="chapter-number" aria-hidden="true">{String(chapter.position).padStart(2, "0")}</div>
       <div className="chapter-body">
         <h3>{chapter.title}</h3>
@@ -33,10 +34,44 @@ export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; c
           <strong>{formatDate(chapter.latestAttemptAt)}</strong>
         </div>
       </div>
-      <Link className="practice-link" href={practiceHref}>
-        {ready || chapter.activeAttemptId ? <CheckCircle size={18} weight="fill" /> : null}
-        {chapter.activeAttemptId ? "Tiếp tục" : "Luyện tập"} <ArrowRight size={16} />
-      </Link>
-    </article>
+      <div className="chapter-action-group">
+        <Link className="practice-link" href={practiceHref}>
+          {ready || chapter.activeAttemptId ? <CheckCircle size={18} weight="fill" /> : null}
+          {chapter.activeAttemptId ? "Tiếp tục" : "Luyện tập"} <ArrowRight size={16} />
+        </Link>
+        <div className="chapter-accordion-icon"><CaretDown size={20} weight="bold" /></div>
+      </div>
+      </summary>
+      <div className="chapter-history-content">
+        <h4>Lịch sử làm bài:</h4>
+        {(!chapter.history || chapter.history.length === 0) ? (
+          <div className="empty-state" style={{ padding: '1rem', marginTop: 0 }}>
+             <p style={{ margin: 0 }}>Chưa có lịch sử làm bài cho chương này.</p>
+          </div>
+        ) : (
+          <div className="attempt-list">
+            {chapter.history.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()).map(attempt => (
+              <article key={attempt.id} className="attempt-row" style={{ borderBottom: '1px solid #e8f0f0' }}>
+                <div className="attempt-icon"><ClipboardText size={19} weight="duotone" /></div>
+                <div>
+                  <strong>Luyện tập</strong>
+                  <p>{formatDate(attempt.submittedAt)}</p>
+                </div>
+                <span className={`status-pill status-${attempt.status}`}>
+                  {attempt.status === "submitted" ? "Đã nộp" : attempt.status === "expired" ? "Hết giờ" : "Đang làm"}
+                </span>
+                {attempt.status === "submitted" ? (
+                  <Link className="attempt-score" href={`/results/${attempt.id}`}>
+                    {Math.round(attempt.score ?? 0)}%
+                  </Link>
+                ) : (
+                  <strong className="attempt-score">—</strong>
+                )}
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </details>
   );
 }

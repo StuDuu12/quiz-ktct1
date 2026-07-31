@@ -1,4 +1,4 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 
 /*
  * Self-hosted Be Vietnam Pro.
@@ -2753,5 +2753,51 @@ body {
     left: 1rem;
     padding: 10px;
   }
+}
+
+/* Chapter Accordion History */
+.chapter-accordion {
+  border-bottom: 1px solid #e8f0f0;
+}
+.chapter-accordion:last-child {
+  border-bottom: 0;
+}
+.chapter-accordion > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+.chapter-accordion > summary::-webkit-details-marker {
+  display: none;
+}
+.chapter-row {
+  border-bottom: none !important; /* Managed by details */
+}
+.chapter-accordion[open] > summary {
+  background: #f9fbfb;
+}
+.chapter-history-content {
+  padding: 0 1.1rem 1.1rem 4.6rem;
+  background: #f9fbfb;
+}
+.chapter-history-content h4 {
+  margin: 0 0 0.8rem 0;
+  color: #24484f;
+  font-size: 0.9rem;
+}
+.chapter-accordion-icon {
+  grid-area: action;
+  justify-self: end;
+  color: var(--color-muted);
+  transition: transform 0.2s ease;
+}
+.chapter-accordion[open] .chapter-accordion-icon {
+  transform: rotate(180deg);
+}
+.chapter-action-group {
+  grid-area: action;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
