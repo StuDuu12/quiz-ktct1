@@ -407,7 +407,7 @@ export async function finishPractice(attemptId: string) {
   if (data.status !== "submitted") {
     throw practiceError("Không thể hoàn thành lượt luyện tập.");
   }
-  revalidatePath("/dashboard");
+  revalidatePath("/", "layout");
   return {
     status: "submitted" as const,
     score: Number(data.score ?? 0),
