@@ -349,10 +349,13 @@ export async function savePracticeAnswer(
     );
   }
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase.rpc("verify_practice_answer", {
+  // @ts-expect-error type generated later
+  const { data: rawData, error } = await supabase.rpc("verify_practice_answer", {
     target_attempt_question_id: attemptQuestionId,
     target_option_id: optionId,
   });
+
+  const data = rawData as any[];
 
   if (error || !data?.[0]) {
     throw practiceError("Không thể kiểm tra đáp án. Hãy thử lại.", error);
