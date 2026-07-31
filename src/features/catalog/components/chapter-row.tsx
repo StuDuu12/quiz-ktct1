@@ -1,4 +1,5 @@
 import { ArrowRight, BookOpen, CheckCircle, Clock, CaretDown, ClipboardText } from "@phosphor-icons/react/ssr";
+import { DeleteAttemptButton } from "./delete-attempt-button";
 import Link from "next/link";
 
 import type { ChapterSummary } from "@/src/features/catalog/queries";
@@ -67,6 +68,7 @@ export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; c
                 ) : (
                   <strong className="attempt-score">—</strong>
                 )}
+                <DeleteAttemptButton attemptId={attempt.id} />
               </article>
             ))}
           </div>

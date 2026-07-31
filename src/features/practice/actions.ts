@@ -413,3 +413,20 @@ export async function finishPractice(attemptId: string) {
     score: Number(data.score ?? 0),
   };
 }
+
+export async function deletePracticeAttempt(attemptId: string) {
+  const viewer = await requireViewer();
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase
+    .from("attempts")
+    .delete()
+    .eq("id", attemptId)
+    .eq("user_id", viewer.id);
+    
+  if (error) {
+    throw new Error("Không thể xoá lượt làm này.");
+  }
+  
+  revalidatePath("/", "layout");
+}
+
