@@ -84,7 +84,7 @@ export function PracticeSession({
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(`practice_state_${initialState.attemptId}`);
+      const stored = sessionStorage.getItem(`practice_state_${initialState.attemptId}`);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed && typeof parsed === 'object') {
@@ -104,7 +104,7 @@ export function PracticeSession({
   useEffect(() => {
     if (hydrated && state.status === "in_progress") {
       try {
-        localStorage.setItem(
+        sessionStorage.setItem(
           `practice_state_${state.attemptId}`,
           JSON.stringify({
             answers: state.answers,
@@ -116,7 +116,7 @@ export function PracticeSession({
       }
     } else if (hydrated && state.status !== "in_progress") {
       try {
-        localStorage.removeItem(`practice_state_${state.attemptId}`);
+        sessionStorage.removeItem(`practice_state_${state.attemptId}`);
       } catch (e) {}
     }
   }, [hydrated, state.attemptId, state.answers, state.currentQuestionId, state.status]);
