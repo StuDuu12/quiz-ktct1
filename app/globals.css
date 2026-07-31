@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 /*
  * Self-hosted Be Vietnam Pro.
@@ -1071,6 +1071,8 @@ body {
   cursor: pointer;
 }
 .navigator-item.is-answered { border-color: #90c7c9; color: #165d68; background: #dff1f1; }
+.navigator-item.is-correct { border-color: #5bb37b; color: #1f6b3b; background: #e3f4e9; }
+.navigator-item.is-wrong { border-color: #d9787c; color: #872023; background: #fde8e9; }
 .navigator-item.is-flagged { border-color: #e8b387; color: #874a20; background: #ffe8d6; }
 .navigator-item.is-current { outline: 3px solid rgb(34 121 135 / 25%); border-color: var(--color-primary); }
 .navigator-item svg { position: absolute; top: 3px; right: 3px; }
@@ -1092,6 +1094,8 @@ body {
 }
 .navigator-legend .legend-current { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgb(34 121 135 / 20%); }
 .navigator-legend .legend-answered { border-color: #90c7c9; background: #dff1f1; }
+.navigator-legend .legend-correct { border-color: #5bb37b; background: #e3f4e9; }
+.navigator-legend .legend-wrong { border-color: #d9787c; background: #fde8e9; }
 .navigator-legend .legend-flagged { border-color: #e8b387; background: #ffe8d6; }
 .mobile-navigator-button, .mobile-navigator-backdrop { display: none; }
 .practice-modal-backdrop, .mobile-navigator-backdrop {
@@ -2750,3 +2754,4 @@ body {
     padding: 10px;
   }
 }
+
