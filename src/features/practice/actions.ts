@@ -349,26 +349,23 @@ export async function savePracticeAnswer(
     );
   }
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
-    .from("attempt_questions")
-    .select("id, attempt_id, attempts!inner(user_id), attempt_question_secrets(correct_option_id, explanation)")
-    .eq("id", attemptQuestionId)
-    .eq("attempt_id", attemptId)
-    .eq("attempts.user_id", viewer.id)
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("verify_practice_answer", {
+    target_attempt_question_id: attemptQuestionId,
+    target_option_id: optionId,
+  });
 
-  if (error || !data || !data.attempt_question_secrets) {
+  if (error || !data?.[0]) {
     throw practiceError("Không thể kiểm tra đáp án. Hãy thử lại.", error);
   }
 
-  const secret = data.attempt_question_secrets;
+  const result = data[0];
   
   return {
     optionId,
-    isCorrect: secret.correct_option_id === optionId,
-    explanation: secret.explanation,
+    isCorrect: result.is_correct,
+    explanation: result.explanation,
     reconciled: false,
-    correctOptionId: secret.correct_option_id,
+    correctOptionId: result.correct_option_id,
   };
 }
 
