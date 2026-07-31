@@ -428,7 +428,7 @@ export function saveE2EPracticeFlag(
   };
 }
 
-export function finishE2EPractice(userId: string, attemptId: string) {
+export function finishE2EPractice(userId: string, attemptId: string, _answers: any[] = []) {
   assertE2EEnabled();
   const attempt = store().practiceAttempts.get(attemptId);
   if (!attempt || attempt.userId !== userId) {
