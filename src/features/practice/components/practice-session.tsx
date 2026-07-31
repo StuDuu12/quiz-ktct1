@@ -286,7 +286,7 @@ export function PracticeSession({
             if (qState?.isCorrect === true) {
               stateClass = " is-correct";
             } else if (qState?.isCorrect === false) {
-              stateClass = " is-incorrect";
+              stateClass = " is-wrong";
             } else if (qState?.optionId) {
               stateClass = " is-answered";
             }
