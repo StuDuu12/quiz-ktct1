@@ -20,3 +20,19 @@ export async function startOrResumePracticeAttempt(
   }
   return data;
 }
+
+export async function startNewPracticeAttempt(
+  courseId: string,
+  chapterId: string,
+): Promise<PracticeAttempt> {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.rpc("start_attempt", {
+    target_course_id: courseId,
+    target_chapter_id: chapterId,
+  });
+
+  if (error || !data) {
+    throw error ?? new Error("PRACTICE_ATTEMPT_START_FAILED");
+  }
+  return data;
+}

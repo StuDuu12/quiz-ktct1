@@ -13,9 +13,7 @@ function formatDate(value: string | null) {
 
 export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; courseSlug: string }) {
   const ready = chapter.accuracy !== null;
-  const practiceHref = chapter.activeAttemptId
-    ? `/courses/${courseSlug}/chapters/${chapter.position}/practice?attempt=${chapter.activeAttemptId}`
-    : `/courses/${courseSlug}/chapters/${chapter.position}/practice`;
+  const practiceHref = `/courses/${courseSlug}/chapters/${chapter.position}/practice`;
   return (
     <details className="chapter-accordion">
       <summary className="chapter-row">
@@ -38,7 +36,7 @@ export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; c
       <div className="chapter-action-group">
         <Link className="practice-link" href={practiceHref}>
           {ready || chapter.activeAttemptId ? <CheckCircle size={18} weight="fill" /> : null}
-          {chapter.activeAttemptId ? "Tiếp tục" : "Luyện tập"} <ArrowRight size={16} />
+          Luyện tập <ArrowRight size={16} />
         </Link>
         <div className="chapter-accordion-icon"><CaretDown size={20} weight="bold" /></div>
       </div>
@@ -64,6 +62,10 @@ export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; c
                 {attempt.status === "submitted" ? (
                   <Link className="attempt-score" href={`/results/${attempt.id}`}>
                     {Math.round(attempt.score ?? 0)}%
+                  </Link>
+                ) : attempt.status === "in_progress" ? (
+                  <Link className="attempt-score" href={`/courses/${courseSlug}/chapters/${chapter.position}/practice?attempt=${attempt.id}`} style={{ fontWeight: 600, color: 'var(--color-primary-dark)' }}>
+                    Tiếp tục
                   </Link>
                 ) : (
                   <strong className="attempt-score">—</strong>

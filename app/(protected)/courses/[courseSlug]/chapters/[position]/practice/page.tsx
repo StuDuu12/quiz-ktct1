@@ -6,7 +6,7 @@ import {
   loadPracticeSession,
   savePracticeAnswer,
   savePracticeFlag,
-  startOrResumePracticeForRoute,
+  startNewPracticeForRoute,
 } from "@/src/features/practice/actions";
 import { PracticeLaunchForm } from "@/src/features/practice/components/practice-launch-form";
 import { PracticeSession } from "@/src/features/practice/components/practice-session";
@@ -34,7 +34,7 @@ export default async function CoursePracticePage({
   if (!attemptId) {
     return (
       <PracticeLaunchForm
-        action={startOrResumePracticeForRoute.bind(
+        action={startNewPracticeForRoute.bind(
           null,
           chapter.course.slug,
           chapter.position,

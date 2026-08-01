@@ -19,7 +19,7 @@ import type {
   PracticeQuestion,
   PracticeState,
 } from "@/src/features/practice/types";
-import { startOrResumePracticeAttempt } from "@/src/features/practice/start-or-resume";
+import { startOrResumePracticeAttempt, startNewPracticeAttempt } from "@/src/features/practice/start-or-resume";
 import { createServerSupabaseClient } from "@/src/lib/supabase/server";
 
 type ChapterRecord = {
@@ -168,7 +168,7 @@ export async function getPracticeChapterByRoute(
   return { ...chapter, course };
 }
 
-export async function startPractice(chapterId: string) {
+export async function startPractice(chapterId: string, forceNew = false) {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
   if (isE2EEnabled()) {
     const state = loadOrStartE2EPractice(viewer.id, chapterId);
@@ -176,10 +176,9 @@ export async function startPractice(chapterId: string) {
   }
   const chapter = await getPracticeChapterById(chapterId);
   try {
-    const attempt = await startOrResumePracticeAttempt(
-      chapter.course_id,
-      chapter.id,
-    );
+    const attempt = forceNew
+      ? await startNewPracticeAttempt(chapter.course_id, chapter.id)
+      : await startOrResumePracticeAttempt(chapter.course_id, chapter.id);
     return { attemptId: attempt.id };
   } catch (error) {
     throw practiceError("Không thể bắt đầu lượt luyện tập.", error);
@@ -191,7 +190,18 @@ export async function startOrResumePracticeForRoute(
   position: number,
 ): Promise<never> {
   const chapter = await getPracticeChapterByRoute(courseSlug, position);
-  const started = await startPractice(chapter.id);
+  const started = await startPractice(chapter.id, false);
+  redirect(
+    `/courses/${chapter.course.slug}/chapters/${chapter.position}/practice?attempt=${started.attemptId}`,
+  );
+}
+
+export async function startNewPracticeForRoute(
+  courseSlug: string,
+  position: number,
+): Promise<never> {
+  const chapter = await getPracticeChapterByRoute(courseSlug, position);
+  const started = await startPractice(chapter.id, true);
   redirect(
     `/courses/${chapter.course.slug}/chapters/${chapter.position}/practice?attempt=${started.attemptId}`,
   );
