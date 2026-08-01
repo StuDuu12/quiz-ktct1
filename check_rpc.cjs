@@ -4,8 +4,8 @@ require('dotenv').config({ path: '.env.local' });
 async function check() {
   const client = new Client({ connectionString: process.env.DATABASE_URL });
   await client.connect();
-  const res = await client.query(`SELECT pg_get_functiondef(oid) FROM pg_proc WHERE proname = 'load_practice_answer_feedback'`);
-  console.log('load_practice_answer_feedback', res.rows[0]?.pg_get_functiondef);
+  const res = await client.query(`SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'attempt_questions'`);
+  console.log('attempt_questions columns', res.rows);
   await client.end();
 }
 

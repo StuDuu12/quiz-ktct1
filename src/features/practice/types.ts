@@ -9,6 +9,7 @@ export type PracticeQuestion = {
   attemptQuestionId: string;
   content: string;
   explanation: string;
+  correctOptionId?: string;
   options: PracticeOption[];
 };
 

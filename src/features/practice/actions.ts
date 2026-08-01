@@ -39,6 +39,7 @@ type SnapshotRecord = {
   id?: unknown;
   content?: unknown;
   explanation?: unknown;
+  correct_option_id?: unknown;
   options?: unknown;
 };
 
@@ -89,7 +90,8 @@ function parseQuestionSnapshot(
     id: questionId,
     attemptQuestionId,
     content: snapshot.content,
-    explanation: "",
+    explanation: (snapshot.explanation as string) || "",
+    correctOptionId: (snapshot.correct_option_id as string) || undefined,
     options: parseOptions(snapshot.options),
   };
 }
