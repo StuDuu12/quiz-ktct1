@@ -12,8 +12,8 @@ type CookieWriter = {
 };
 
 export async function createServerSupabaseClient(response?: CookieWriter) {
-  const { supabaseAnonKey, supabaseUrl } = getPublicEnv();
   const cookieStore = await cookies();
+  const { supabaseAnonKey, supabaseUrl } = getPublicEnv();
 
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {
