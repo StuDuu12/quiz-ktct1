@@ -38,9 +38,9 @@ import type {
 type PracticeSessionProps = {
   initialState: PracticeState;
   mode?: "practice" | "review";
-  saveAnswer: SavePracticeAnswer;
-  saveFlag: SavePracticeFlag;
-  finish: FinishPractice;
+  saveAnswer?: SavePracticeAnswer;
+  saveFlag?: SavePracticeFlag;
+  finish?: FinishPractice;
 };
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -194,6 +194,7 @@ export function PracticeSession({
       setSaveStatus("saving");
       setError("");
       try {
+        if (!saveAnswer) return;
         const feedback = await saveAnswer(
           state.attemptId,
           attemptQuestionId,
@@ -236,7 +237,7 @@ export function PracticeSession({
     setState((current) => togglePracticeFlag(current, questionId));
     setError("");
     const question = state.questions.find((q) => q.id === questionId);
-    if (!question) return;
+    if (!question || !saveFlag) return;
     void saveFlag(
       state.attemptId,
       question.attemptQuestionId,
@@ -395,6 +396,7 @@ export function PracticeSession({
           };
         });
 
+      if (!finish) return;
       const result = await finish(state.attemptId, score, answersToSave);
       setScore(result.score);
       setState((current) => ({ ...current, status: result.status }));

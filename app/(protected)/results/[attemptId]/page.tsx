@@ -51,9 +51,6 @@ export default async function ResultPage({ params }: PageProps) {
       <PracticeSession
         initialState={practiceState}
         mode="review"
-        saveAnswer={async () => { throw new Error("Read only"); }}
-        saveFlag={async () => {}}
-        finish={async () => ({ status: "submitted", score: 0 })}
       />
     );
   }
