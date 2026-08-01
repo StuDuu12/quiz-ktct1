@@ -265,6 +265,14 @@ export function PracticeSession({
     onClose: closeNavigator,
   });
 
+  useModalFocus({
+    active: reviewOpen,
+    containerRef: dialogRef,
+    initialFocusRef: closeDialogRef,
+    invokerRef: reviewInvokerRef,
+    onClose: closeReview,
+  });
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (reviewOpen || state.status !== "in_progress") return;
@@ -337,7 +345,7 @@ export function PracticeSession({
                 type="button"
                 className={`navigator-item${isCurrent ? " is-current" : ""}${stateClass}${qState?.flagged ? " is-flagged" : ""}`}
                 aria-current={isCurrent ? "step" : undefined}
-                aria-label={`Câu ${index + 1}`}
+                aria-label={`Câu ${index + 1}${qState?.flagged ? " đã đặt cờ" : ""}`}
                 onClick={() => goToQuestion(index)}
               >
                 {index + 1}
@@ -396,26 +404,7 @@ export function PracticeSession({
     }
   };
 
-  if (state.status === "expired") {
-    return (
-      <main className="practice-complete practice-expired">
-        <section aria-labelledby="practice-expired-title">
-          <WarningCircle size={54} weight="duotone" />
-          <p className="practice-kicker">PHIÊN ĐÃ HẾT HẠN</p>
-          <h1 id="practice-expired-title">Lượt luyện tập đã hết hạn</h1>
-          <p>
-            Thời hạn do máy chủ xác định. Các câu đã lưu vẫn được giữ trong
-            lịch sử, và bạn có thể bắt đầu một lượt mới cho chương này.
-          </p>
-          <Link
-            href={`/courses/${state.courseSlug}/chapters/${state.chapterPosition}/practice`}
-          >
-            Bắt đầu lượt mới <ArrowRight size={18} />
-          </Link>
-        </section>
-      </main>
-    );
-  }
+
 
   if (state.status === "submitted" || score !== null) {
     const completedScore = score ?? state.score ?? 0;

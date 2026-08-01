@@ -314,11 +314,7 @@ export async function loadPracticeSession(
     answers[question.id] = answer;
   }
 
-  const status =
-    attempt.status === "in_progress" &&
-    Date.now() >= new Date(attempt.expires_at).getTime()
-      ? "expired"
-      : attempt.status;
+  const status = attempt.status;
 
   return {
     attemptId,
@@ -433,9 +429,7 @@ export async function finishPractice(
   if (error || !data) {
     throw practiceError("Không thể hoàn thành lượt luyện tập.", error);
   }
-  if (data.status === "expired") {
-    return { status: "expired" as const, score: null };
-  }
+
   if (data.status !== "submitted") {
     throw practiceError("Không thể hoàn thành lượt luyện tập.");
   }
