@@ -44,8 +44,7 @@ export type PracticeFeedback = {
 };
 
 export type FinishPracticeResult =
-  | { status: "submitted"; score: number }
-  | { status: "expired"; score: null };
+  | { status: "submitted"; score: number };
 
 export type SavePracticeAnswer = (
   attemptId: string,

@@ -7,7 +7,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { PracticeSession } from "@/src/features/practice/components/practice-session";
 import type { PracticeState } from "@/src/features/practice/types";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  sessionStorage.clear();
+});
 
 const initialState: PracticeState = {
   attemptId: "attempt-1",
@@ -90,7 +93,7 @@ describe("PracticeSession", () => {
     );
 
     expect(
-      screen.getByRole("navigation", { name: "Danh sách câu hỏi" }),
+      screen.getByRole("navigation", { name: "Điều hướng câu hỏi" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Câu 1/ })).toHaveAttribute(
       "aria-current",
@@ -121,7 +124,7 @@ describe("PracticeSession", () => {
     expect(finish).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByRole("button", { name: "Xác nhận hoàn thành" }));
-    await waitFor(() => expect(finish).toHaveBeenCalledWith("attempt-1"));
+    await waitFor(() => expect(finish).toHaveBeenCalledWith("attempt-1", 0, []));
   });
 
   it("shows the persisted score when a submitted practice page is reloaded", () => {
@@ -171,44 +174,7 @@ describe("PracticeSession", () => {
     expect(screen.getByText("Đáp án A đúng.")).toBeInTheDocument();
   });
 
-  it("renders an expired reload with a clear start-new path", () => {
-    render(
-      <PracticeSession
-        initialState={{ ...initialState, status: "expired" }}
-        saveAnswer={vi.fn()}
-        saveFlag={vi.fn()}
-        finish={vi.fn()}
-      />,
-    );
 
-    expect(
-      screen.getByRole("heading", { name: "Lượt luyện tập đã hết hạn" }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Bắt đầu lượt mới/ })).toHaveAttribute(
-      "href",
-      "/courses/ktct/chapters/1/practice",
-    );
-  });
-
-  it("renders expiry when the server expires the attempt during finish", async () => {
-    render(
-      <PracticeSession
-        initialState={initialState}
-        saveAnswer={vi.fn()}
-        saveFlag={vi.fn()}
-        finish={vi.fn().mockResolvedValue({ status: "expired", score: null })}
-      />,
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Kết thúc" }));
-    fireEvent.click(screen.getByRole("button", { name: "Xác nhận hoàn thành" }));
-
-    await waitFor(() =>
-      expect(
-        screen.getByRole("heading", { name: "Lượt luyện tập đã hết hạn" }),
-      ).toBeInTheDocument(),
-    );
-  });
 
   it("moves focus into the modal, traps it, closes on Escape, and restores focus", () => {
     render(
