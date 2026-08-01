@@ -37,6 +37,7 @@ import type {
 
 type PracticeSessionProps = {
   initialState: PracticeState;
+  mode?: "practice" | "review";
   saveAnswer: SavePracticeAnswer;
   saveFlag: SavePracticeFlag;
   finish: FinishPractice;
@@ -75,6 +76,7 @@ function getQuestionText(content: string) {
 
 export function PracticeSession({
   initialState,
+  mode = "practice",
   saveAnswer,
   saveFlag,
   finish,
@@ -406,7 +408,7 @@ export function PracticeSession({
 
 
 
-  if (state.status === "submitted" || score !== null) {
+  if ((state.status === "submitted" || score !== null) && mode !== "review") {
     const completedScore = score ?? state.score ?? 0;
     return (
       <main className="practice-complete">
@@ -446,12 +448,21 @@ export function PracticeSession({
         ) : null}
         <header className="practice-header">
         <Link
-          href={`/courses/${state.courseSlug}`}
+          href={mode === "review" ? "/history" : `/courses/${state.courseSlug}`}
           className="practice-brand"
-          aria-label="Trở về học phần"
+          aria-label={mode === "review" ? "Trở về lịch sử" : "Trở về học phần"}
         >
-          <BookOpen size={23} weight="fill" />
-          <span>Ôn thi KTCT</span>
+          {mode === "review" ? (
+            <>
+              <ArrowLeft size={22} weight="bold" />
+              <span>Trở về lịch sử</span>
+            </>
+          ) : (
+            <>
+              <BookOpen size={23} weight="fill" />
+              <span>Ôn thi KTCT</span>
+            </>
+          )}
         </Link>
         <div className="practice-chapter">
           <span>Chương {state.chapterPosition}</span>
@@ -540,8 +551,7 @@ export function PracticeSession({
                   })}
                 </fieldset>
 
-                {answer?.showFeedback &&
-                typeof answer.isCorrect === "boolean" ? (
+                {answer?.showFeedback && (typeof answer.isCorrect === "boolean" || mode === "review") ? (
                   <section
                     className={answer.isCorrect ? "feedback feedback-correct" : "feedback feedback-incorrect"}
                     aria-live="polite"
@@ -552,7 +562,7 @@ export function PracticeSession({
                       <XCircle size={23} weight="fill" />
                     )}
                     <div>
-                      <strong>{answer.isCorrect ? "Chính xác" : "Chưa chính xác"}</strong>
+                      <strong>{answer.isCorrect ? "Chính xác" : !answer.optionId ? "Chưa trả lời" : "Chưa chính xác"}</strong>
                       <p>{answer.explanation || "Chưa có lời giải cho câu hỏi này."}</p>
                       {!answer.isCorrect && answer.correctOptionId ? (
                         <p style={{ marginTop: '0.5rem', fontWeight: 600 }}>
@@ -608,7 +618,7 @@ export function PracticeSession({
               >
                 Câu tiếp <ArrowRight size={18} />
               </button>
-            ) : (
+            ) : mode !== "review" ? (
               <button
                 type="button"
                 className="finish-button"
@@ -616,24 +626,26 @@ export function PracticeSession({
               >
                 Kết thúc
               </button>
-            )}
+            ) : null}
           </footer>
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginTop: '16px' }}>
-            <button
-              type="button"
-              className="finish-link"
-              onClick={openReview}
-            >
-              Kết thúc
-            </button>
-            <Link
-              href={`/courses/${state.courseSlug}`}
-              className="save-link"
-              style={{ fontWeight: 500, color: 'var(--text-secondary)' }}
-            >
-              Lưu & thoát
-            </Link>
-          </div>
+          {mode !== "review" ? (
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginTop: '16px' }}>
+              <button
+                type="button"
+                className="finish-link"
+                onClick={openReview}
+              >
+                Kết thúc
+              </button>
+              <Link
+                href={`/courses/${state.courseSlug}`}
+                className="save-link"
+                style={{ fontWeight: 500, color: 'var(--text-secondary)' }}
+              >
+                Lưu & thoát
+              </Link>
+            </div>
+          ) : null}
         </section>
 
         <aside className="practice-navigator-panel">{navigator}</aside>
