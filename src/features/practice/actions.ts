@@ -410,43 +410,28 @@ export async function finishPractice(
   const viewer = await requireViewer(["student", "instructor", "admin"]);
   if (isE2EEnabled()) return finishE2EPractice(viewer.id, attemptId, answersToSave);
   const supabase = await createServerSupabaseClient();
-  
-  if (answersToSave && answersToSave.length > 0) {
-    const { error: insertError } = await supabase
-      .from("attempt_answers")
-      .upsert(
-        answersToSave.map((a) => ({
-          attempt_question_id: a.attemptQuestionId,
-          selected_option_id: a.optionId || null,
-          is_flagged: a.flagged
-        })),
-        { onConflict: "attempt_question_id" }
-      );
-    if (insertError) {
-      console.error("Failed to bulk save practice answers:", insertError);
-    }
-  }
 
-  const { data, error } = await supabase
-    .from("attempts")
-    .update({ status: "submitted", score })
-    .eq("id", attemptId)
-    .eq("user_id", viewer.id)
-    .eq("kind", "practice")
-    .select("status, score")
-    .maybeSingle();
+  // Use security-definer RPC to bypass table-level permission restrictions
+  // (UPDATE on attempts and INSERT on attempt_answers were revoked from
+  // authenticated users in the resilient_mock_exam_sessions migration).
+  const { data, error } = await supabase.rpc("finish_practice_attempt", {
+    target_attempt_id: attemptId,
+    answers_to_save: JSON.stringify(answersToSave),
+  });
 
   if (error || !data) {
     throw practiceError("Không thể hoàn thành lượt luyện tập.", error);
   }
 
-  if (data.status !== "submitted") {
+  const result = typeof data === "string" ? JSON.parse(data) : data;
+
+  if (result.status !== "submitted") {
     throw practiceError("Không thể hoàn thành lượt luyện tập.");
   }
   revalidatePath("/", "layout");
   return {
     status: "submitted" as const,
-    score: Number(data.score ?? 0),
+    score: Number(result.score ?? 0),
   };
 }
 
