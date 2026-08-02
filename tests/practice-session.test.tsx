@@ -5,7 +5,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-libra
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { PracticeSession } from "@/src/features/practice/components/practice-session";
-import type { PracticeState } from "@/src/features/practice/types";
+import type { PracticeFeedback, PracticeState } from "@/src/features/practice/types";
 
 afterEach(() => {
   cleanup();
@@ -53,15 +53,9 @@ const initialState: PracticeState = {
 
 describe("PracticeSession", () => {
   it("submits keyboard answers once and shows immediate feedback", async () => {
-    let resolveSave!: (feedback: {
-      optionId: string;
-      isCorrect: boolean;
-      explanation: string;
-      reconciled: boolean;
-      correctOptionId: string;
-    }) => void;
+    let resolveSave!: (feedback: PracticeFeedback) => void;
     const saveAnswer = vi.fn(
-      () => new Promise((resolve) => {
+      () => new Promise<PracticeFeedback>((resolve) => {
         resolveSave = resolve;
       }),
     );
