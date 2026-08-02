@@ -222,6 +222,7 @@ type SeedOption = {
 
 export type SeedQuestion = {
   chapter: number;
+  practicePosition: number;
   sourceNumber: number;
   content: string;
   explanation: string;
@@ -243,6 +244,8 @@ export function readAndValidateSeed(projectRoot: string): SeedQuestion[] {
       !Number.isInteger(question.chapter) ||
       question.chapter! < 1 ||
       question.chapter! > 6 ||
+      !Number.isInteger(question.practicePosition) ||
+      question.practicePosition! < 1 ||
       !Number.isInteger(question.sourceNumber) ||
       !question.content?.trim() ||
       !question.explanation?.trim() ||
@@ -251,6 +254,20 @@ export function readAndValidateSeed(projectRoot: string): SeedQuestion[] {
       !labels.includes(question.correctLabel ?? "")
     ) {
       throw new Error(`Invalid KTCT seed question: ${identity}`);
+    }
+  }
+
+  for (let chapter = 1; chapter <= 6; chapter += 1) {
+    const chapterPositions = (raw as SeedQuestion[])
+      .filter((question) => question.chapter === chapter)
+      .map((question) => question.practicePosition)
+      .toSorted((left, right) => left - right);
+    const expectedPositions = Array.from(
+      { length: chapterPositions.length },
+      (_, index) => index + 1,
+    );
+    if (chapterPositions.join(",") !== expectedPositions.join(",")) {
+      throw new Error(`Invalid KTCT practice positions for chapter ${chapter}`);
     }
   }
 

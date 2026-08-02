@@ -1,6 +1,7 @@
 [
   {
     "chapter": 1,
+    "practicePosition": 1,
     "sourceNumber": 1,
     "content": "Thuật ngữ \"Kinh tế chính trị\" lần đầu tiên xuất hiện vào năm 1615 trong tác phẩm của nhà kinh tế học nào?",
     "options": [
@@ -26,6 +27,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 2,
     "sourceNumber": 2,
     "content": "Trường phái lý luận kinh tế nào đầu tiên chuyển trọng tâm nghiên cứu từ lĩnh vực lưu thông sang lĩnh vực sản xuất?",
     "options": [
@@ -51,6 +53,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 3,
     "sourceNumber": 3,
     "content": "Đóng góp khoa học nổi bật và đặc trưng nhất của V.I. Lênin vào lý luận kinh tế chính trị Mác - Lênin giai đoạn cuối thế kỷ XIX đầu thế kỷ XX là gì?",
     "options": [
@@ -76,6 +79,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 4,
     "sourceNumber": 4,
     "content": "Vì sao trường phái trọng thương lại dành trọng tâm vào việc nghiên cứu lĩnh vực lưu thông?",
     "options": [
@@ -101,6 +105,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 5,
     "sourceNumber": 5,
     "content": "Nhận định nào sau đây phản ánh đúng hạn chế lịch sử của trường phái trọng nông?",
     "options": [
@@ -126,6 +131,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 6,
     "sourceNumber": 6,
     "content": "Bước nhảy vọt về lý luận khoa học của C. Mác so với D. Ricardo được thể hiện thông qua phát hiện nào?",
     "options": [
@@ -151,6 +157,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 7,
     "sourceNumber": 7,
     "content": "Nguyên nhân chủ yếu nào khiến các lý thuyết kinh tế của chủ nghĩa xã hội không tưởng không luận chứng được vai trò lịch sử của chủ nghĩa tư bản?",
     "options": [
@@ -176,6 +183,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 8,
     "sourceNumber": 8,
     "content": "Sau các công trình của A. Smith, dòng lý thuyết kinh tế thứ nhất phát triển theo hướng nào để phân biệt với dòng lý thuyết Mácxít?",
     "options": [
@@ -201,6 +209,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 9,
     "sourceNumber": 9,
     "content": "Điểm chung cốt lõi về mặt lôgíc lịch sử trong sự phát triển của các trường phái kinh tế chính trị là gì?",
     "options": [
@@ -226,6 +235,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 10,
     "sourceNumber": 10,
     "content": "Một doanh nghiệp hiện nay lập luận rằng: \"Lợi nhuận của công ty thu được hoàn toàn là do mua rẻ nguyên liệu và bán đắt thành phẩm ra thị trường\". Quan điểm này phản ánh tư duy lý luận mang tính chất của trường phái kinh tế lịch sử nào?",
     "options": [
@@ -251,6 +261,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 11,
     "sourceNumber": 11,
     "content": "Một nhà nghiên cứu tiến hành xây dựng mô hình phân tích hành vi của người tiêu dùng và các đại lượng lớn của nền kinh tế dựa trên tâm lý học hành vi mà không đi sâu luận giải các quan hệ xã hội trong nền sản xuất. Nhà nghiên cứu này đang tiếp cận theo dòng lý thuyết nào được hình thành từ sau A. Smith?",
     "options": [
@@ -276,6 +287,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 12,
     "sourceNumber": 12,
     "content": "Khi phân tích mối quan hệ giữa kinh tế chính trị cổ điển Anh và kinh tế chính trị Mác - Lênin, kết luận nào sau đây phản ánh đúng bản chất của quá trình phát triển này? –",
     "options": [
@@ -301,6 +313,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 13,
     "sourceNumber": 13,
     "content": "Hãy phân tích sự khác biệt căn bản về đối tượng nghiên cứu giữa trường phái trọng thương và trường phái trọng nông?",
     "options": [
@@ -326,6 +339,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 14,
     "sourceNumber": 14,
     "content": "Trường phái trọng thương xác định đối tượng nghiên cứu của kinh tế chính trị nằm ở lĩnh vực nào?",
     "options": [
@@ -351,6 +365,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 15,
     "sourceNumber": 15,
     "content": "Theo nghĩa hẹp, đối tượng nghiên cứu của bộ \"Tư bản\" được C. Mác xác định là các quan hệ sản xuất và trao đổi của phương thức sản xuất nào?",
     "options": [
@@ -376,6 +391,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 16,
     "sourceNumber": 16,
     "content": "Mục đích nghiên cứu ở cấp độ cao nhất của kinh tế chính trị Mác - Lênin là gì?",
     "options": [
@@ -401,6 +417,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 17,
     "sourceNumber": 17,
     "content": "Những mối liên hệ phản ánh bản chất, khách quan, lặp đi lặp lại của các hiện tượng và quá trình kinh tế được gọi là gì?",
     "options": [
@@ -426,6 +443,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 18,
     "sourceNumber": 18,
     "content": "Phương pháp nghiên cứu nào được sử dụng như một phương pháp chủ yếu của kinh tế chính trị Mác - Lênin?",
     "options": [
@@ -451,6 +469,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 19,
     "sourceNumber": 19,
     "content": "Trường phái trọng nông đã có bước tiến gì về mặt lý luận trong việc xác định đối tượng nghiên cứu so với chủ nghĩa trọng thương?",
     "options": [
@@ -476,6 +495,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 20,
     "sourceNumber": 20,
     "content": "Sự phát triển trong lý luận của C. Mác và Ph. Ăngghen so với các nhà tư tưởng trước đó khi xác định đối tượng nghiên cứu của kinh tế chính trị thể hiện ở điểm nào?",
     "options": [
@@ -501,6 +521,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 21,
     "sourceNumber": 21,
     "content": "Nhận định nào sau đây phản ánh đúng quan điểm của V.I. Lênin về đối tượng nghiên cứu của chính trị kinh tế học?",
     "options": [
@@ -526,6 +547,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 22,
     "sourceNumber": 22,
     "content": "Điểm giống nhau về hướng tác động giữa quy luật kinh tế và chính sách kinh tế đối với xã hội là gì?",
     "options": [
@@ -551,6 +573,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 23,
     "sourceNumber": 23,
     "content": "Theo Ph. Ăngghen, vì sao không thể có cùng một môn kinh tế chính trị duy nhất cho tất cả mọi nước và tất cả mọi thời đại lịch sử?",
     "options": [
@@ -576,6 +599,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 24,
     "sourceNumber": 24,
     "content": "Bản chất của phương pháp trừu tượng hóa khoa học trong nghiên cứu kinh tế chính trị Mác - Lênin là gì?",
     "options": [
@@ -601,6 +625,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 25,
     "sourceNumber": 25,
     "content": "Việc các nhà nghiên cứu ở các nước xã hội chủ nghĩa trước đây chỉ quy quan hệ sản xuất về quan hệ sở hữu, tổ chức quản lý và phân phối thu nhập đã dẫn đến hạn chế gì?",
     "options": [
@@ -626,6 +651,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 26,
     "sourceNumber": 26,
     "content": "Khi nghiên cứu đối tượng của kinh tế chính trị Mác - Lênin, việc đặt các quan hệ xã hội của sản xuất và trao đổi trong mối liên hệ biện chứng với lực lượng sản xuất và kiến trúc thượng tầng nhằm mục đích gì?",
     "options": [
@@ -651,6 +677,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 27,
     "sourceNumber": 27,
     "content": "Giá trị khoa học của kinh tế chính trị Mác - Lênin đóng vai trò gì đối với việc phát triển một quốc gia?",
     "options": [
@@ -676,6 +703,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 28,
     "sourceNumber": 28,
     "content": "Một quốc gia quyết định thay đổi chính sách thuế nhằm điều chỉnh hành vi tích lũy và đầu tư của các doanh nghiệp. Hành động này phản ánh đặc tính nào của chính sách kinh tế trong mối quan hệ với quy luật kinh tế?",
     "options": [
@@ -701,6 +729,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 29,
     "sourceNumber": 29,
     "content": "Khi một nhà nghiên cứu muốn tìm ra bản chất của quan hệ lợi ích kinh tế giữa người lao động và người sử dụng lao động, việc họ gạt bỏ yếu tố tình cảm cá nhân giữa hai chủ thể này minh chứng cho điều gì?",
     "options": [
@@ -726,6 +755,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 30,
     "sourceNumber": 30,
     "content": "Trong một cuộc thảo luận về phát triển kinh tế, một ý kiến cho rằng: \"Kinh tế chính trị Mác - Lênin hoàn toàn đối lập cực đoan với các khoa học kinh tế hiện đại khác\". Nhận định này là:",
     "options": [
@@ -751,6 +781,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 31,
     "sourceNumber": 31,
     "content": "Khi phân tích thị trường lúa gạo tại một địa phương, nhà kinh tế không chỉ xem xét lượng cung cầu (mặt thị trường) mà còn đi sâu nghiên cứu hệ thống phân bổ đất đai, cách thức chia sẻ lợi nhuận giữa nông dân và thương lái (mặt xã hội). Cách tiếp cận chỉnh thể này phù hợp với quan điểm nào sau đây?",
     "options": [
@@ -776,6 +807,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 32,
     "sourceNumber": 32,
     "content": "Sự khác biệt căn bản về tính chất giữa quy luật kinh tế và chính sách kinh tế được thể hiện như thế nào?",
     "options": [
@@ -801,6 +833,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 33,
     "sourceNumber": 33,
     "content": "Khi vận dụng phương pháp trừu tượng hóa khoa học, nếu người nghiên cứu loại bỏ yếu tố lợi ích kinh tế ra khỏi quan hệ giữa người lao động và người sử dụng sức lao động thì sẽ dẫn đến hệ quả gì?",
     "options": [
@@ -826,6 +859,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 34,
     "sourceNumber": 34,
     "content": "Việc chuyển từ quan điểm \"chỉ nhấn mạnh mặt quan hệ sản xuất quy về sở hữu, tổ chức, phân phối\" sang quan điểm \"nghiên cứu mặt xã hội của cả sản xuất, lưu thông, phân phối, tiêu dùng\" phản ánh sự thay đổi mang tính học thuật như thế nào trong kinh tế chính trị Mác - Lênin?",
     "options": [
@@ -851,6 +885,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 35,
     "sourceNumber": 35,
     "content": "Biện pháp nào sau đây thể hiện sự vận dụng đúng đắn kinh tế chính trị Mác - Lênin vào thực tiễn quản lý vĩ mô?",
     "options": [
@@ -876,6 +911,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 36,
     "sourceNumber": 36,
     "content": "Chức năng nào của kinh tế chính trị Mác - Lênin cung cấp hệ thống tri thức mở về những quy luật chi phối sự phát triển của sản xuất và trao đổi gắn với phương thức sản xuất?",
     "options": [
@@ -901,6 +937,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 37,
     "sourceNumber": 37,
     "content": "Kinh tế chính trị Mác - Lênin góp phần củng cố niềm tin cho người lao động tiến bộ hướng đến phấn đấu vì mục tiêu nào sau đây?",
     "options": [
@@ -926,6 +963,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 38,
     "sourceNumber": 38,
     "content": "Việc người lao động và các nhà hoạch định chính sách hình thành được năng lực, kỹ năng vận dụng các quy luật kinh tế khách quan để điều chỉnh hành vi là biểu hiện của chức năng nào?",
     "options": [
@@ -951,6 +989,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 39,
     "sourceNumber": 39,
     "content": "Các quan hệ kinh tế vốn vận động vô cùng phức tạp, đan xen và tưởng như rất hỗn độn trên bề mặt xã hội thực chất đều tuân thủ điều gì?",
     "options": [
@@ -976,6 +1015,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 40,
     "sourceNumber": 40,
     "content": "Nhận định nào sau đây phản ánh đúng bản chất chức năng phương pháp luận của kinh tế chính trị Mác - Lênin?",
     "options": [
@@ -1001,6 +1041,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 41,
     "sourceNumber": 41,
     "content": "Đối với sinh viên đại học, môn kinh tế chính trị Mác - Lênin đóng vai trò là cơ sở khoa học lý luận để làm gì?",
     "options": [
@@ -1026,6 +1067,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 42,
     "sourceNumber": 42,
     "content": "Một sinh viên ngành Tài chính – Ngân hàng khi nghiên cứu về \"tiền tệ\" không chỉ dừng lại ở việc học các chức năng kỹ thuật của tiền, mà còn sử dụng kiến thức kinh tế chính trị để giải thích sâu sắc cội nguồn bản chất của tiền trong tiến trình phát triển sản xuất. Sinh viên này đang vận dụng chức năng nào của môn học?",
     "options": [
@@ -1051,6 +1093,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 43,
     "sourceNumber": 43,
     "content": "Một cơ quan quản lý vĩ mô tiến hành ban hành chính sách mới nhằm giải quyết hài hòa các quan hệ lợi ích trong nền kinh tế, từ đó tạo động lực thúc đẩy toàn xã hội sáng tạo. Hành động này chứng minh môn kinh tế chính trị Mác - Lênin đang thực hiện tốt chức năng nào?",
     "options": [
@@ -1076,6 +1119,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 44,
     "sourceNumber": 44,
     "content": "Nếu một nhà hoạch định chính sách không hoàn thành tốt \"chức năng nhận thức\" (không hiểu rõ các quy luật kinh tế khách quan) thì sẽ dẫn đến hệ quả tất yếu nào đối với việc thực hiện \"chức năng thực tiễn\"?",
     "options": [
@@ -1101,6 +1145,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 45,
     "sourceNumber": 45,
     "content": "Điểm khác biệt cốt lõi thể hiện sự vượt trội trong cách lý giải về tiền tệ của kinh tế chính trị Mác - Lênin (với tư cách là phương pháp luận) so với lý thuyết tiền tệ thông thường của kinh tế học chuyên ngành là gì?",
     "options": [
@@ -1126,6 +1171,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 46,
     "sourceNumber": 46,
     "content": "Hãy đọc thông tin dưới đây và trả lời câu hỏi\n\n“…Khi bàn về mối quan hệ giữa kinh tế và chính trị, cũng giống như C. Mác và Ph. Ăng-ghen, V.I. Lê-nin khẳng định vai trò quyết định của kinh tế đối với chính trị. Theo V.I. Lê-nin,: “Trong sản xuất vật chất, con người ở trong những mối quan hệ nhất định với nhau, những quan hệ sản xuất. Những quan hệ này bao giờ cũng phù hợp với trình độ phát triển của năng suất mà những lực lượng kinh tế của các quan hệ ấy có được trong thời kỳ đó. Toàn bộ những quan hệ sản xuất đó tạo thành cơ cấu kinh tế của xã hội, tức là cái cơ sở hiện thực trên đó xây dựng lên một kiến trúc thượng tầng chính trị và pháp lý và phù hợp với cơ sở đó là những hình thức ý thức xã hội nhất định. Như vậy, phương thức sản xuất quyết định các quá trình của đời sống xã hội, chính trị và thuần tuý tinh thần”…”\n\n(Nguồn: Lê Thị Chiên, “Về mối quan hệ giữa kinh tế và chính trị trong quan điểm của V.I. Lê-nin và ý nghĩa đối với Việt Nam hiện nay”, tulieuvankien.dangcongsan.vn, 16/09/2019)\n\nTheo thông tin trên, yếu tố nào là cơ sở hiện thực để xây dựng lên kiến trúc thượng tầng?",
     "options": [
@@ -1151,6 +1197,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 47,
     "sourceNumber": 47,
     "content": "Hãy đọc thông tin dưới đây và trả lời câu hỏi\n\n“…Khi bàn về mối quan hệ giữa kinh tế và chính trị, cũng giống như C. Mác và Ph. Ăng-ghen, V.I. Lê-nin khẳng định vai trò quyết định của kinh tế đối với chính trị. Theo V.I. Lê-nin,: “Trong sản xuất vật chất, con người ở trong những mối quan hệ nhất định với nhau, những quan hệ sản xuất. Những quan hệ này bao giờ cũng phù hợp với trình độ phát triển của năng suất mà những lực lượng kinh tế của các quan hệ ấy có được trong thời kỳ đó. Toàn bộ những quan hệ sản xuất đó tạo thành cơ cấu kinh tế của xã hội, tức là cái cơ sở hiện thực trên đó xây dựng lên một kiến trúc thượng tầng chính trị và pháp lý và phù hợp với cơ sở đó là những hình thức ý thức xã hội nhất định. Như vậy, phương thức sản xuất quyết định các quá trình của đời sống xã hội, chính trị và thuần tuý tinh thần”…”\n\n(Nguồn: Lê Thị Chiên, “Về mối quan hệ giữa kinh tế và chính trị trong quan điểm của V.I. Lê-nin và ý nghĩa đối với Việt Nam hiện nay”, tulieuvankien.dangcongsan.vn, 16/09/2019)\n\nDựa vào thông tin trên, nhận định nào sau đây phản ánh đúng bản chất mối quan hệ giữa quan hệ sản xuất và các quan hệ xã hội khác?",
     "options": [
@@ -1176,6 +1223,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 48,
     "sourceNumber": 48,
     "content": "Hãy đọc thông tin dưới đây và trả lời câu hỏi\n\n“…Khi bàn về mối quan hệ giữa kinh tế và chính trị, cũng giống như C. Mác và Ph. Ăng-ghen, V.I. Lê-nin khẳng định vai trò quyết định của kinh tế đối với chính trị. Theo V.I. Lê-nin,: “Trong sản xuất vật chất, con người ở trong những mối quan hệ nhất định với nhau, những quan hệ sản xuất. Những quan hệ này bao giờ cũng phù hợp với trình độ phát triển của năng suất mà những lực lượng kinh tế của các quan hệ ấy có được trong thời kỳ đó. Toàn bộ những quan hệ sản xuất đó tạo thành cơ cấu kinh tế của xã hội, tức là cái cơ sở hiện thực trên đó xây dựng lên một kiến trúc thượng tầng chính trị và pháp lý và phù hợp với cơ sở đó là những hình thức ý thức xã hội nhất định. Như vậy, phương thức sản xuất quyết định các quá trình của đời sống xã hội, chính trị và thuần tuý tinh thần”…”\n\n(Nguồn: Lê Thị Chiên, “Về mối quan hệ giữa kinh tế và chính trị trong quan điểm của V.I. Lê-nin và ý nghĩa đối với Việt Nam hiện nay”, tulieuvankien.dangcongsan.vn, 16/09/2019)\n\nKhi một quốc gia thực hiện chính sách đổi mới, hoàn thiện quan hệ sở hữu và cơ chế phân phối nhằm tạo động lực ổn định hệ thống chính trị, hành động này vận dụng trực tiếp nguyên lý nào trong thông tin trên?",
     "options": [
@@ -1201,6 +1249,7 @@
   },
   {
     "chapter": 1,
+    "practicePosition": 49,
     "sourceNumber": 49,
     "content": "Hãy đọc thông tin dưới đây và trả lời câu hỏi\n\n“…Khi bàn về mối quan hệ giữa kinh tế và chính trị, cũng giống như C. Mác và Ph. Ăng-ghen, V.I. Lê-nin khẳng định vai trò quyết định của kinh tế đối với chính trị. Theo V.I. Lê-nin,: “Trong sản xuất vật chất, con người ở trong những mối quan hệ nhất định với nhau, những quan hệ sản xuất. Những quan hệ này bao giờ cũng phù hợp với trình độ phát triển của năng suất mà những lực lượng kinh tế của các quan hệ ấy có được trong thời kỳ đó. Toàn bộ những quan hệ sản xuất đó tạo thành cơ cấu kinh tế của xã hội, tức là cái cơ sở hiện thực trên đó xây dựng lên một kiến trúc thượng tầng chính trị và pháp lý và phù hợp với cơ sở đó là những hình thức ý thức xã hội nhất định. Như vậy, phương thức sản xuất quyết định các quá trình của đời sống xã hội, chính trị và thuần tuý tinh thần”…”\n\n(Nguồn: Lê Thị Chiên, “Về mối quan hệ giữa kinh tế và chính trị trong quan điểm của V.I. Lê-nin và ý nghĩa đối với Việt Nam hiện nay”, tulieuvankien.dangcongsan.vn, 16/09/2019)\n\nTừ luận điểm của V.I. Lê-nin được trích dẫn trong thông tin trên, nếu một nhà hoạch định chính sách xây dựng hệ thống luật pháp (kiến trúc thượng tầng) hoàn toàn thoát ly và vượt quá xa so với trình độ phát triển của các quan hệ sản xuất hiện tại thì hệ quả tất yếu đối với nền kinh tế là gì?",
     "options": [
@@ -1226,6 +1275,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 1,
     "sourceNumber": 1,
     "content": "Theo lý luận của C. Mác, sản xuất hàng hóa được định nghĩa là gì? – Cấp độ 1",
     "options": [
@@ -1251,6 +1301,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 2,
     "sourceNumber": 2,
     "content": "Đâu là một trong các điều kiện khách quan quyết định sự ra đời và tồn tại của sản xuất hàng hóa? – Cấp độ 1",
     "options": [
@@ -1276,6 +1327,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 3,
     "sourceNumber": 3,
     "content": "Thu thuộc tính nào của hàng hóa được định nghĩa là công dụng của sản phẩm có thể thỏa mãn nhu cầu nào đó của con người? – Cấp độ 1",
     "options": [
@@ -1301,6 +1353,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 4,
     "sourceNumber": 4,
     "content": "Theo lý luận của C. Mác, lao động cụ thể là gì? – Cấp độ 1",
     "options": [
@@ -1326,6 +1379,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 5,
     "sourceNumber": 5,
     "content": "Đâu là định nghĩa chính xác nhất về \"Thời gian lao động xã hội cần thiết\"? – Cấp độ 1",
     "options": [
@@ -1351,6 +1405,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 6,
     "sourceNumber": 6,
     "content": "Bản chất của tiền tệ trong nền kinh tế hàng hóa được xác định là gì? – Cấp độ 1",
     "options": [
@@ -1376,6 +1431,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 7,
     "sourceNumber": 7,
     "content": "Điểm khác biệt lớn nhất giữa hàng hóa thông thường và dịch vụ là gì? – Cấp độ 1",
     "options": [
@@ -1401,6 +1457,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 8,
     "sourceNumber": 8,
     "content": "Nhận định nào sau đây là ĐÚNG khi nói về mối quan hệ giữa phân công lao động xã hội và sự ra đời của sản xuất hàng hóa? – Cấp độ 2",
     "options": [
@@ -1426,6 +1483,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 9,
     "sourceNumber": 9,
     "content": "Tại sao việc cố tình dùng ý chí chủ quan để xóa bỏ nền sản xuất hàng hóa khi còn đủ các điều kiện ra đời của nó lại là sai lầm? – Cấp độ 2",
     "options": [
@@ -1451,6 +1509,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 10,
     "sourceNumber": 10,
     "content": "Phát biểu nào sau đây thể hiện ĐÚNG tính chất của giá trị sử dụng của hàng hóa? – Cấp độ 2",
     "options": [
@@ -1476,6 +1535,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 11,
     "sourceNumber": 11,
     "content": "Mối quan hệ biện chứng giữa \"giá trị\" và \"giá trị trao đổi\" được biểu hiện như thế nào? – Cấp độ 2",
     "options": [
@@ -1501,6 +1561,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 12,
     "sourceNumber": 12,
     "content": "Việc C. Mác phát hiện ra tính hai mặt của lao động sản xuất hàng hóa có ý nghĩa khoa học như thế nào? – Cấp độ 2",
     "options": [
@@ -1526,6 +1587,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 13,
     "sourceNumber": 13,
     "content": "Khi năng suất lao động tăng lên, lượng giá trị trong một đơn vị hàng hóa sẽ thay đổi như thế nào? – Cấp độ 2",
     "options": [
@@ -1551,6 +1613,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 14,
     "sourceNumber": 14,
     "content": "Điểm khác biệt căn bản giữa việc \"tăng năng suất lao động\" và \"tăng cường độ lao động\" là gì? – Cấp độ 2",
     "options": [
@@ -1576,6 +1639,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 15,
     "sourceNumber": 15,
     "content": "Nhận định nào sau đây phản ánh đúng bản chất của \"lao động phức tạp\" so với \"lao động giản đơn\"? – Cấp độ 2",
     "options": [
@@ -1601,6 +1665,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 16,
     "sourceNumber": 16,
     "content": "Theo lịch sử phát triển các hình thái giá trị, hình thái tiền của giá trị xuất hiện khi nào? – Cấp độ 2",
     "options": [
@@ -1626,6 +1691,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 17,
     "sourceNumber": 17,
     "content": "Khi tiền thực hiện chức năng \"Thước đo giá trị\", giá cả của hàng hóa có thể lên xuống do tác động của những yếu tố nào? – Cấp độ 2",
     "options": [
@@ -1651,6 +1717,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 18,
     "sourceNumber": 18,
     "content": "Dưới góc độ kinh tế chính trị Mác - Lênin, quyền sử dụng đất có đặc trưng gì khác biệt so với hàng hóa thông thường? – Cấp độ 2",
     "options": [
@@ -1676,6 +1743,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 19,
     "sourceNumber": 19,
     "content": "Bản chất kinh tế của các giao dịch mua bán thương hiệu (danh tiếng) trong điều kiện ngày nay là gì? – Cấp độ 2",
     "options": [
@@ -1701,6 +1769,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 20,
     "sourceNumber": 20,
     "content": "C. Mác gọi chứng khoán, chứng quyền và các giấy tờ có giá là gì để phân biệt với tư bản thực? – Cấp độ 2",
     "options": [
@@ -1726,6 +1795,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 21,
     "sourceNumber": 21,
     "content": "Theo David Begg được trích dẫn trong tài liệu, loại hàng hóa nào được định nghĩa là \"nếu được một người tiêu dùng rồi thì người khác không thể dùng được nữa\"? – Cấp độ 2",
     "options": [
@@ -1751,6 +1821,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 22,
     "sourceNumber": 22,
     "content": "Giả sử một xí nghiệp may mặc có thời gian lao động cá biệt để sản xuất một chiếc áo là 2 giờ, trong khi thời gian lao động xã hội cần thiết là 3 giờ. Xí nghiệp này sẽ có lợi thế gì trong cạnh tranh? – Cấp độ 3",
     "options": [
@@ -1776,6 +1847,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 23,
     "sourceNumber": 23,
     "content": "Một người thợ thủ công sản xuất được một chiếc bình gốm đẹp nhưng xã hội đã bão hòa loại sản phẩm này, dẫn đến việc không thể bán được chiếc bình. Dưới góc độ lý luận của C. Mác, hiện tượng này phản ánh điều gì? – Cấp độ 3",
     "options": [
@@ -1801,6 +1873,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 24,
     "sourceNumber": 24,
     "content": "Khi phân tích một đơn vị sản phẩm gồm chi phí nguyên vật liệu và khấu hao máy móc là 10 USD, hao phí lao động mới kết tinh thêm là 5 USD. Hãy xác định lượng giá trị của đơn vị hàng hóa đó theo cấu thành. – Cấp độ 3",
     "options": [
@@ -1826,6 +1899,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 25,
     "sourceNumber": 25,
     "content": "Trong một nhà máy, nếu người quản lý yêu cầu công nhân tăng cường độ lao động bằng cách thao tác nhanh và khẩn trương hơn trong ca làm việc, kết quả nào sau đây sẽ xảy ra đối với giá trị hàng hóa? – Cấp độ 3",
     "options": [
@@ -1851,6 +1925,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 26,
     "sourceNumber": 26,
     "content": "Trình độ khéo léo trung bình của người lao động và mức độ phát triển của khoa học công nghệ tại một quốc gia đột ngột tăng cao. Nhân tố này sẽ tác động trực tiếp như thế nào đến giá trị hàng hóa? – Cấp độ 3",
     "options": [
@@ -1876,6 +1951,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 27,
     "sourceNumber": 27,
     "content": "Khi một quốc gia chuyển từ việc dùng vàng miếng sang sử dụng tiền giấy để làm môi giới trong mua bán, chức năng nào của tiền tệ đang được phát huy và có đặc điểm gì? – Cấp độ 3",
     "options": [
@@ -1901,6 +1977,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 28,
     "sourceNumber": 28,
     "content": "Một câu lạc bộ bóng đá chi một khoản tiền khổng lồ để chuyển nhượng một cầu thủ ngôi sao. Dựa trên lý luận về các yếu tố khác hàng hóa thông thường, mức giá cao này phản ánh điều gì? – Cấp độ 3",
     "options": [
@@ -1926,6 +2003,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 29,
     "sourceNumber": 29,
     "content": "Trực trạng một bộ phận cá nhân trong xã hội trở nên giàu có rất nhanh nhờ việc mua bán quyền sử dụng đất trong các đợt sốt đất được giải thích như thế nào về mặt bản chất kinh tế? – Cấp độ 4",
     "options": [
@@ -1951,6 +2029,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 30,
     "sourceNumber": 30,
     "content": "Hãy phân tích hệ quả đối với nền kinh tế xã hội nếu một quốc gia cố tình duy trì quan điểm cho rằng \"toàn thể xã hội có thể giàu có vững chắc chỉ bằng con đường duy nhất là buôn bán chứng khoán, chứng quyền\". – Cấp độ 4",
     "options": [
@@ -1976,6 +2055,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 31,
     "sourceNumber": 31,
     "content": "Trong bối cảnh nền kinh tế hiện đại, việc một doanh nghiệp tập trung đầu tư hàng triệu USD để cải tiến quy trình công nghệ nhằm hoàn thiện công dụng, mẫu mã của sản phẩm nhằm đáp ứng nhu cầu khắt khe của người mua phản ánh tư duy kinh tế chính trị nào? – Cấp độ 4",
     "options": [
@@ -2001,6 +2081,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 32,
     "sourceNumber": 32,
     "content": "Giả sử một quốc gia đối mặt với tình trạng hàng loạt hàng hóa ứ đọng, không thể bán được do người sản xuất tạo ra sản phẩm có chi phí cá biệt cao hơn mức xã hội chấp nhận. Trên cương vị một nhà quản lý vĩ mô, giải pháp nào căn cứ vào lý luận lượng giá trị của C. Mác là bền vững nhất? – Cấp độ 4",
     "options": [
@@ -2026,6 +2107,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 33,
     "sourceNumber": 33,
     "content": "Sự phát triển mạnh mẽ của các hình thức thanh toán không dùng tiền mặt (thẻ ngân hàng, ví điện tử, tiền kỹ thuật số) trong nền kinh tế hiện nay phản ánh sự tiến hóa của chức năng nào của tiền tệ và mang lại hệ quả gì? – Cấp độ 4",
     "options": [
@@ -2051,6 +2133,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 34,
     "sourceNumber": 34,
     "content": "Một quốc gia quyết định đầu tư mạnh mẽ vào hệ thống giáo dục đại học và đào tạo nghề chuyên sâu cho người lao động. Dưới góc độ lý luận của C. Mác về tính chất phức tạp của lao động, chính sách này sẽ có tác động chiến lược như thế nào đến nền kinh tế? – Cấp độ 4",
     "options": [
@@ -2076,6 +2159,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 35,
     "sourceNumber": 35,
     "content": "Dựa trên quan niệm của David Begg về \"Hàng khuyến dụng\" được trích dẫn trong tài liệu, khi nhà nước quyết định trợ cấp toàn diện về y tế, giáo dục và nhà ở cho người dân nghèo, hành động này dựa trên cơ sở lập luận xã hội nào? – Cấp độ 4",
     "options": [
@@ -2101,6 +2185,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 36,
     "sourceNumber": 36,
     "content": "Xét về mặt bản chất và ở cấp độ trừu tượng, thị trường được định nghĩa là gì? – Cấp độ 1",
     "options": [
@@ -2126,6 +2211,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 37,
     "sourceNumber": 37,
     "content": "Hệ thống các quan hệ mang tính tự điều chỉnh tuân theo yêu cầu của các quy luật kinh tế được gọi là gì? – Cấp độ 1",
     "options": [
@@ -2151,6 +2237,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 38,
     "sourceNumber": 38,
     "content": "Trong các đặc trưng phổ biến của nền kinh tế thị trường, giá cả được hình thành dựa trên nguyên tắc nào? – Cấp độ 1",
     "options": [
@@ -2176,6 +2263,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 39,
     "sourceNumber": 39,
     "content": "Quy luật kinh tế nào được xác định là quy luật kinh tế cơ bản của sản xuất hàng hóa? – Cấp độ 1",
     "options": [
@@ -2201,6 +2289,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 40,
     "sourceNumber": 40,
     "content": "Công thức tổng quát nào sau đây biểu thị đúng số lượng tiền cần thiết cho lưu thông (M) theo nguyên lý của quy luật lưu thông tiền tệ? – Cấp độ 1",
     "options": [
@@ -2226,6 +2315,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 41,
     "sourceNumber": 41,
     "content": "Sự ganh đua giữa các chủ thể kinh tế với nhau nhằm có được những ưu thế về sản xuất cũng như tiêu thụ để thu được lợi ích tối đa được gọi là gì? – Cấp độ 1",
     "options": [
@@ -2251,6 +2341,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 42,
     "sourceNumber": 42,
     "content": "Khi phân loại thị trường, tiêu chí nào được sử dụng để chia thành thị trường tư liệu tiêu dùng và thị trường tư liệu sản xuất? – Cấp độ 2",
     "options": [
@@ -2276,6 +2367,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 43,
     "sourceNumber": 43,
     "content": "Nhận định nào sau đây thể hiện ĐÚNG vai trò của thị trường trong việc thực hiện giá trị hàng hóa? – Cấp độ 2",
     "options": [
@@ -2301,6 +2393,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 44,
     "sourceNumber": 44,
     "content": "Tại sao nói sự hình thành nền kinh tế thị trường là một tất yếu khách quan trong lịch sử? – Cấp độ 2",
     "options": [
@@ -2326,6 +2419,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 45,
     "sourceNumber": 45,
     "content": "Ưu thế nào sau đây thuộc về nền kinh tế thị trường trong việc phát huy tiềm năng các nguồn lực? – Cấp độ 2",
     "options": [
@@ -2351,6 +2445,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 46,
     "sourceNumber": 46,
     "content": "Một trong những khuyết tật cố hữu mà bản thân nền kinh tế thị trường KHÔNG THỂ tự khắc phục, sửa chữa là gì? – Cấp độ 2",
     "options": [
@@ -2376,6 +2471,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 47,
     "sourceNumber": 47,
     "content": "Theo yêu cầu của quy luật giá trị, việc sản xuất và trao đổi hàng hóa phải được tiến hành trên cơ sở nào? – Cấp độ 2",
     "options": [
@@ -2401,6 +2497,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 48,
     "sourceNumber": 48,
     "content": "Quy luật giá trị hoạt động và phát huy tác dụng trên thị trường thông qua cơ chế nào? – Cấp độ 2",
     "options": [
@@ -2426,6 +2523,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 49,
     "sourceNumber": 49,
     "content": "Khi cung nhỏ hơn cầu trên thị trường, mối quan hệ giữa giá cả và giá trị hàng hóa sẽ biến động như thế nào? – Cấp độ 2",
     "options": [
@@ -2451,6 +2549,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 50,
     "sourceNumber": 50,
     "content": "Theo quy luật lưu thông tiền tệ, hệ quả nào sẽ xảy ra nếu tiền giấy được phát hành quá nhiều vào lưu thông? – Cấp độ 2",
     "options": [
@@ -2476,6 +2575,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 51,
     "sourceNumber": 51,
     "content": "Biện pháp chủ yếu được các doanh nghiệp áp dụng khi tham gia cạnh tranh trong nội bộ ngành là gì? – Cấp độ 2",
     "options": [
@@ -2501,6 +2601,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 52,
     "sourceNumber": 52,
     "content": "Mục đích chủ yếu của các chủ thể kinh tế khi thực hiện cạnh tranh giữa các ngành là gì? – Cấp độ 2",
     "options": [
@@ -2526,6 +2627,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 53,
     "sourceNumber": 53,
     "content": "Tác động tích cực nào sau đây ĐÚNG khi nói về vai trò của cạnh tranh trong nền kinh tế thị trường? – Cấp độ 2",
     "options": [
@@ -2551,6 +2653,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 54,
     "sourceNumber": 54,
     "content": "Giả sử một doanh nghiệp sản xuất giày có thời gian lao động cá biệt là 4 giờ, trong khi thời gian lao động xã hội cần thiết được thị trường chấp nhận là 3 giờ. Theo quy luật giá trị, doanh nghiệp này sẽ rơi vào tình thế nào? – Cấp độ 3",
     "options": [
@@ -2576,6 +2679,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 55,
     "sourceNumber": 55,
     "content": "Khi giá cả mặt hàng nông sản trên thị trường bất ngờ tăng cao do cung nhỏ hơn cầu, các hộ nông dân có xu hướng mở rộng quy mô trồng trọt, đồng thời lao động từ các lĩnh vực khác cũng dịch chuyển vào ngành này. Hiện tượng này phản ánh tác động nào của quy luật giá trị? – Cấp độ 3",
     "options": [
@@ -2601,6 +2705,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 56,
     "sourceNumber": 56,
     "content": "Một thương nhân chuyển hàng hóa từ nơi có giá cả thấp (cung lớn hơn cầu) đến bán ở nơi có giá cả cao (cung nhỏ hơn cầu). Hành vi này chịu sự điều tiết trực tiếp mang tính khách quan của quy luật nào? – Cấp độ 3",
     "options": [
@@ -2626,6 +2731,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 57,
     "sourceNumber": 57,
     "content": "Trong một thời gian nhất định, tổng giá cả hàng hóa đưa ra lưu thông là 100 tỷ đồng, số vòng lưu thông trung bình của đồng tiền là 5 vòng. Do việc thanh toán không dùng tiền mặt phát triển, tổng giá cả hàng hóa bán chịu là 20 tỷ đồng, các khoản khấu trừ cho nhau là 10 tỷ đồng, và các khoản đến kỳ thanh toán là 30 tỷ đồng. Hãy xác định số lượng tiền cần thiết cho lưu thông (M). – Cấp độ 3",
     "options": [
@@ -2651,6 +2757,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 58,
     "sourceNumber": 58,
     "content": "Một doanh nghiệp dệt may liên tục nghiên cứu, ứng dụng dây chuyền công nghệ tự động hóa tiên tiến vào quy trình sản xuất nhằm làm cho giá trị cá biệt của sản phẩm thấp hơn giá trị xã hội. Hành vi cạnh tranh này mang lại tác động gì cho lực lượng sản xuất xã hội? – Cấp độ 3",
     "options": [
@@ -2676,6 +2783,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 59,
     "sourceNumber": 59,
     "content": "Nhóm doanh nghiệp A tìm cách độc chiếm các nguồn lực tài nguyên then chốt nhưng cố tình không đưa vào sản xuất nhằm tạo ưu thế cạnh tranh không lành mạnh. Hiện tượng này minh chứng cho tác động tiêu cực nào của cạnh tranh? – Cấp độ 3",
     "options": [
@@ -2701,6 +2809,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 60,
     "sourceNumber": 60,
     "content": "Phân tích mối quan hệ giữa \"Thị trường\", \"Cơ chế thị trường\" và \"Nền kinh tế thị trường\" dựa trên tài liệu, nhận định nào sau đây phản ánh ĐÚNG cấu trúc logic của các khái niệm này? – Cấp độ 4",
     "options": [
@@ -2726,6 +2835,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 61,
     "sourceNumber": 61,
     "content": "Tại sao các quốc gia hiện đại ngày nay đều xây dựng mô hình \"kinh tế hỗn hợp\" (kinh tế thị trường có sự điều tiết của nhà nước) thay vì duy trì một nền kinh tế thị trường thuần túy? – Cấp độ 4",
     "options": [
@@ -2751,6 +2861,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 62,
     "sourceNumber": 62,
     "content": "Dưới góc độ quản lý kinh tế vĩ mô, việc nhà nước theo dõi sát sao biểu đồ biến động của giá cả thị trường và quan hệ cung - cầu để đưa ra các chính sách thuế, tín dụng phù hợp nhằm ổn định thị trường phản ánh sự vận dụng lý luận nào? – Cấp độ 4",
     "options": [
@@ -2776,6 +2887,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 63,
     "sourceNumber": 63,
     "content": "Khi một nền kinh tế thị trường xảy ra tình trạng lạm phát phi mã, giá cả hàng hóa tăng vọt do nhà nước in quá nhiều tiền giấy vào lưu thông, sai lầm mang tính chiến lược ở đây là gì? – Cấp độ 4",
     "options": [
@@ -2801,6 +2913,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 64,
     "sourceNumber": 64,
     "content": "Nếu một quốc gia buông lỏng quản lý, để các chủ thể sản xuất kinh doanh tự do chạy theo mục tiêu tìm kiếm lợi nhuận tối đa bằng mọi giá mà vi phạm cả nguyên tắc đạo đức, hệ quả tất yếu nào đối với xã hội được dự báo trong tài liệu? – Cấp độ 4",
     "options": [
@@ -2826,6 +2939,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 65,
     "sourceNumber": 65,
     "content": "Hãy phân tích tác động tổng hợp của quy luật giá trị đối với lực lượng sản xuất và cấu trúc xã hội trong nền kinh tế hàng hóa thuần túy chạy theo lợi ích cá nhân. – Cấp độ 4",
     "options": [
@@ -2851,6 +2965,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 66,
     "sourceNumber": 66,
     "content": "Theo tài liệu, người sản xuất hàng hóa bao gồm những đối tượng nào sau đây? – Cấp độ 1",
     "options": [
@@ -2876,6 +2991,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 67,
     "sourceNumber": 67,
     "content": "Chủ thể nào đóng vai trò là cầu nối giữa các chủ thể sản xuất và tiêu dùng hàng hóa, dịch vụ trên thị trường? – Cấp độ 1",
     "options": [
@@ -2901,6 +3017,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 68,
     "sourceNumber": 68,
     "content": "Mục tiêu tối đa của người sản xuất khi chọn mặt hàng, số lượng và các yếu tố sản xuất trong điều kiện nguồn lực có hạn là gì? – Cấp độ 2",
     "options": [
@@ -2926,6 +3043,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 69,
     "sourceNumber": 69,
     "content": "Sức mua của người tiêu dùng có vai trò như thế nào đối với người sản xuất theo nội dung tài liệu? – Cấp độ 2",
     "options": [
@@ -2951,6 +3069,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 70,
     "sourceNumber": 70,
     "content": "Nguyên nhân cốt lõi dẫn đến sự xuất hiện của các chủ thể trung gian trong thị trường là gì? – Cấp độ 2",
     "options": [
@@ -2976,6 +3095,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 71,
     "sourceNumber": 71,
     "content": "Xét về vai trò kinh tế, nhà nước có chức năng cốt lõi nào trong nền kinh tế thị trường? – Cấp độ 2",
     "options": [
@@ -3001,6 +3121,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 72,
     "sourceNumber": 72,
     "content": "Một doanh nghiệp sản xuất thực phẩm quyết định đầu tư hệ thống kiểm định chất lượng nghiêm ngặt dù chi phí cao, nhằm bảo vệ sức khỏe cho người tiêu dùng. Hành động này phản ánh việc thực hiện trách nhiệm nào của người sản xuất? – Cấp độ 3",
     "options": [
@@ -3026,6 +3147,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 73,
     "sourceNumber": 73,
     "content": "Khi chính phủ nước X bãi bỏ hàng loạt \"giấy phép con\" gây phiền hà để doanh nghiệp tự do đổi mới công nghệ, hành động này phù hợp với nguyên lý nào trong quản lý kinh tế của nhà nước? – Cấp độ 3",
     "options": [
@@ -3051,6 +3173,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 74,
     "sourceNumber": 74,
     "content": "Từ luận điểm \"doanh nghiệp luôn đóng vai trò vừa là người mua cũng vừa là người bán\", có thể rút ra nhận định bản chất nào về mối quan hệ giữa các chủ thể thị trường? – Cấp độ 4",
     "options": [
@@ -3076,6 +3199,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 75,
     "sourceNumber": 75,
     "content": "Phân tích hệ quả đối với nền kinh tế nếu các cá nhân trong bộ máy nhà nước tự ý thiết lập thêm các rào cản hành chính đối với sản xuất kinh doanh? – Cấp độ 4",
     "options": [
@@ -3101,6 +3225,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 76,
     "sourceNumber": 76,
     "content": "Trong một bộ tộc cổ xưa, các thành viên tự săn bắn và hái lượm để nuôi sống bản thân, không có sự phân chia ngành nghề và cũng không có quyền tư hữu tài sản. Dựa trên lý luận của C. Mác về hai điều kiện ra đời của sản xuất hàng hóa, nhận định nào sau đây là đúng về bộ tộc này?",
     "options": [
@@ -3126,6 +3251,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 77,
     "sourceNumber": 77,
     "content": "Hãy phân tích ví dụ sau: x đơn vị hàng hóa A đổi lấy y đơn vị hàng hóa B. Nếu chúng ta tiến hành gạt bỏ hoàn toàn giá trị sử dụng (tính có ích) của cả hai hàng hóa này sang một bên, thì điểm chung duy nhất còn lại để chúng có thể trao đổi với nhau theo một tỷ lệ nhất định là gì?",
     "options": [
@@ -3151,6 +3277,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 78,
     "sourceNumber": 78,
     "content": "Một xưởng may tư nhân nhỏ tự quyết định thiết kế và sản xuất một loại trang phục theo sở thích riêng của chủ xưởng mà không khảo sát thị trường. Khi đem sản phẩm ra chợ bán, toàn bộ số quần áo này bị tồn kho do không phù hợp với nhu cầu của người tiêu dùng. Tình huống này phản ánh sự biểu hiện của mối mâu thuẫn nào dưới đây?",
     "options": [
@@ -3176,6 +3303,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 79,
     "sourceNumber": 79,
     "content": "Giả sử trong một ngành sản xuất, điều kiện trang bị kỹ thuật và trình độ quản lý của đa số doanh nghiệp đạt mức trung bình, đòi hỏi hao phí 4 giờ lao động để làm ra một sản phẩm X. Doanh nghiệp A nhờ tích cực cải tiến quy trình công nghệ nên chỉ mất 2 giờ lao động cá biệt. Theo quy luật giá trị, doanh nghiệp A cần hướng tới mục tiêu nào để có ưu thế cạnh tranh lớn nhất?",
     "options": [
@@ -3201,6 +3329,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 80,
     "sourceNumber": 80,
     "content": "Một nhà máy sản xuất giày da đang vận hành bình thường. Nếu nhà máy này áp dụng công nghệ tự động hóa hiện đại giúp năng suất lao động tăng lên gấp đôi, trong khi tổng thời gian lao động và các yếu tố khác không đổi, hãy xác định sự thay đổi về lượng giá trị của một đôi giày?",
     "options": [
@@ -3226,6 +3355,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 81,
     "sourceNumber": 81,
     "content": "Hãy xem xét bài tập so sánh sau: Người thợ sửa chữa máy tính (đòi hỏi phải trải qua quá trình đào tạo hệ thống về kỹ năng chuyên môn) và người quét dọn văn phòng (lao động không cần đào tạo chuyên sâu) cùng làm việc trong 1 giờ. Dựa vào lý luận về tính chất phức tạp của lao động, nhận định nào sau đây là đúng?",
     "options": [
@@ -3251,6 +3381,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 82,
     "sourceNumber": 82,
     "content": "Một công ty bất động sản mua lại quyền sử dụng một khu đất với giá 5 tỷ đồng, sau đó đô thị hóa xung quanh phát triển khiến giá miếng đất này tăng lên 8 tỷ đồng và họ bán đi để thu lời. Xét theo bản chất của quan hệ trao đổi này trong nền kinh tế thị trường hiện đại, nhận định nào sau đây là chính xác?",
     "options": [
@@ -3276,6 +3407,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 83,
     "sourceNumber": 83,
     "content": "Doanh nghiệp X phát hành cổ phiếu trên thị trường chứng khoán nhằm huy động vốn mở rộng nhà máy sản xuất hạt nhựa. Dựa trên lý luận của C. Mác về các yếu tố phái sinh trong nền kinh tế ngày nay, việc mua bán cổ phiếu này của các nhà đầu tư phản ánh hoạt động nào?",
     "options": [
@@ -3301,6 +3433,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 84,
     "sourceNumber": 84,
     "content": "Vào dịp Tết Nguyên Đán, nhu cầu mua sắm bánh kẹo của người dân tăng mạnh (cầu lớn hơn cung). Theo cơ chế tác động của quy luật giá trị và quy luật cung - cầu được trình bày trong tài liệu, trạng thái giá cả thị trường của mặt hàng bánh kẹo lúc này sẽ biểu hiện như thế nào?",
     "options": [
@@ -3326,6 +3459,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 85,
     "sourceNumber": 85,
     "content": "Giả sử tổng giá cả hàng hóa đưa ra lưu thông trong quý I của một quốc gia là 900 tỷ đồng, số vòng lưu thông trung bình của đồng tiền trong thời gian này là 3 vòng. Nếu nhà nước in và phát hành vào lưu thông khối lượng tiền giấy lên tới 600 tỷ đồng, hiện tượng kinh tế nào tất yếu sẽ xảy ra theo quy luật lưu thông tiền tệ?",
     "options": [
@@ -3351,6 +3485,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 86,
     "sourceNumber": 86,
     "content": "Trong cuộc chạy đua giành thị phần, Công ty sản xuất nước giải khát A đã đầu tư mua sắm dây chuyền đóng chai công nghệ cao của Đức, giúp cắt giảm thời gian đóng gói và nâng cao chất lượng vỏ chai. Biện pháp cạnh tranh trong nội bộ ngành này của Công ty A nhằm hướng tới kết quả trực tiếp nào?",
     "options": [
@@ -3376,6 +3511,7 @@
   },
   {
     "chapter": 2,
+    "practicePosition": 87,
     "sourceNumber": 87,
     "content": "Công ty cổ phần sữa Y đầu tư xây dựng các trang trại chăn nuôi bò, mua máy móc, thuê nhân công tạo ra sản phẩm sữa cung ứng cho thị trường, đồng thời luôn cam kết tuân thủ tiêu chuẩn an toàn vệ sinh thực phẩm và bảo vệ môi trường xung quanh. Hành vi này phản ánh đúng vai trò và trách nhiệm nào của người sản xuất?",
     "options": [
@@ -3401,6 +3537,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 1,
     "sourceNumber": 1,
     "content": "Theo lý luận của C. Mác, tư bản vận động theo công thức chung nào sau đây? – Cấp độ 1",
     "options": [
@@ -3426,6 +3563,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 2,
     "sourceNumber": 2,
     "content": "Hai điều kiện cần và đủ để sức lao động trở thành hàng hóa là gì? – Cấp độ 1",
     "options": [
@@ -3451,6 +3589,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 3,
     "sourceNumber": 3,
     "content": "Các bộ phận hợp thành giá trị của hàng hóa sức lao động gồm có những yếu tố nào? – Cấp độ 1",
     "options": [
@@ -3476,6 +3615,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 4,
     "sourceNumber": 4,
     "content": "Quá trình sản xuất giá trị thặng dư là sự thống nhất của hai quá trình nào? – Cấp độ 1",
     "options": [
@@ -3501,6 +3641,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 5,
     "sourceNumber": 5,
     "content": "Bộ phận tư bản nào có giá trị không biến đổi trong quá trình sản xuất và được lao động cụ thể của công nhân chuyển nguyên vẹn vào giá trị sản phẩm? – Cấp độ 1",
     "options": [
@@ -3526,6 +3667,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 6,
     "sourceNumber": 6,
     "content": "Theo C. Mác, bản chất kinh tế - xã hội của giá trị thặng dư trong nền kinh tế thị trường tư bản chủ nghĩa là gì? – Cấp độ 1",
     "options": [
@@ -3551,6 +3693,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 7,
     "sourceNumber": 8,
     "content": "Giá trị thặng dư thu được do kéo dài ngày lao động vượt quá thời gian lao động tất yếu trong khi các điều kiện khác không đổi được gọi là gì? – Cấp độ 1",
     "options": [
@@ -3576,6 +3719,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 8,
     "sourceNumber": 9,
     "content": "Điểm khác nhau cơ bản về mục đích giữa lưu thông hàng hóa giản đơn (H-T-H) và lưu thông tư bản (T-H-T’) là gì? – Cấp độ 2",
     "options": [
@@ -3601,6 +3745,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 9,
     "sourceNumber": 10,
     "content": "Vì sao lưu thông thông thường (mua, bán theo nguyên tắc ngang giá hoặc không ngang giá) không thể tạo ra giá trị tăng thêm xét trên phạm vi toàn xã hội? – Cấp độ 2",
     "options": [
@@ -3626,6 +3771,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 10,
     "sourceNumber": 11,
     "content": "Tại sao nói hàng hóa sức lao động là một loại hàng hóa đặc biệt? – Cấp độ 2",
     "options": [
@@ -3651,6 +3797,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 11,
     "sourceNumber": 12,
     "content": "Thời gian lao động xã hội cần thiết để tái sản xuất ra sức lao động được quy về yếu tố nào? – Cấp độ 2",
     "options": [
@@ -3676,6 +3823,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 12,
     "sourceNumber": 13,
     "content": "Bản chất của thời gian lao động thặng dư trong quá trình sản xuất được hiểu như thế nào? – Cấp độ 2",
     "options": [
@@ -3701,6 +3849,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 13,
     "sourceNumber": 14,
     "content": "Vai trò cốt lõi của tư bản bất biến (c) trong quá trình tạo ra giá trị thặng dư là gì? – Cấp độ 2",
     "options": [
@@ -3726,6 +3875,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 14,
     "sourceNumber": 15,
     "content": "Bản chất của tiền công trong nền kinh tế thị trường được C. Mác vạch rõ là gì? – Cấp độ 2",
     "options": [
@@ -3751,6 +3901,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 15,
     "sourceNumber": 16,
     "content": "Tuần hoàn của tư bản phản ánh sự vận động của tư bản trải qua những giai đoạn và hình thái kế tiếp nào? – Cấp độ 2",
     "options": [
@@ -3776,6 +3927,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 16,
     "sourceNumber": 17,
     "content": "Thời gian chu chuyển của tư bản được xác định bao gồm những bộ phận thời gian nào? – Cấp độ 2",
     "options": [
@@ -3801,6 +3953,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 17,
     "sourceNumber": 18,
     "content": "Sự khác biệt trong phương thức chuyển giá trị vào sản phẩm giữa tư bản cố định và tư bản lưu động là gì? – Cấp độ 2",
     "options": [
@@ -3826,6 +3979,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 18,
     "sourceNumber": 19,
     "content": "Hiện tượng hao mòn vô hình của tư bản cố định xảy ra do nguyên nhân chủ yếu nào dưới đây? – Cấp độ 2",
     "options": [
@@ -3851,6 +4005,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 19,
     "sourceNumber": 20,
     "content": "Tỷ suất giá trị thặng dư (m’) phản ánh điều gì trong nền kinh tế thị trường tư bản chủ nghĩa? – Cấp độ 2",
     "options": [
@@ -3876,6 +4031,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 20,
     "sourceNumber": 21,
     "content": "Bản chất của giá trị thặng dư tương đối là giá trị thặng dư thu được bằng cách nào? – Cấp độ 2",
     "options": [
@@ -3901,6 +4057,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 21,
     "sourceNumber": 22,
     "content": "Vì sao giá trị thặng dư siêu ngạch là động lực mạnh nhất thúc đẩy các nhà tư bản cải tiến kỹ thuật? – Cấp độ 2",
     "options": [
@@ -3926,6 +4083,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 22,
     "sourceNumber": 23,
     "content": "Mối quan hệ giữa giá trị thặng dư siêu ngạch và giá trị thặng dư tương đối được C. Mác xác định như thế nào? – Cấp độ 2",
     "options": [
@@ -3951,6 +4109,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 23,
     "sourceNumber": 24,
     "content": "Nhân tố nào ngày nay đang trở thành động lực quan trọng nhất của sản xuất giá trị thặng dư trong nền kinh tế thị trường toàn cầu? – Cấp độ 2",
     "options": [
@@ -3976,6 +4135,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 24,
     "sourceNumber": 25,
     "content": "Một nhà tư bản ứng ra 200.000 USD để mở xí nghiệp. Nếu số tiền này chỉ được dùng để mua máy móc và nguyên liệu phục vụ sản xuất mà không thuê mướn công nhân thì quá trình này có tạo ra giá trị thặng dư không? Vì sao? – Cấp độ 3",
     "options": [
@@ -4001,6 +4161,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 25,
     "sourceNumber": 26,
     "content": "Theo thỏa thuận trong hợp đồng, một công nhân dệt làm việc 8 giờ một ngày với mức lương là 20 USD. Thực tế, chỉ sau 3 giờ lao động, người này đã tạo ra một lượng giá trị mới bằng đúng 20 USD. Nhận định nào sau đây đúng về thời gian lao động của người công nhân? – Cấp độ 3",
     "options": [
@@ -4026,6 +4187,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 26,
     "sourceNumber": 27,
     "content": "Một chủ doanh nghiệp muốn gia tăng khối lượng giá trị thặng dư bằng tiền (M) từ 5.000 USD lên 10.000 USD. Dựa vào công thức M = m' x V, chủ doanh nghiệp này có thể sử dụng biện pháp thực tế nào? – Cấp độ 3",
     "options": [
@@ -4051,6 +4213,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 27,
     "sourceNumber": 28,
     "content": "Nhà máy X áp dụng công nghệ tự động hóa, điều này khiến cho thời gian lao động để sản xuất các nhu yếu phẩm cho công nhân giảm xuống, dẫn đến giá trị sức lao động của công nhân giảm từ 30 USD/ngày xuống còn 15 USD/ngày. Nhà máy X đang áp dụng phương pháp sản xuất giá trị thặng dư nào? – Cấp độ 3",
     "options": [
@@ -4076,6 +4239,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 28,
     "sourceNumber": 29,
     "content": "Xí nghiệp A và xí nghiệp B cùng ứng ra một lượng tư bản như nhau là 1.000.000 USD trong 1 năm. Tuy nhiên, xí nghiệp A có tốc độ chu chuyển tư bản là 4 vòng/năm, còn xí nghiệp B là 2 vòng/năm. Hiệu quả kinh doanh của hai xí nghiệp này sẽ như thế nào? – Cấp độ 3",
     "options": [
@@ -4101,6 +4265,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 29,
     "sourceNumber": 30,
     "content": "Một công ty dệt may liên tục cải tiến quy trình, đầu tư máy se sợi thế hệ mới giúp năng suất lao động của công ty cao vượt trội so với mặt bằng chung của ngành. Hàng hóa của công ty bán ra có giá trị cá biệt thấp hơn giá trị xã hội. Công ty này đang thu được loại giá trị thặng dư nào? – Cấp độ 3",
     "options": [
@@ -4126,6 +4291,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 30,
     "sourceNumber": 31,
     "content": "Khi một người trẻ quyết định khởi nghiệp lập doanh nghiệp và thuê mướn lao động. Trong tình huống này, người chủ này cần có thái độ và trách nhiệm như thế nào đối với người lao động? – Cấp độ 3",
     "options": [
@@ -4151,6 +4317,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 31,
     "sourceNumber": 32,
     "content": "Nhà đầu tư Y mua một dây chuyền sản xuất sợi trị giá 500.000 USD. Sau 2 năm vận hành, dù dây chuyền chưa hề bị hư hỏng vật chất nhưng trên thị trường xuất hiện loại máy mới có năng suất cao gấp đôi với giá rẻ hơn. Hệ quả kinh tế nào đã xảy ra với nhà đầu tư Y? – Cấp độ 3",
     "options": [
@@ -4176,6 +4343,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 32,
     "sourceNumber": 33,
     "content": "Phân tích luận điểm của C. Mác: \"Tư bản không vi phạm quy luật kinh tế về trao đổi ngang giá trong nền kinh tế thị trường tư bản chủ nghĩa nhưng giá trị thặng dư vẫn được tạo ra\". Khẳng định nào sau đây giải thích đúng bản chất sâu sắc của hiện tượng này? – Cấp độ 4",
     "options": [
@@ -4201,6 +4369,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 33,
     "sourceNumber": 34,
     "content": "Nếu giả định trong một doanh nghiệp, việc quản lý sản xuất kinh doanh hoàn toàn do người lao động được thuê đảm nhiệm, và bản thân người chủ sở hữu không hề tham gia vào bất kỳ hoạt động quản lý nào. Nguồn gốc của giá trị mới tạo ra trong doanh nghiệp này được phân tích như thế nào? – Cấp độ 4",
     "options": [
@@ -4226,6 +4395,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 34,
     "sourceNumber": 35,
     "content": "Phân tích mối quan hệ biện chứng giữa quá trình sản xuất giá trị thặng dư và quá trình thực hiện giá trị thặng dư dưới hình thái tiền. Nhận định nào sau đây là đúng? – Cấp độ 4",
     "options": [
@@ -4251,6 +4421,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 35,
     "sourceNumber": 36,
     "content": "Dưới góc độ kiểm soát chất lượng quản lý vĩ mô, hãy phân tích tác động của môi trường kinh doanh do nhà nước kiến tạo đối với chu chuyển tư bản của các doanh nghiệp? – Cấp độ 4",
     "options": [
@@ -4276,6 +4447,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 36,
     "sourceNumber": 37,
     "content": "Trong điều kiện kinh tế thị trường hiện đại ngày nay, các nhà tư bản sử dụng những phương thức văn minh, tinh vi hơn để khai thác sức lao động. Sự thay đổi này làm thay đổi bản chất của giá trị thặng dư như thế nào? – Cấp độ 4",
     "options": [
@@ -4301,6 +4473,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 37,
     "sourceNumber": 38,
     "content": "Hãy phân tích giới hạn của phương pháp sản xuất giá trị thặng dư tuyệt đối và lý do tại sao các nhà tư bản phải chuyển sang phương pháp sản xuất giá trị thặng dư tương đối? – Cấp độ 4",
     "options": [
@@ -4326,6 +4499,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 38,
     "sourceNumber": 39,
     "content": "Từ lý luận về giá trị thặng dư siêu ngạch, hãy phân tích hệ quả của việc tất cả các xí nghiệp trong một ngành đều đồng loạt đổi mới công nghệ và đạt năng suất lao động cao ngang bằng nhau? – Cấp độ 4",
     "options": [
@@ -4351,6 +4525,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 39,
     "sourceNumber": 40,
     "content": "Giả sử một quốc gia mở rộng giao thương quốc tế, các chủ thể trung gian kết nối thông tin giúp hàng hóa dệt may trong nước xuất khẩu ra nước ngoài rất nhanh chóng. Dưới góc độ lý luận chu chuyển tư bản, hành động này có tác động phân tích nào? – Cấp độ 4",
     "options": [
@@ -4376,6 +4551,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 40,
     "sourceNumber": 41,
     "content": "Nguồn gốc duy nhất của tích lũy tư bản là yếu tố nào? – Cấp độ 1",
     "options": [
@@ -4401,6 +4577,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 41,
     "sourceNumber": 42,
     "content": "Hình thức lặp lại quá trình sản xuất với quy mô như cũ mà trong đó toàn bộ giá trị thặng dư được nhà tư bản tiêu dùng cho cá nhân được gọi là gì? – Cấp độ 1",
     "options": [
@@ -4426,6 +4603,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 42,
     "sourceNumber": 43,
     "content": "Cấu tạo hữu cơ của tư bản được ký hiệu là c/v là cấu tạo giá trị được quyết định bởi yếu tố nào và phản ánh sự biến đổi của yếu tố nào? – Cấp độ 1",
     "options": [
@@ -4451,6 +4629,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 43,
     "sourceNumber": 44,
     "content": "Sự tăng thêm quy mô của tư bản cá biệt bằng cách tư bản hóa giá trị thặng dư được gọi là gì? – Cấp độ 1",
     "options": [
@@ -4476,6 +4655,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 44,
     "sourceNumber": 45,
     "content": "Hình thái bần cùng hóa nào thể hiện sự sụt giảm tuyệt đối về mức sống của giai cấp công nhân làm thuê? – Cấp độ 1",
     "options": [
@@ -4501,6 +4681,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 45,
     "sourceNumber": 46,
     "content": "Bản chất của tích lũy tư bản được hiểu một cách đầy đủ là gì? – Cấp độ 2",
     "options": [
@@ -4526,6 +4707,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 46,
     "sourceNumber": 47,
     "content": "Khi tỷ lệ giữa tích lũy và tiêu dùng đã được xác định cố định, quy mô tích lũy tư bản sẽ phụ thuộc trực tiếp vào yếu tố nào? – Cấp độ 2",
     "options": [
@@ -4551,6 +4733,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 47,
     "sourceNumber": 48,
     "content": "Vì sao việc tăng năng suất lao động xã hội lại là nhân tố góp phần làm tăng quy mô tích lũy tư bản? – Cấp độ 2",
     "options": [
@@ -4576,6 +4759,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 48,
     "sourceNumber": 49,
     "content": "Theo C. Mác, sự chênh lệch giữa tư bản sử dụng và tư bản tiêu dùng được thể hiện rõ nhất qua hoạt động của yếu tố nào? – Cấp độ 2",
     "options": [
@@ -4601,6 +4785,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 49,
     "sourceNumber": 50,
     "content": "Yếu tố nào sau đây đóng vai trò là nguồn tài chính có thể sử dụng cho mở rộng sản xuất khi chưa cần thiết phải đổi mới tư bản cố định? – Cấp độ 2",
     "options": [
@@ -4626,6 +4811,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 50,
     "sourceNumber": 51,
     "content": "Nhận định nào sau đây là đúng về xu hướng vận động của cấu tạo hữu cơ của tư bản trong quá trình tích lũy? – Cấp độ 2",
     "options": [
@@ -4651,6 +4837,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 51,
     "sourceNumber": 52,
     "content": "Điểm khác biệt cốt lõi giữa tập trung tư bản và tích tụ tư bản xét về mặt quy mô tư bản xã hội là gì? – Cấp độ 2",
     "options": [
@@ -4676,6 +4863,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 52,
     "sourceNumber": 53,
     "content": "Bản chất tính hai mặt của quá trình tích lũy tư bản được tài liệu chỉ ra là gì? – Cấp độ 2",
     "options": [
@@ -4701,6 +4889,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 53,
     "sourceNumber": 54,
     "content": "Hiện tượng bần cùng hóa tương đối của giai cấp công nhân làm thuê được biểu hiện như thế nào? – Cấp độ 2",
     "options": [
@@ -4726,6 +4915,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 54,
     "sourceNumber": 55,
     "content": "Điều kiện cần thiết để đại lượng tư bản ứng trước lớn trở thành tiền đề cho việc tăng quy mô tích lũy là gì? – Cấp độ 2",
     "options": [
@@ -4751,6 +4941,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 55,
     "sourceNumber": 56,
     "content": "Một doanh nghiệp tư nhân quyết định nâng tỷ suất giá trị thặng dư bằng cách áp dụng biện pháp cắt giảm tiền công, yêu cầu công nhân tăng ca và tăng cường độ lao động. Doanh nghiệp này đang tác động vào nhân tố nào để ảnh hưởng đến quy mô tích lũy? – Cấp độ 3",
     "options": [
@@ -4776,6 +4967,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 56,
     "sourceNumber": 57,
     "content": "Nhà máy dệt mỏ rộng nhà xưởng bằng cách trích một phần lợi nhuận thu được trong năm để mua thêm máy móc và thuê thêm 50 công nhân mới. Hành động này phản ánh phương thức hoạt động nào sau đây? – Cấp độ 3",
     "options": [
@@ -4801,6 +4993,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 57,
     "sourceNumber": 58,
     "content": "Công ty A và công ty B trong ngành sản xuất linh kiện điện tử đã thực hiện ký kết hợp đồng sáp nhập với nhau để tạo thành một tập đoàn lớn hơn nhằm tăng sức cạnh tranh. Hoạt động này là minh chứng thực tế cho hiện tượng nào? – Cấp độ 3",
     "options": [
@@ -4826,6 +5019,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 58,
     "sourceNumber": 59,
     "content": "Một doanh nghiệp cơ khí sở hữu hệ thống máy phay kỹ thuật số đã khấu hao hết giá trị vào sản phẩm sau 5 năm, nhưng hệ thống này vẫn hoạt động tốt và giữ nguyên tính năng. Theo lý luận của C. Mác, hệ thống máy móc này đang đóng vai trò gì? – Cấp độ 3",
     "options": [
@@ -4851,6 +5045,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 59,
     "sourceNumber": 60,
     "content": "Trong bối cảnh nền kinh tế gặp khó khăn nghiêm trọng do khủng hoảng tài chính, hàng loạt nhà máy đóng cửa khiến hàng triệu công nhân rơi vào tình trạng thất nghiệp và sụt giảm mức sống nghiêm trọng. Hiện tượng này phản ánh rõ nhất hình thái bần cùng hóa nào? – Cấp độ 3",
     "options": [
@@ -4876,6 +5071,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 60,
     "sourceNumber": 61,
     "content": "Phân tích mối quan hệ giữa tích lũy tư bản và cơ cấu nhân sự của doanh nghiệp: Khi doanh nghiệp không ngừng tích lũy và ứng dụng công nghệ cao làm tăng cấu tạo hữu cơ (c/v), hệ quả mang tính quy luật nào sẽ xảy ra đối với người lao động? – Cấp độ 4",
     "options": [
@@ -4901,6 +5097,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 61,
     "sourceNumber": 62,
     "content": "Nghiên cứu tác động của việc tích tụ và tập trung tư bản đối với mục tiêu kinh tế của các nhà chủ sở hữu, nhận định nào sau đây là đúng và sâu sắc nhất? – Cấp độ 4",
     "options": [
@@ -4926,6 +5123,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 62,
     "sourceNumber": 63,
     "content": "Dưới góc độ quản trị doanh nghiệp hiện đại dựa trên lý luận tích lũy tư bản, việc một nhà tư bản nắm giữ và tích lũy một quỹ khấu hao lớn trong khi chưa cần thiết phải đổi mới máy móc mang lại lợi thế chiến lược gì? – Cấp độ 4",
     "options": [
@@ -4951,6 +5149,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 63,
     "sourceNumber": 64,
     "content": "Giả sử một quốc gia có tốc độ tăng trưởng lực lượng sản xuất rất cao, đời sống vật chất và lượng sản phẩm phân phối cho công nhân có tăng lên về mặt số lượng tuyệt đối, nhưng khoảng cách giàu nghèo giữa họ và giới chủ ngày càng bị kéo dãn xa. Tình huống này phản ánh quy luật nào của tích lũy tư bản? – Cấp độ 4",
     "options": [
@@ -4976,6 +5175,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 64,
     "sourceNumber": 65,
     "content": "Một nhà tư bản đối mặt với sự cạnh tranh khốc liệt trên thị trường. Để làm cho tư bản của mình không những được bảo tồn mà còn phải không ngừng lớn lên, chiến lược bắt buộc mang tính quy luật mà nhà tư bản phải thực hiện là gì? – Cấp độ 4",
     "options": [
@@ -5001,6 +5201,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 65,
     "sourceNumber": 66,
     "content": "Chi phí sản xuất tư bản chủ nghĩa được ký hiệu là gì và có công thức tính về mặt lượng như thế nào? – Cấp độ 1",
     "options": [
@@ -5026,6 +5227,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 66,
     "sourceNumber": 67,
     "content": "Lợi nhuận mang hình thái chuyển hóa của phạm trù nào khi nó được quan niệm là con đẻ của toàn bộ tư bản ứng trước? – Cấp độ 1",
     "options": [
@@ -5051,6 +5253,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 67,
     "sourceNumber": 68,
     "content": "Tỷ suất lợi nhuận là tỷ lệ phần trăm giữa lợi nhuận và yếu tố nào sau đây? – Cấp độ 1",
     "options": [
@@ -5076,6 +5279,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 68,
     "sourceNumber": 69,
     "content": "Số lợi nhuận bằng nhau của những tư bản như nhau đầu tư vào các ngành khác nhau được gọi là gì? – Cấp độ 1",
     "options": [
@@ -5101,6 +5305,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 69,
     "sourceNumber": 70,
     "content": "Nguồn gốc bản chất của lợi nhuận thương nghiệp trong nền kinh tế thị trường tư bản chủ nghĩa là gì? – Cấp độ 1",
     "options": [
@@ -5126,6 +5331,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 70,
     "sourceNumber": 71,
     "content": "Hình thái tư bản nào được C. Mác nhận định là phiến diện nhất, song cũng được sùng bái nhất? – Cấp độ 1",
     "options": [
@@ -5151,6 +5357,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 71,
     "sourceNumber": 72,
     "content": "Hình thức địa tô mà địa chủ thu được do cho thuê mảnh đất đã được đầu tư, thâm canh và làm tăng độ màu mỡ của đất gọi là gì? – Cấp độ 1",
     "options": [
@@ -5176,6 +5383,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 72,
     "sourceNumber": 73,
     "content": "Điểm khác biệt về mặt lượng giữa chi phí sản xuất tư bản chủ nghĩa (k) và giá trị hàng hóa (G) là gì? – Cấp độ 2",
     "options": [
@@ -5201,6 +5409,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 73,
     "sourceNumber": 74,
     "content": "Nhận định nào sau đây phản ánh đúng vai trò quan trọng đầu tiên của chi phí sản xuất tư bản chủ nghĩa? – Cấp độ 2",
     "options": [
@@ -5226,6 +5435,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 74,
     "sourceNumber": 75,
     "content": "Khi nhà tư bản cá biệt bán hàng hóa thấp hơn giá trị nhưng cao hơn chi phí sản xuất thì điều gì sẽ xảy ra? – Cấp độ 2",
     "options": [
@@ -5251,6 +5461,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 75,
     "sourceNumber": 76,
     "content": "Tại sao tỷ suất lợi nhuận (p') phản ánh đầy đủ hơn mức độ hiệu quả kinh doanh so với lợi nhuận (p)? – Cấp độ 2",
     "options": [
@@ -5276,6 +5487,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 76,
     "sourceNumber": 77,
     "content": "Trong điều kiện giá trị thặng dư và tư bản khả biến giữ nguyên, việc tiết kiệm tư bản bất biến sẽ tác động thế nào đến tỷ suất lợi nhuận? – Cấp độ 2",
     "options": [
@@ -5301,6 +5513,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 77,
     "sourceNumber": 78,
     "content": "Cơ chế chủ yếu nào thúc đẩy sự hình thành tỷ suất lợi nhuận bình quân giữa các ngành sản xuất kinh doanh khác nhau? – Cấp độ 2",
     "options": [
@@ -5326,6 +5539,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 78,
     "sourceNumber": 79,
     "content": "Khi lợi nhuận chuyển hóa thành lợi nhuận bình quân thì giá trị của hàng hóa sẽ chuyển hóa thành phạm trù nào? – Cấp độ 2",
     "options": [
@@ -5351,6 +5565,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 79,
     "sourceNumber": 80,
     "content": "Điều kiện cần và đủ để hình thành tỷ suất lợi nhuận bình quân, lợi nhuận bình quân và giá cả sản xuất bao gồm những gì? – Cấp độ 2",
     "options": [
@@ -5376,6 +5591,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 80,
     "sourceNumber": 81,
     "content": "Bản chất của hiện tượng kinh tế dẫn đến việc nhà tư bản sản xuất chịu bán hàng hóa cho nhà tư bản thương nghiệp với giá thấp hơn giá trị là gì? – Cấp độ 2",
     "options": [
@@ -5401,6 +5617,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 81,
     "sourceNumber": 82,
     "content": "Về mặt bản chất kinh tế, khoản lợi tức mà người đi vay phải trả cho người cho vay có nguồn gốc từ đâu? – Cấp độ 2",
     "options": [
@@ -5426,6 +5643,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 82,
     "sourceNumber": 83,
     "content": "Tại sao công thức vận động T - T' của tư bản cho vay lại tạo ra ảo tưởng \"tiền đẻ ra tiền\" trong nền kinh tế? – Cấp độ 2",
     "options": [
@@ -5451,6 +5669,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 83,
     "sourceNumber": 84,
     "content": "Các loại chứng khoán như cổ phiếu, trái phiếu được C. Mác gọi là \"tư bản giả\" vì lý do nào sau đây? – Cấp độ 2",
     "options": [
@@ -5476,6 +5695,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 84,
     "sourceNumber": 85,
     "content": "Địa tô tuyệt đối theo lý luận của C. Mác được xác định bằng khoản chênh lệch giữa hai yếu tố nào? – Cấp độ 2",
     "options": [
@@ -5501,6 +5721,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 85,
     "sourceNumber": 86,
     "content": "Nhận định nào sau đây phản ánh đúng ý nghĩa khoa học từ lý luận địa tô tư bản chủ nghĩa của C. Mác? – Cấp độ 2",
     "options": [
@@ -5526,6 +5747,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 86,
     "sourceNumber": 87,
     "content": "Giả sử một nhà tư bản ứng ra 800.000 USD để mua máy móc (khấu hao trong 10 năm), 300.000 USD để mua nguyên vật liệu cho một năm và 100.000$ USD làm tiền công cho công nhân trong một năm. Hãy xác định chi phí sản xuất tư bản chủ nghĩa (k) của doanh nghiệp này trong năm đầu tiên? – Cấp độ 3",
     "options": [
@@ -5551,6 +5773,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 87,
     "sourceNumber": 88,
     "content": "Một doanh nghiệp may mặc có chi phí sản xuất trong năm là 400.000 USD. Sau khi bán hết toàn bộ sản phẩm theo đúng giá trị, họ thu về 480.000$ USD. Khoản chênh lệch 80.000 USD này được gọi là gì trên bề mặt nền kinh tế thị trường? – Cấp độ 3",
     "options": [
@@ -5576,6 +5799,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 88,
     "sourceNumber": 89,
     "content": "Công ty X đầu tư tư bản ứng trước là 500.000 USD và thu được lợi nhuận hằng năm là 100.000 USD. Hãy tính tỷ suất lợi nhuận hằng năm của công ty này? – Cấp độ 3",
     "options": [
@@ -5601,6 +5825,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 89,
     "sourceNumber": 90,
     "content": "Nhờ cải tiến quy trình quản lý, một tập đoàn sản xuất thiết bị điện tử đã tăng tốc độ chu chuyển của tư bản lên gấp đôi trong khi các yếu tố khác không đổi. Theo lý luận của C. Mác, hệ quả trực tiếp đối với doanh nghiệp này là gì? – Cấp độ 3",
     "options": [
@@ -5626,6 +5851,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 90,
     "sourceNumber": 91,
     "content": "Trên thị trường có hiện tượng các dòng vốn tự do di chuyển từ ngành dệt (nơi có cung lớn hơn cầu, giá cả hạ) sang ngành cơ khí (nơi có cung nhỏ hơn cầu, giá cả tăng). Hiện tượng tự do di chuyển vốn này sẽ tạm dừng lại khi nào? – Cấp độ 3",
     "options": [
@@ -5651,6 +5877,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 91,
     "sourceNumber": 92,
     "content": "Ông B có một khoản tiền nhàn rỗi lớn và quyết định đem cho Công ty C vay để mở rộng nhà xưởng. Công ty C kinh doanh có lãi và trích một phần lợi nhuận thu được để trả cho ông B định kỳ. Quan hệ lợi ích kinh tế giữa ông B và Công ty C phản ánh phạm trù nào? – Cấp độ 3",
     "options": [
@@ -5676,6 +5903,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 92,
     "sourceNumber": 93,
     "content": "Một nhà tư bản thuê một mảnh đất có điều kiện tự nhiên rất thuận lợi, gần nguồn nước và đường giao thông để canh tác nông nghiệp. Nhờ các yếu tố thuận lợi này, nhà tư bản thu được một khoản lợi nhuận siêu ngạch dôi ra ngoài lợi nhuận bình quân và phải trả cho địa chủ. Khoản trả này là hình thức nào? – Cấp độ 3",
     "options": [
@@ -5701,6 +5929,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 93,
     "sourceNumber": 94,
     "content": "Doanh nghiệp sản xuất nông sản A bán hàng hóa cho công ty phân phối thương nghiệp B với mức giá cao hơn chi phí sản xuất nhưng thấp hơn giá trị thực tế của hàng hóa. Hành động này phản ánh cơ chế phân chia giá trị thặng dư như thế nào? – Cấp độ 4",
     "options": [
@@ -5726,6 +5955,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 94,
     "sourceNumber": 95,
     "content": "Khi xem xét một dây chuyền sản xuất tự động hóa đã khấu hao hết toàn bộ giá trị vào sản phẩm nhưng vẫn tiếp tục được vận hành ổn định trong nhà máy. Dưới góc độ lý luận kinh tế chính trị, sự vận động này phản ánh điều gì? – Cấp độ 4",
     "options": [
@@ -5751,6 +5981,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 95,
     "sourceNumber": 96,
     "content": "Sự biến đổi trong nhận thức thực tế của nhà tư bản khi phạm trù \"lợi nhuận\" xuất hiện thay thế cho \"giá trị thặng dư\" thể hiện sự che lấp bản chất bóc lột như thế nào? – Cấp độ 4",
     "options": [
@@ -5776,6 +6007,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 96,
     "sourceNumber": 97,
     "content": "Nếu một quốc gia áp đặt chính sách thắt chặt tín dụng, làm cho lượng cung tư bản cho vay giảm mạnh trong khi nhu cầu vay vốn của các doanh nghiệp tăng cao. Hãy dự đoán sự thay đổi của tỷ suất lợi tức ($z'$) trong bối cảnh này? – Cấp độ 4",
     "options": [
@@ -5801,6 +6033,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 97,
     "sourceNumber": 98,
     "content": "Một công ty cổ phần hoạt động trong lĩnh vực công nghệ vừa phát hành một lượng lớn chứng quyền trên thị trường chứng khoán và mang lại thu nhập lớn cho các nhà đầu tư sở hữu chúng. Việc mua bán các chứng quyền này được phân loại vào hoạt động nào? – Cấp độ 4",
     "options": [
@@ -5826,6 +6059,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 98,
     "sourceNumber": 99,
     "content": "Giả sử một mảnh đất nông nghiệp hàng năm mang lại khoản địa tô ổn định là 20.000$ USD. Trong điều kiện tỷ lệ lãi suất ngân hàng hiện hành là 5%/năm, hãy xác định giá cả của mảnh đất này khi thực hiện bán quyền sử dụng đất? – Cấp độ 4",
     "options": [
@@ -5851,6 +6085,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 99,
     "sourceNumber": 100,
     "content": "Tại sao nói hiện tượng tự do di chuyển vốn và sức lao động giữa các ngành là điều kiện tiên quyết cho sự hình thành giá cả sản xuất (? – Cấp độ 4",
     "options": [
@@ -5876,6 +6111,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 100,
     "sourceNumber": 101,
     "content": "Một nhà tư bản ứng trước 650.000 USD để sản xuất hàng hóa. Trong đó, chi phí mua máy móc là 200.000 USD (khấu hao trong 10 năm), nguyên nhiên vật liệu là 350.000 USD/năm, và thuê sức lao động là 100.000 USD/năm. Hãy tính chi phí sản xuất tư bản chủ nghĩa (k) của nhà tư bản này trong một năm? – Cấp độ: 2",
     "options": [
@@ -5901,6 +6137,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 101,
     "sourceNumber": 102,
     "content": "Doanh nghiệp sản xuất sợi ứng ra tổng tư bản để mua tư liệu sản xuất và sức lao động với cấu tạo giá trị là 80c + 20v. Biết rằng tỷ suất giá trị thặng dư thu được đạt mức 150%. Hãy xác định tỷ suất lợi nhuận (p') của doanh nghiệp này? – Cấp độ: 2",
     "options": [
@@ -5926,6 +6163,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 102,
     "sourceNumber": 103,
     "content": "Một công nhân làm việc trong một ngày lao động quy định là 8 giờ, với thời gian lao động tất yếu được xác định là 3 giờ. Nếu nhà tư bản áp dụng phương pháp sản xuất giá trị thặng dư tuyệt đối bằng cách kéo dài ngày lao động thêm 2 giờ, tỷ suất giá trị thặng dư (m') mới sẽ thay đổi như thế nào? – Cấp độ: 2",
     "options": [
@@ -5951,6 +6189,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 103,
     "sourceNumber": 104,
     "content": "Giả sử ngày lao động của một công nhân kéo dài trong 8 giờ và tỷ suất giá trị thặng dư ban đầu là 100%. Nhà tư bản áp dụng phương pháp sản xuất giá trị thặng dư tương đối bằng cách cải tiến kỹ thuật, làm giá trị tư liệu sinh hoạt giảm khiến thời gian lao động tất yếu giảm đi 1 giờ. Tỷ suất giá trị thặng dư (m') sau khi thay đổi là bao nhiêu? – Cấp độ: 2",
     "options": [
@@ -5976,6 +6215,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 104,
     "sourceNumber": 105,
     "content": "Có 3 ngành sản xuất khác nhau trong xã hội với lượng tư bản đầu tư của mỗi ngành đều bằng 200 đơn vị tiền tệ. Cấu tạo hữu cơ của tư bản ở ngành I là 160c + 40v; ngành II là 140c + 60v; ngành III là 120c + 80v. Giả định tỷ suất giá trị thặng dư của cả 3 ngành đều đạt 100%. Tỷ suất lợi nhuận bình quân của xã hội là bao nhiêu? – Cấp độ: 2",
     "options": [
@@ -6001,6 +6241,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 105,
     "sourceNumber": 106,
     "content": "Một tư bản ứng trước có tổng số vốn đầu tư là 500.000 USD, trong đó tỷ lệ giữa cấu tạo giá trị tư bản bất biến và tư bản khả biến (c/v) được xác định là 4/1. Nếu tỷ suất giá trị thặng dư thu được là 120%, khối lượng giá trị thặng dư (M) mà nhà tư bản thu được đạt mức nào? – Cấp độ: 2",
     "options": [
@@ -6026,6 +6267,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 106,
     "sourceNumber": 107,
     "content": "Một mảnh đất nông nghiệp hàng năm mang lại cho địa chủ một khoản địa tô tuyệt đối ổn định là 6.000 USD. Giả sử tỷ lệ lãi suất gửi tiết kiệm của ngân hàng thương mại tại thời điểm tính toán là 5%/năm. Giá cả của mảnh ruộng đất này khi thực hiện mua bán quyền sử dụng đất trên thị trường là bao nhiêu? – Cấp độ: 2",
     "options": [
@@ -6051,6 +6293,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 107,
     "sourceNumber": 108,
     "content": "Trong một xí nghiệp cơ khí, nhà tư bản ứng ra 400.000 USD tư bản bất biến và 100.000 USD tư bản khả biến để kinh doanh. Kết thúc chu kỳ sản xuất, cấu tạo giá trị của hàng hóa thu được biểu hiện thông qua công thức G = 500.000 USD + 150.000 USD. Tỷ suất giá trị thặng dư (m') phản ánh trình độ khai thác sức lao động của xí nghiệp này là bao nhiêu? – Cấp độ: 2",
     "options": [
@@ -6076,6 +6319,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 108,
     "sourceNumber": 109,
     "content": "Một nhà tư bản thương nghiệp ký hợp đồng mua một lô hàng từ nhà tư bản sản xuất với mức giá bằng chi phí sản xuất cộng lợi nhuận thương nghiệp cấu thành. Biết giá trị thực tế của hàng hóa là 130.000 USD, chi phí sản xuất k = 100.000 USD, và lợi nhuận bình quân toàn xã hội đạt 30.000 USD. Để nhà tư bản thương nghiệp có được lợi nhuận thương nghiệp là 10.000 USD, giá mua mà nhà thương nghiệp trả cho nhà sản xuất phải là bao nhiêu? – Cấp độ: 2",
     "options": [
@@ -6101,6 +6345,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 109,
     "sourceNumber": 110,
     "content": "Một nhà tư bản đi vay một lượng tiền nhàn rỗi từ ngân hàng trị giá 200.000 USD để mở rộng sản xuất kinh doanh với cam kết trả mức tỷ suất lợi tức là 4%/năm. Kết thúc năm, nhờ lượng tiền vay này, nhà tư bản thu được mức lợi nhuận bình quân là 20.000 USD. Phần lợi nhuận còn lại của nhà tư bản đi vay sau khi khấu trừ lợi tức là bao nhiêu? – Cấp độ: 2",
     "options": [
@@ -6126,6 +6371,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 110,
     "sourceNumber": 111,
     "content": "Một tư bản sản xuất cố định có thời gian của một vòng chu chuyển là 4 năm, trong khi bộ phận tư bản lưu động đi kèm lại có thời gian của một vòng chu chuyển chỉ mất 0,25 năm (3 tháng). Hãy tính số vòng chu chuyển (n) trong một năm của từng bộ phận tư bản (cố định và lưu động) lần lượt là bao nhiêu? – Cấp độ: 2",
     "options": [
@@ -6151,6 +6397,7 @@
   },
   {
     "chapter": 3,
+    "practicePosition": 111,
     "sourceNumber": 112,
     "content": "Doanh nghiệp X ứng ra một lượng tư bản trị giá 1.000.000 USD để tham gia sản xuất. Sau một năm, doanh nghiệp thu về lợi nhuận là 250.000 USD. Biết chi phí sản xuất thực tế bỏ ra để tạo ra khối lượng hàng hóa tương ứng trong năm là 800.000 USD. Tỷ suất lợi nhuận (p') phản ánh mức doanh lợi đầu tư của doanh nghiệp X là bao nhiêu? – Cấp độ: 2",
     "options": [
@@ -6176,6 +6423,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 1,
     "sourceNumber": 1,
     "content": "Theo V.I. Lênin, nhân tố nào dưới đây là nguyên nhân trực tiếp đẻ ra tập trung sản xuất, từ đó dẫn tới sự hình thành của độc quyền? – cấp độ: 1",
     "options": [
@@ -6201,6 +6449,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 2,
     "sourceNumber": 2,
     "content": "Trong nền kinh tế thị trường, các tổ chức độc quyền có khả năng ấn định loại giá cả nào nhằm thu lợi nhuận độc quyền cao? – cấp độ: 1",
     "options": [
@@ -6226,6 +6475,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 3,
     "sourceNumber": 3,
     "content": "Bản chất của độc quyền nhà nước trong chủ nghĩa tư bản là gì? – cấp độ: 1",
     "options": [
@@ -6251,6 +6501,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 4,
     "sourceNumber": 4,
     "content": "Khi độc quyền xuất hiện trong nền kinh tế thị trường, mối quan hệ giữa độc quyền và cạnh tranh được biểu hiện như thế nào? – cấp độ: 1",
     "options": [
@@ -6276,6 +6527,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 5,
     "sourceNumber": 5,
     "content": "Phát biểu nào sau đây phản ánh đúng nguyên nhân hình thành độc quyền xuất phát từ sự phát triển của lực lượng sản xuất vào cuối thế kỷ xix đầu thế kỷ XX? – cấp độ: 2",
     "options": [
@@ -6301,6 +6553,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 6,
     "sourceNumber": 6,
     "content": "Cuộc khủng hoảng kinh tế lớn năm 1873 trong thế giới tư bản chủ nghĩa đã tác động như thế nào đến sự hình thành các tổ chức độc quyền? – cấp độ: 2",
     "options": [
@@ -6326,6 +6579,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 7,
     "sourceNumber": 7,
     "content": "Về mặt cấu trúc, độc quyền nhà nước trong nền kinh tế thị trường tư bản chủ nghĩa được hình thành trên cơ sở nào? – cấp độ: 2",
     "options": [
@@ -6351,6 +6605,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 8,
     "sourceNumber": 8,
     "content": "Vì sao nhà nước tư sản phải đứng ra đảm nhận phát triển một số ngành mới như năng lượng, giao thông vận tải, giáo dục hay nghiên cứu khoa học cơ bản? – cấp độ: 2",
     "options": [
@@ -6376,6 +6631,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 9,
     "sourceNumber": 9,
     "content": "Xét về bản chất kinh tế, khi nhà nước tư sản chuyển nhiều lực lượng sản xuất thành tài sản của mình thì nhà nước đó trở thành gì? – cấp độ: 2",
     "options": [
@@ -6401,6 +6657,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 10,
     "sourceNumber": 10,
     "content": "Tại sao độc quyền lại tạo ra khả năng thúc đẩy sự tiến bộ của khoa học - kỹ thuật trong nền kinh tế thị trường? – cấp độ: 2",
     "options": [
@@ -6426,6 +6683,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 11,
     "sourceNumber": 11,
     "content": "Tác động tiêu cực nào của độc quyền biểu hiện qua việc gây thiệt hại trực tiếp cho người tiêu dùng và toàn xã hội? – cấp độ: 2",
     "options": [
@@ -6451,6 +6709,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 12,
     "sourceNumber": 12,
     "content": "Hình thức cạnh tranh giữa các tổ chức độc quyền trong cùng một ngành thường dẫn đến kết cục nào dưới đây? – cấp độ: 2",
     "options": [
@@ -6476,6 +6735,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 13,
     "sourceNumber": 13,
     "content": "Một doanh nghiệp độc quyền X thực hiện mua nguyên liệu đầu vào với giá thấp và bán sản phẩm đầu ra với giá cao cho xã hội. Hành vi này phản ánh đúng đặc điểm nào của giá cả độc quyền? – cấp độ: 3",
     "options": [
@@ -6501,6 +6761,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 14,
     "sourceNumber": 14,
     "content": "Khi nghiên cứu về nguồn gốc của lợi nhuận độc quyền cao, nhận định nào sau đây là đúng đắn về mặt lý luận kinh tế chính trị Mác - Lênin? – cấp độ: 3",
     "options": [
@@ -6526,6 +6787,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 15,
     "sourceNumber": 15,
     "content": "Trước xu hướng quốc tế hóa đời sống kinh tế và sự bành trướng của các liên minh độc quyền quốc tế vấp phải hàng rào quốc gia, vai trò can thiệp của nhà nước tư sản được giải thích như thế nào? – cấp độ: 3",
     "options": [
@@ -6551,6 +6813,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 16,
     "sourceNumber": 16,
     "content": "Hiện tượng các thành viên trong cùng một nghiệp đoàn độc quyền tìm cách chiếm tỷ lệ cổ phần khống chế lẫn nhau thuộc loại hình quan hệ cạnh tranh nào? – cấp độ: 3",
     "options": [
@@ -6576,6 +6839,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 17,
     "sourceNumber": 17,
     "content": "Giả sử một tập đoàn độc quyền sở hữu một sáng chế công nghệ có khả năng tiết kiệm 50% năng lượng sản xuất. Tuy nhiên, họ quyết định không ứng dụng sáng chế này vì việc vận hành dây chuyền cũ vẫn đang mang lại lợi nhuận độc quyền tối đa và không bị cạnh tranh đe dọa. Tình huống này minh chứng rõ nhất cho tác động tiêu cực nào của độc quyền? – cấp độ: 4",
     "options": [
@@ -6601,6 +6865,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 18,
     "sourceNumber": 18,
     "content": "Nhà nước tư sản ban hành chính sách trợ cấp thất nghiệp, điều tiết thu nhập quốc dân và phát triển phúc lợi xã hội nhằm mục đích sâu xa nào dưới đây? – cấp độ: 4",
     "options": [
@@ -6626,6 +6891,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 19,
     "sourceNumber": 19,
     "content": "Để loại bỏ các chủ thể yếu thế hơn ra khỏi thị trường, một tổ chức độc quyền lớn đã sử dụng biện pháp thâu tóm toàn bộ hệ thống xe lửa, cảng biển và nguồn cung ứng dầu mỏ tại khu vực. Hành vi này phản ánh loại hình cạnh tranh nào? – cấp độ: 4",
     "options": [
@@ -6651,6 +6917,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 20,
     "sourceNumber": 20,
     "content": "Nhận định nào sau đây đánh giá một cách biện chứng và khách quan nhất về hình thức vận động của quan hệ sản xuất tư bản chủ nghĩa trong giai đoạn độc quyền nhà nước? – cấp độ: 4",
     "options": [
@@ -6676,6 +6943,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 21,
     "sourceNumber": 21,
     "content": "Theo lý luận của V.I. Lênin về đặc điểm kinh tế của độc quyền, tư bản tài chính là kết quả của sự hợp nhất giữa hai yếu tố nào? – cấp độ: 1",
     "options": [
@@ -6701,6 +6969,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 22,
     "sourceNumber": 22,
     "content": "Xuất khẩu tư bản là hình thức xuất khẩu giá trị ra nước ngoài nhằm mục đích cốt lõi nào dưới đây? – cấp độ: 1",
     "options": [
@@ -6726,6 +6995,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 23,
     "sourceNumber": 23,
     "content": "Trong giai đoạn độc quyền nhà nước, hình thức kết hợp về nhân sự được thực hiện thông qua công cụ trung gian nào để tạo cơ sở xã hội thực hiện sự thống trị? – cấp độ: 1",
     "options": [
@@ -6751,6 +7021,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 24,
     "sourceNumber": 24,
     "content": "Cơ chế điều tiết kinh tế của độc quyền nhà nước trong chủ nghĩa tư bản là sự dung hợp của những cơ chế nào? – cấp độ: 1",
     "options": [
@@ -6776,6 +7047,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 25,
     "sourceNumber": 25,
     "content": "Vì sao sự tích tụ và tập trung sản xuất đến mức cao vào cuối thế kỷ XIX, đầu thế kỷ XX lại trực tiếp dẫn đến khuynh hướng thỏa hiệp và hình thành các tổ chức độc quyền? – cấp độ: 2",
     "options": [
@@ -6801,6 +7073,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 26,
     "sourceNumber": 26,
     "content": "Đặc điểm nào dưới đây phân biệt rõ nét nhất giữa hình thức tổ chức độc quyền syndicate (xanhđica) và cartel (các-ten)? – cấp độ: 2",
     "options": [
@@ -6826,6 +7099,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 27,
     "sourceNumber": 27,
     "content": "Trong quá trình chuyển đổi vai trò từ trung gian thanh toán sang quyền lực \"vạn năng\", các tổ chức độc quyền ngân hàng thực hiện sự khống chế đối với độc quyền công nghiệp bằng cách nào? – cấp độ: 2",
     "options": [
@@ -6851,6 +7125,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 28,
     "sourceNumber": 28,
     "content": "Biện pháp \"chế độ tham dự\" được các nhà tài phiệt (đầu sỏ tài chính) áp dụng trong thực tiễn nhằm mục đích gì? – cấp độ: 2",
     "options": [
@@ -6876,6 +7151,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 29,
     "sourceNumber": 29,
     "content": "Đầu tư gián tiếp – một hình thức của xuất khẩu tư bản – được thực hiện thông qua phương thức nào sau đây? – cấp độ: 2",
     "options": [
@@ -6901,6 +7177,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 30,
     "sourceNumber": 30,
     "content": "Từ những năm 50 của thế kỷ XX, trước sự sụp đổ của hệ thống thuộc địa kiểu cũ, các cường quốc tư bản chuyển sang thi hành chính sách thực dân mới bằng nội dung chủ yếu nào? – cấp độ: 2",
     "options": [
@@ -6926,6 +7203,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 31,
     "sourceNumber": 31,
     "content": "Vì sao dư luận thế giới lại gọi các hội chủ xí nghiệp độc quyền lớn (như Hội công nghiệp toàn quốc Mỹ, Liên đoàn các nhà kinh tế Nhật bản) là “những chính phủ đằng sau chính phủ”? – cấp độ: 2",
     "options": [
@@ -6951,6 +7229,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 32,
     "sourceNumber": 32,
     "content": "Chức năng nào sau đây không phải là chức năng cơ bản của sở hữu nhà nước trong nền kinh tế độc quyền nhà nước? – cấp độ: 2",
     "options": [
@@ -6976,6 +7255,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 33,
     "sourceNumber": 33,
     "content": "Sự thâm nhập đan xen đan kết giữa độc quyền công nghiệp và độc quyền ngân hàng được lý luận mác - lênin giải thích theo nguyên lý biến đổi chất nào? – cấp độ: 3",
     "options": [
@@ -7001,6 +7281,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 34,
     "sourceNumber": 34,
     "content": "Khi một quốc gia tư bản thực hiện việc ký kết các đơn đặt hàng quân sự lớn với các tập đoàn độc quyền tư nhân bằng nguồn ngân sách, hành vi này phản ánh sự hình thành và phát triển của yếu tố nào? – cấp độ: 3",
     "options": [
@@ -7026,6 +7307,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 35,
     "sourceNumber": 35,
     "content": "Nhận định nào sau đây là đúng về mối quan hệ giữa \"công ty mẹ\", \"công ty con\" và \"công ty cháu\" trong \"chế độ tham dự\" của hệ thống tài phiệt? – cấp độ: 3",
     "options": [
@@ -7051,6 +7333,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 36,
     "sourceNumber": 36,
     "content": "Sự xuất hiện của các nước phụ thuộc mắc vào \"cái lưới phụ thuộc về tài chính và ngoại giao\" mặc dù trên hình thức được độc lập về chính trị phản ánh đặc điểm kinh tế nào của độc quyền? – cấp độ: 3",
     "options": [
@@ -7076,6 +7359,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 37,
     "sourceNumber": 37,
     "content": "Tập đoàn X (một liên minh công nghiệp lớn) mua 51% cổ phần của ngân hàng Y. Ngược lại, ngân hàng Y cử giám đốc tín dụng của mình trực tiếp tham gia vào hội đồng quản trị của tập đoàn X để giám sát các dòng vốn vay. Hiện tượng này minh chứng thực tế cho khái niệm lý luận nào của V.I. Lênin? – cấp độ: 4",
     "options": [
@@ -7101,6 +7385,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 38,
     "sourceNumber": 38,
     "content": "Xét tình huống: bộ trưởng bộ năng lượng quốc gia tư bản a sau khi hết nhiệm kỳ liền được bổ nhiệm làm chủ tịch hội đồng quản trị của một tập đoàn dầu khí độc quyền lớn nhất nước đó. Hiện tượng này phản ánh đặc trưng kinh tế nào của độc quyền nhà nước? – cấp độ: 4",
     "options": [
@@ -7126,6 +7411,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 39,
     "sourceNumber": 39,
     "content": "Khi các liên minh độc quyền quốc tế vấp phải hàng rào quốc gia dân tộc trên thị trường thế giới, họ thường dùng phương thức nào để giải quyết mâu thuẫn nhằm bảo vệ lợi ích tối cao của mình? – cấp độ: 4",
     "options": [
@@ -7151,6 +7437,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 40,
     "sourceNumber": 40,
     "content": "Một quốc gia tư bản tiến hành mua lại các doanh nghiệp giao thông vận tải tư nhân đang thua lỗ bằng nguồn vốn ngân sách, sau đó hiện đại hóa hệ thống này để cung ứng dịch vụ logistics giá rẻ cho các tập đoàn độc quyền tư nhân khác kinh doanh. Hành vi này thể hiện bản chất vĩ mô nào của sở hữu nhà nước? – cấp độ: 4",
     "options": [
@@ -7176,6 +7463,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 41,
     "sourceNumber": 41,
     "content": "Hình thức tổ chức độc quyền đa ngành nào bao gồm hàng trăm xí nghiệp có quan hệ với những ngành khác nhau và được phân bố ở nhiều nước nhằm đối phó với luật chống độc quyền? – cấp độ: 1",
     "options": [
@@ -7201,6 +7489,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 42,
     "sourceNumber": 42,
     "content": "Trong giai đoạn hiện nay, đại bộ phận dòng vốn xuất khẩu tư bản có xu hướng chảy qua lại giữa khu vực nào? – cấp độ: 1",
     "options": [
@@ -7226,6 +7515,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 43,
     "sourceNumber": 43,
     "content": "Thể chế nào trong phân chia quyền lực nhà nước đã trở thành phổ biến ở các nước tư bản phát triển ngày nay để tạo nên sự thỏa hiệp, cùng tồn tại giữa các thế lực độc quyền? – cấp độ: 1",
     "options": [
@@ -7251,6 +7541,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 44,
     "sourceNumber": 44,
     "content": "Quá trình phát triển của chủ nghĩa tư bản đạt tới mức điển hình nhất trong lịch sử đối với nền sản xuất hàng hóa đã tạo ra kết quả nào về mặt sản xuất? – cấp độ: 1",
     "options": [
@@ -7276,6 +7567,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 45,
     "sourceNumber": 45,
     "content": "Vì sao mục đích kinh doanh chủ yếu của các liên minh độc quyền kiểu conglomerate là thu lợi nhuận từ hoạt động kinh doanh chứng khoán? – cấp độ: 2",
     "options": [
@@ -7301,6 +7593,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 46,
     "sourceNumber": 46,
     "content": "Biểu hiện mới của đặc điểm tập trung sản xuất hiện nay được chứng minh bằng sự cùng tồn tại song hành của những chủ thể nào trên thị trường? – cấp độ: 2",
     "options": [
@@ -7326,6 +7619,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 47,
     "sourceNumber": 47,
     "content": "Sự biến đổi của \"chế độ tham dự\" bằng việc bổ sung thêm \"chế độ ủy nhiệm\" trong cơ chế của tư bản tài chính hiện nay có đặc điểm gì? – cấp độ: 2",
     "options": [
@@ -7351,6 +7645,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 48,
     "sourceNumber": 48,
     "content": "Nguyên nhân chủ yếu nào dẫn đến sự ra đời của các trung tâm tài chính thế giới trong những thập kỷ gần đây? – cấp độ: 2",
     "options": [
@@ -7376,6 +7671,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 49,
     "sourceNumber": 49,
     "content": "Sự hình thành thị trường độc quyền nhà nước hiện nay được biểu hiện cụ thể thông qua hình thức nào? – cấp độ: 2",
     "options": [
@@ -7401,6 +7697,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 50,
     "sourceNumber": 50,
     "content": "Viện trợ nước ngoài của các chính phủ tư sản hiện đại trong các dự án song phương mang đặc điểm bản chất nào dưới đây? – cấp độ: 2",
     "options": [
@@ -7426,6 +7723,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 51,
     "sourceNumber": 51,
     "content": "Điểm khác biệt cốt lõi thể hiện tính chất hiện đại của hình thức xuất khẩu tư bản ngày nay so với thời kỳ cũ là gì? – cấp độ: 2",
     "options": [
@@ -7451,6 +7749,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 52,
     "sourceNumber": 52,
     "content": "Xu thế trì trệ, kìm hãm sự phát triển kinh tế - xã hội của độc quyền trong lòng chủ nghĩa tư bản bắt nguồn từ nhân tố nào? – cấp độ: 2",
     "options": [
@@ -7476,6 +7775,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 53,
     "sourceNumber": 53,
     "content": "Một công ty sản xuất linh kiện điện tử quy mô nhỏ tại Đức ký hợp đồng gia công dài hạn cho một concern sản xuất ô tô lớn. Toàn bộ tiêu chuẩn kỹ thuật, giá cả đầu ra và công nghệ đều do concern này ấn định. Tình huống này phản ánh đúng thực trạng biểu hiện mới nào của độc quyền? – cấp độ: 3",
     "options": [
@@ -7501,6 +7801,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 54,
     "sourceNumber": 54,
     "content": "Khi một quốc gia đang phát triển kêu gọi một tập đoàn nước ngoài đầu tư xây dựng nhà máy điện, vận hành khai thác trong 25 năm để thu hồi vốn và lợi nhuận, sau đó bàn giao lại toàn bộ cho chính phủ sở tại quản lý. Đây là biểu hiện mới của hình thức xuất khẩu tư bản nào? – cấp độ: 3",
     "options": [
@@ -7526,6 +7827,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 55,
     "sourceNumber": 55,
     "content": "Hiện tượng các nước tư bản phát triển như mỹ và các quốc gia châu âu tranh giành phạm vi ảnh hưởng thông qua các điều kiện ràng buộc về dòng vốn tín dụng, công nghệ cao và các hiệp định thương mại, kiểm soát vĩ mô mà không dùng quân sự trực tiếp cai trị phản ánh điều gì? – cấp độ: 3",
     "options": [
@@ -7551,6 +7853,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 56,
     "sourceNumber": 56,
     "content": "Việc các nước châu Âu áp dụng đồng tiền chung Euro vào ngày 1/1/1999 và xây dựng các chính sách thuế quan thống nhất trong toàn Khối liên minh châu Âu (EU) phản ánh xu hướng vận động mới nào dưới sự chi phối của độc quyền? – cấp độ: 3",
     "options": [
@@ -7576,6 +7879,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 57,
     "sourceNumber": 57,
     "content": "Trong cuộc khủng hoảng kinh tế, chính phủ mỹ đã chi hàng chục tỷ usd từ ngân sách để mua lại cổ phần và giải cứu tập đoàn bảo hiểm aig và citigroup khỏi nguy cơ phá sản, sau đó kiểm soát cổ phần khống chế của các hãng này. Thực tiễn này minh chứng rõ nhất cho biểu hiện mới nào của độc quyền nhà nước? – cấp độ: 4",
     "options": [
@@ -7601,6 +7905,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 58,
     "sourceNumber": 58,
     "content": "Sự kiện lật đổ chính phủ hợp pháp ở Chilê năm 1973 và các biến động chính trị tại Nga năm 1993, nơi các thế lực tư sản lũng đoạn ngay lập tức dùng các biện pháp mạnh như giải tán chính phủ khi nguy cơ bị mất quyền chi phối xuất hiện, chứng minh cho luận điểm nào trong tài liệu? – cấp độ: 4",
     "options": [
@@ -7626,6 +7931,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 59,
     "sourceNumber": 59,
     "content": "Trích đoạn phát biểu của Đonald J. Trump (2016) bày tỏ sự quan ngại về \"46,5 triệu người đang sống trong cảnh nghèo đói\" và \"các chương trình tài chính quá thiên vị lợi ích của người giàu\" phản ánh sâu sắc giới hạn lịch sử nào của chủ nghĩa tư bản? – cấp độ: 4",
     "options": [
@@ -7651,6 +7957,7 @@
   },
   {
     "chapter": 4,
+    "practicePosition": 60,
     "sourceNumber": 60,
     "content": "Sự vận động của quan hệ sở hữu tư bản chủ nghĩa từ sở hữu tư nhân (giai đoạn tự do cạnh tranh) đến sở hữu tập thể (giai đoạn độc quyền) và sở hữu nhà nước (giai đoạn độc quyền nhà nước) được giải thích một cách biện chứng là do yêu cầu của quy luật nào? – cấp độ: 4",
     "options": [
@@ -7676,6 +7983,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 1,
     "sourceNumber": 1,
     "content": "Theo Văn kiện Đại hội IX của Đảng, kinh tế thị trường định hướng xã hội chủ nghĩa được xác định là: – Cấp độ: 1",
     "options": [
@@ -7701,6 +8009,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 2,
     "sourceNumber": 2,
     "content": "Lãnh đạo nền kinh tế thị trường định hướng xã hội chủ nghĩa ở Việt Nam là tổ chức nào? – Cấp độ: 1",
     "options": [
@@ -7726,6 +8035,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 3,
     "sourceNumber": 3,
     "content": "Khái niệm kinh tế thị trường định hướng xã hội chủ nghĩa theo Đại hội XII của Đảng thể hiện sự phát triển mới nào về nhận thức lý luận? – Cấp độ: 2",
     "options": [
@@ -7751,6 +8061,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 4,
     "sourceNumber": 4,
     "content": "Bản chất của việc định hướng xã hội chủ nghĩa trong nền kinh tế thị trường ở Việt Nam thực chất là gì? – Cấp độ: 2",
     "options": [
@@ -7776,6 +8087,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 5,
     "sourceNumber": 5,
     "content": "Vì sao nói hệ giá trị \"dân giàu, nước mạnh, dân chủ, công bằng, văn minh\" là thước đo tính định hướng xã hội chủ nghĩa của nền kinh tế thị trường ở Việt Nam? – Cấp độ: 2",
     "options": [
@@ -7801,6 +8113,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 6,
     "sourceNumber": 6,
     "content": "Khi xem xét một quốc gia có nền kinh tế phát triển cao về thu nhập quốc dân nhưng lại xảy ra tình trạng mất công bằng xã hội nghiêm trọng, góc nhìn của Kinh tế chính trị Mác - Lênin đánh giá thế nào về việc áp dụng mô hình kinh tế? – Cấp độ: 3",
     "options": [
@@ -7826,6 +8139,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 7,
     "sourceNumber": 7,
     "content": "Một doanh nghiệp Việt Nam tiến hành đổi mới công nghệ, tăng năng suất lao động, tuân thủ pháp luật, đóng thuế đầy đủ và tích cực tham gia các chương trình an sinh xã hội. Hoạt động này phản ánh đúng khía cạnh nào trong định hướng xã hội chủ nghĩa? – Cấp độ: 4",
     "options": [
@@ -7851,6 +8165,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 8,
     "sourceNumber": 8,
     "content": "Nền kinh tế thị trường là giai đoạn phát triển cao của hình thức sản xuất nào? – Cấp độ: 1",
     "options": [
@@ -7876,6 +8191,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 9,
     "sourceNumber": 9,
     "content": "Việc phát triển kinh tế thị trường ở Việt Nam là tất yếu khách quan vì xuất phát từ yếu tố nền tảng nào? – Cấp độ: 1",
     "options": [
@@ -7901,6 +8217,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 10,
     "sourceNumber": 10,
     "content": "Tại sao sự phát triển của kinh tế thị trường không mâu thuẫn với mục tiêu xây dựng chủ nghĩa xã hội ở Việt Nam? – Cấp độ: 2",
     "options": [
@@ -7926,6 +8243,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 11,
     "sourceNumber": 11,
     "content": "Khái niệm \"xu hướng tự phủ định, tự tiến hóa\" của kinh tế thị trường tư bản chủ nghĩa phản ánh điều gì? – Cấp độ: 2",
     "options": [
@@ -7951,6 +8269,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 12,
     "sourceNumber": 12,
     "content": "Tính tất yếu của việc tồn tại lâu dài nền kinh tế thị trường trong thời kỳ quá độ ở Việt Nam do nguyên nhân nào quyết định? – Cấp độ: 2",
     "options": [
@@ -7976,6 +8295,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 13,
     "sourceNumber": 13,
     "content": "Lựa chọn mô hình kinh tế thị trường định hướng xã hội chủ nghĩa thể hiện thái độ như thế nào của Việt Nam đối với văn minh nhân loại? – Cấp độ: 2",
     "options": [
@@ -8001,6 +8321,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 14,
     "sourceNumber": 14,
     "content": "Việc chuyển đổi từ nền kinh tế tự cấp tự túc sang kinh tế thị trường định hướng xã hội chủ nghĩa có tác động trực tiếp nào đến phân công lao động ở Việt Nam? – Cấp độ: 2",
     "options": [
@@ -8026,6 +8347,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 15,
     "sourceNumber": 15,
     "content": "Một quốc gia duy trì tốc độ tăng trưởng kinh tế cao trong nhiều năm nhưng phớt lờ việc khắc phục các thất bại của thị trường (như ô nhiễm môi trường, độc quyền tiêu cực). Khi phân tích dưới góc độ lý luận kinh tế chính trị Mác - Lênin, bài học đặt ra cho Việt Nam là gì? – Cấp độ: 3",
     "options": [
@@ -8051,6 +8373,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 16,
     "sourceNumber": 16,
     "content": "Việc Việt Nam chủ động mở cửa, hội nhập kinh tế quốc tế và chấp nhận các quy tắc thương mại tự do toàn cầu phản ánh tính tất yếu nào? – Cấp độ: 3",
     "options": [
@@ -8076,6 +8399,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 17,
     "sourceNumber": 17,
     "content": "Giả sử một ngành sản xuất trong nước đang đối mặt với nguy cơ suy thoái do công nghệ lạc hậu và năng suất thấp. Nếu áp dụng quy luật vận hành của kinh tế thị trường định hướng XHCN, giải pháp căn cơ nhất là gì? – Cấp độ: 4",
     "options": [
@@ -8101,6 +8425,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 18,
     "sourceNumber": 18,
     "content": "Phân tích thực tiễn quá trình đổi mới ở Việt Nam cho thấy, việc chuyển từ \"áp dụng cơ chế thị trường\" sang \"phát triển kinh tế thị trường định hướng xã hội chủ nghĩa\" có ý nghĩa bước ngoặt như thế nào? – Cấp độ: 4",
     "options": [
@@ -8126,6 +8451,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 19,
     "sourceNumber": 19,
     "content": "Về mặt mục tiêu, kinh tế thị trường định hướng XHCN ở Việt Nam nhằm phát triển lực lượng sản xuất và: – Cấp độ: 1",
     "options": [
@@ -8151,6 +8477,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 20,
     "sourceNumber": 20,
     "content": "Trong nền kinh tế thị trường định hướng XHCN ở Việt Nam, thành phần kinh tế nào giữ vai trò chủ đạo? – Cấp độ: 1",
     "options": [
@@ -8176,6 +8503,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 21,
     "sourceNumber": 21,
     "content": "Khái niệm sở hữu theo lý luận Kinh tế chính trị Mác - Lênin bao gồm những nội dung cơ bản nào? – Cấp độ: 2",
     "options": [
@@ -8201,6 +8529,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 22,
     "sourceNumber": 22,
     "content": "Biểu hiện tập trung của nội dung kinh tế trong quan hệ sở hữu là gì? – Cấp độ: 2",
     "options": [
@@ -8226,6 +8555,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 23,
     "sourceNumber": 23,
     "content": "Vai trò của kinh tế tư nhân trong nền kinh tế thị trường định hướng XHCN ở Việt Nam được xác định là: – Cấp độ: 2",
     "options": [
@@ -8251,6 +8581,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 24,
     "sourceNumber": 24,
     "content": "Trong nền kinh tế thị trường định hướng XHCN, Nhà nước quản lý nền kinh tế thông qua công cụ nào sau đây? – Cấp độ: 2",
     "options": [
@@ -8276,6 +8607,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 25,
     "sourceNumber": 25,
     "content": "Hình thức phân phối đầu ra nào sau đây phản ánh bản chất định hướng xã hội chủ nghĩa của nền kinh tế thị trường ở Việt Nam? – Cấp độ: 2",
     "options": [
@@ -8301,6 +8633,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 26,
     "sourceNumber": 26,
     "content": "Mối quan hệ giữa tăng trưởng kinh tế và công bằng xã hội ở Việt Nam được xác định như thế nào? – Cấp độ: 2",
     "options": [
@@ -8326,6 +8659,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 27,
     "sourceNumber": 27,
     "content": "Sự khác biệt căn bản về mục tiêu giữa kinh tế thị trường định hướng XHCN ở Việt Nam và kinh tế thị trường TBCN là gì? – Cấp độ: 2",
     "options": [
@@ -8351,6 +8685,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 28,
     "sourceNumber": 28,
     "content": "Khi nói kinh tế nhà nước giữ vai trò chủ đạo, điều đó có nghĩa là các doanh nghiệp nhà nước phải: – Cấp độ: 2",
     "options": [
@@ -8376,6 +8711,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 29,
     "sourceNumber": 29,
     "content": "Khái niệm \"phân phối đầu vào\" trong nền kinh tế thị trường định hướng XHCN Việt Nam biểu hiện qua khía cạnh nào? – Cấp độ: 2",
     "options": [
@@ -8401,6 +8737,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 30,
     "sourceNumber": 30,
     "content": "Một doanh nghiệp có hành vi xả chất thải chưa qua xử lý ra môi trường nhằm giảm chi phí sản xuất để tối đa hóa lợi nhuận. Xét dưới góc độ mối quan hệ giữa tăng trưởng kinh tế và phát triển xã hội, hành vi này vi phạm nguyên tắc nào? – Cấp độ: 3",
     "options": [
@@ -8426,6 +8763,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 31,
     "sourceNumber": 31,
     "content": "Việc Nhà nước Việt Nam ban hành các chính sách miễn giảm thuế, hỗ trợ tín dụng ưu đãi cho các hộ nghèo và vùng sâu vùng xa khởi nghiệp sản xuất phản ánh chức năng nào của Nhà nước trong kinh tế thị trường định hướng XHCN? – Cấp độ: 3",
     "options": [
@@ -8451,6 +8789,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 32,
     "sourceNumber": 32,
     "content": "Nếu một quốc gia áp dụng chính sách phân phối cào bằng (bình quân chủ nghĩa) toàn bộ sản phẩm làm ra cho mọi người dân bất chấp mức độ đóng góp và hiệu quả lao động, hệ quả kinh tế - xã hội tất yếu sẽ là gì? – Cấp độ: 3",
     "options": [
@@ -8476,6 +8815,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 33,
     "sourceNumber": 33,
     "content": "Khi xem xét mối quan hệ giữa nội dung kinh tế và nội dung pháp lý của sở hữu, trường hợp một cá nhân có tài sản nhưng không được pháp luật công nhận và bảo vệ quyền sở hữu thì điều gì sẽ xảy ra? – Cấp độ: 3",
     "options": [
@@ -8501,6 +8841,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 34,
     "sourceNumber": 34,
     "content": "Nhận định nào sau đây là ĐÚNG khi nói về vị trí của các thành phần kinh tế ở Việt Nam hiện nay? – Cấp độ: 3",
     "options": [
@@ -8526,6 +8867,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 35,
     "sourceNumber": 35,
     "content": "Phân tích tình huống: Một tập đoàn tư nhân Việt Nam tự nghiên cứu, chế tạo thành công ô tô điện và xuất khẩu ra thị trường quốc tế. Việc Nhà nước tạo điều kiện cho tập đoàn này phát triển phản ánh đúng tinh thần nào của Đại hội XIII? – Cấp độ: 4",
     "options": [
@@ -8551,6 +8893,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 36,
     "sourceNumber": 36,
     "content": "Để xử lý triệt để bài toán \"không hy sinh tiến bộ và công bằng xã hội để chạy theo tăng trưởng kinh tế đơn thuần\" trong bối cảnh thực tiễn Việt Nam hiện nay, giải pháp mang tính chiến lược nhất là gì? – Cấp độ: 4",
     "options": [
@@ -8576,6 +8919,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 37,
     "sourceNumber": 37,
     "content": "Một địa phương quyết định thu hồi đất nông nghiệp của dân để làm dự án khu công nghiệp nhưng không có chính sách bồi thường thỏa đáng và không đào tạo chuyển đổi nghề nghiệp cho nông dân, dẫn đến khiếu kiện kéo dài. Dưới góc độ Kinh tế chính trị Mác - Lênin, hạn chế lớn nhất của chính sách này là gì? – Cấp độ: 4",
     "options": [
@@ -8601,6 +8945,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 38,
     "sourceNumber": 38,
     "content": "Khi nghiên cứu về cấu trúc nền kinh tế thị trường định hướng XHCN Việt Nam, có ý kiến cho rằng: \"Vì kinh tế nhà nước giữ vai trò chủ đạo nên các doanh nghiệp tư nhân không thể cạnh tranh bình đẳng\". Luận điểm nào sau đây phản bác chính xác nhất ý kiến trên? – Cấp độ: 4",
     "options": [
@@ -8626,6 +8971,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 39,
     "sourceNumber": 39,
     "content": "Thể chế kinh tế là gì? – Cấp độ: 1",
     "options": [
@@ -8651,6 +8997,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 40,
     "sourceNumber": 40,
     "content": "Bộ phận nào sau đây KHÔNG thuộc cấu thành cơ bản của thể chế kinh tế? – Cấp độ: 1",
     "options": [
@@ -8676,6 +9023,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 41,
     "sourceNumber": 41,
     "content": "Nhà nước pháp quyền xã hội chủ nghĩa Việt Nam có bản chất là nhà nước: – Cấp độ: 1",
     "options": [
@@ -8701,6 +9049,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 42,
     "sourceNumber": 42,
     "content": "Lý do khách quan thứ nhất khiến Việt Nam phải tiếp tục hoàn thiện thể chế kinh tế thị trường định hướng XHCN là gì? – Cấp độ: 2",
     "options": [
@@ -8726,6 +9075,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 43,
     "sourceNumber": 43,
     "content": "Trình độ và năng lực tổ chức, quản lý nền kinh tế thị trường của Nhà nước thể hiện chủ yếu ở khía cạnh nào? – Cấp độ: 2",
     "options": [
@@ -8751,6 +9101,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 44,
     "sourceNumber": 44,
     "content": "Theo đánh giá của Đảng tại Trung ương 5 khóa XII và Đại hội XIII, một trong những hạn chế lớn của thể chế KTTT ở nước ta hiện nay là: – Cấp độ: 2",
     "options": [
@@ -8776,6 +9127,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 45,
     "sourceNumber": 45,
     "content": "Tại sao hệ thống thể chế kinh tế thị trường định hướng XHCN ở Việt Nam bắt buộc phải phục vụ lợi ích của nhân dân? – Cấp độ: 2",
     "options": [
@@ -8801,6 +9153,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 46,
     "sourceNumber": 46,
     "content": "Yếu tố nào sau đây được xác định là tác giả chính ban hành thể chế chính thức của nền kinh tế? – Cấp độ: 2",
     "options": [
@@ -8826,6 +9179,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 47,
     "sourceNumber": 47,
     "content": "Một hệ thống quy định pháp luật về kinh tế thường xuyên bị thay đổi, các văn bản hướng dẫn thi hành chồng chéo lên nhau sẽ gây ra hậu quả trực tiếp nào cho nền kinh tế? – Cấp độ: 3",
     "options": [
@@ -8851,6 +9205,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 48,
     "sourceNumber": 48,
     "content": "Sự xuất hiện của hiện tượng \"lợi ích cục bộ\", \"cài cắm quy định có lợi cho nhóm riêng\" trong quá trình soạn thảo văn bản quy phạm pháp luật là biểu hiện của yếu tố nào? – Cấp độ: 3",
     "options": [
@@ -8876,6 +9231,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 49,
     "sourceNumber": 49,
     "content": "Khi phản biện ý kiến: \"Việt Nam chỉ cần bê nguyên vẹn hệ thống pháp luật kinh tế của một quốc gia phát triển về áp dụng là sẽ có ngay thể chế hoàn hảo\", luận điểm nào sau đây là đúng đắn nhất? – Cấp độ: 4",
     "options": [
@@ -8901,6 +9257,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 50,
     "sourceNumber": 50,
     "content": "Phân tích thực trạng một số loại thị trường ở Việt Nam vận hành còn vướng mắc, kém hiệu quả (như thị trường đất đai, thị trường khoa học công nghệ), yêu cầu cấp bách đặt ra đối với Nhà nước là gì? – Cấp độ: 4",
     "options": [
@@ -8926,6 +9283,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 51,
     "sourceNumber": 51,
     "content": "Nội dung nào sau đây thuộc về hoàn thiện thể chế về sở hữu ở Việt Nam? – Cấp độ: 1",
     "options": [
@@ -8951,6 +9309,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 52,
     "sourceNumber": 52,
     "content": "Nhằm tạo môi trường cạnh tranh bình đẳng giữa các thành phần kinh tế, Nhà nước cần thực hiện giải pháp nào? – Cấp độ: 1",
     "options": [
@@ -8976,6 +9335,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 53,
     "sourceNumber": 53,
     "content": "Các yếu tố thị trường cơ bản cần được vận hành theo nguyên tắc của thể chế kinh tế thị trường bao gồm: – Cấp độ: 1",
     "options": [
@@ -9001,6 +9361,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 54,
     "sourceNumber": 54,
     "content": "Nội dung hoàn thiện thể chế phát triển đồng bộ các loại thị trường ở Việt Nam KHÔNG bao gồm thị trường nào sau đây? – Cấp độ: 2",
     "options": [
@@ -9026,6 +9387,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 55,
     "sourceNumber": 55,
     "content": "Việc thể chế hóa việc cơ cấu lại, đổi mới doanh nghiệp nhà nước nhằm mục đích gì? – Cấp độ: 2",
     "options": [
@@ -9051,6 +9413,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 56,
     "sourceNumber": 56,
     "content": "Trong thu hút đầu tư trực tiếp nước ngoài (FDI), định hướng thể chế mới của Việt Nam là gì? – Cấp độ: 2",
     "options": [
@@ -9076,6 +9439,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 57,
     "sourceNumber": 57,
     "content": "Nhiệm vụ xây dựng thể chế hội nhập kinh tế quốc tế của Việt Nam đòi hỏi phải: – Cấp độ: 2",
     "options": [
@@ -9101,6 +9465,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 58,
     "sourceNumber": 58,
     "content": "Yếu tố nào giữ vai trò quyết định nâng cao năng lực lãnh đạo và sức chiến đấu trong hoàn thiện thể chế KTTT định hướng XHCN? – Cấp độ: 2",
     "options": [
@@ -9126,6 +9491,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 59,
     "sourceNumber": 59,
     "content": "Một quy định về thủ tục cấp phép đầu tư công khai, minh bạch, giảm bớt thời gian chờ đợi cho doanh nghiệp sẽ có tác động trực tiếp như thế nào đến môi trường kinh doanh? – Cấp độ: 3",
     "options": [
@@ -9151,6 +9517,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 60,
     "sourceNumber": 60,
     "content": "Nhằm giải quyết tình trạng \"đất đai bị bỏ hoang, lãng phí hoặc bị thâu tóm trục lợi\", giải pháp thể chế căn cơ nhất về đất đai là gì? – Cấp độ: 3",
     "options": [
@@ -9176,6 +9543,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 61,
     "sourceNumber": 61,
     "content": "Việc hoàn thiện thể chế về sở hữu trí tuệ có vai trò động lực như thế nào đối với nền kinh tế hiện đại? – Cấp độ: 3",
     "options": [
@@ -9201,6 +9569,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 62,
     "sourceNumber": 62,
     "content": "Giả sử xảy ra xung đột tranh chấp hợp đồng kinh tế giữa một doanh nghiệp tư nhân trong nước và một tập đoàn FDI. Theo nguyên tắc hoàn thiện thể chế ở Việt Nam, việc giải quyết phải dựa trên cơ sở nào? – Cấp độ: 4",
     "options": [
@@ -9226,6 +9595,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 63,
     "sourceNumber": 63,
     "content": "Để ngăn chặn hiệu quả hiện tượng \"nhóm lợi ích\" thâu tóm tài sản công thông qua cổ phần hóa doanh nghiệp nhà nước, giải pháp thể chế nào cần được triển khai quyết liệt? – Cấp độ: 4",
     "options": [
@@ -9251,6 +9621,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 64,
     "sourceNumber": 64,
     "content": "Lợi ích kinh tế là gì? – Cấp độ: 1",
     "options": [
@@ -9276,6 +9647,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 65,
     "sourceNumber": 65,
     "content": "Về bản chất, lợi ích kinh tế phản ánh điều gì trong nền sản xuất xã hội? – Cấp độ: 1",
     "options": [
@@ -9301,6 +9673,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 66,
     "sourceNumber": 66,
     "content": "Biểu hiện lợi ích kinh tế của người lao động và chủ doanh nghiệp lần lượt là: – Cấp độ: 1",
     "options": [
@@ -9326,6 +9699,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 67,
     "sourceNumber": 67,
     "content": "Vai trò nào sau đây thuộc về lợi ích kinh tế đối với các chủ thể kinh tế - xã hội? – Cấp độ: 2",
     "options": [
@@ -9351,6 +9725,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 68,
     "sourceNumber": 68,
     "content": "Lợi ích kinh tế giữ vai trò là cơ sở để thúc đẩy phát triển yếu tố nào sau đây? – Cấp độ: 2",
     "options": [
@@ -9376,6 +9751,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 69,
     "sourceNumber": 69,
     "content": "Trong các hình thức lợi ích kinh tế, lợi ích nào được xác định là cơ sở, nền tảng của các lợi ích khác? – Cấp độ: 2",
     "options": [
@@ -9401,6 +9777,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 70,
     "sourceNumber": 70,
     "content": "Nguyên nhân chính dẫn đến sự mâu thuẫn giữa các lợi ích kinh tế là gì? – Cấp độ: 2",
     "options": [
@@ -9426,6 +9803,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 71,
     "sourceNumber": 71,
     "content": "Nhân tố nào sau đây KHÔNG ảnh hưởng trực tiếp đến quan hệ lợi ích kinh tế? – Cấp độ: 2",
     "options": [
@@ -9451,6 +9829,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 72,
     "sourceNumber": 72,
     "content": "Quan hệ lợi ích giữa người lao động và người sử dụng lao động mang tính chất: – Cấp độ: 2",
     "options": [
@@ -9476,6 +9855,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 73,
     "sourceNumber": 73,
     "content": "Hiện tượng \"lợi ích nhóm\" hoặc \"nhóm lợi ích\" sẽ gây tác hại nguy hiểm nhất cho xã hội khi nào? – Cấp độ: 3",
     "options": [
@@ -9501,6 +9881,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 74,
     "sourceNumber": 74,
     "content": "Sự thống nhất về lợi ích kinh tế giữa các chủ thể biểu hiện rõ nhất ở khía cạnh nào sau đây? – Cấp độ: 3",
     "options": [
@@ -9526,6 +9907,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 75,
     "sourceNumber": 75,
     "content": "Phân tích tình huống: Khi người công nhân hăng hái sản xuất, tăng năng suất lao động, giúp doanh nghiệp tăng lợi nhuận và bản thân nhận được tiền thưởng cao. Đây là minh chứng cho: – Cấp độ: 3",
     "options": [
@@ -9551,6 +9933,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 76,
     "sourceNumber": 76,
     "content": "Giả sử một chủ doanh nghiệp quyết định cắt giảm toàn bộ chi phí bảo hộ lao động và hạ tiền lương xuống dưới mức tối thiểu để gia tăng lợi nhuận ngắn hạn. Dưới góc độ lý luận quan hệ lợi ích, hành vi này sẽ dẫn đến hệ quả gì? – Cấp độ: 4",
     "options": [
@@ -9576,6 +9959,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 77,
     "sourceNumber": 77,
     "content": "Bài học lý luận quan trọng nhất cho Việt Nam trong việc giải quyết mối quan hệ giữa lợi ích cá nhân và lợi ích xã hội hiện nay là gì? – Cấp độ: 4",
     "options": [
@@ -9601,6 +9985,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 78,
     "sourceNumber": 78,
     "content": "Hài hòa các lợi ích kinh tế được hiểu là: – Cấp độ: 1",
     "options": [
@@ -9626,6 +10011,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 79,
     "sourceNumber": 79,
     "content": "Nhằm tạo môi trường thuận lợi cho hoạt động tìm kiếm lợi ích hợp pháp của các chủ thể kinh tế, Nhà nước cần: – Cấp độ: 1",
     "options": [
@@ -9651,6 +10037,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 80,
     "sourceNumber": 80,
     "content": "Công cụ nào sau đây được Nhà nước sử dụng chủ yếu để điều hòa lợi ích, thu hẹp khoảng cách giàu nghèo? – Cấp độ: 1",
     "options": [
@@ -9676,6 +10063,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 81,
     "sourceNumber": 81,
     "content": "Hai quan niệm chính về công bằng trong phân phối thu nhập bao gồm: – Cấp độ: 2",
     "options": [
@@ -9701,6 +10089,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 82,
     "sourceNumber": 82,
     "content": "Để ngăn ngừa các quan hệ lợi ích có ảnh hưởng tiêu cực đối với sự phát triển xã hội, Nhà nước cần thực hiện giải pháp nào? – Cấp độ: 2",
     "options": [
@@ -9726,6 +10115,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 83,
     "sourceNumber": 83,
     "content": "Nguyên tắc căn bản khi giải quyết mâu thuẫn giữa các lợi ích kinh tế là gì? – Cấp độ: 2",
     "options": [
@@ -9751,6 +10141,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 84,
     "sourceNumber": 84,
     "content": "Tại sao Nhà nước phải can thiệp để bảo đảm hài hòa các lợi ích kinh tế mà không thể phó mặc hoàn toàn cho cơ chế thị trường? – Cấp độ: 2",
     "options": [
@@ -9776,6 +10167,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 85,
     "sourceNumber": 85,
     "content": "Việc Nhà nước triển khai các chương trình mục tiêu quốc gia về \"Xóa đói giảm nghèo bền vững\" phản ánh quan niệm nào về công bằng trong phân phối? – Cấp độ: 3",
     "options": [
@@ -9801,6 +10193,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 86,
     "sourceNumber": 86,
     "content": "Một cơ quan quản lý nhà nước ban hành quy định \"xin - cho\" trong cấp phép khai thác tài nguyên, tạo điều kiện cho doanh nghiệp \"sân sau\" thâu tóm đất đai với giá rẻ. Dưới góc độ kiểm soát lợi ích tiêu cực, việc này vi phạm nghiêm trọng yêu cầu nào? – Cấp độ: 3",
     "options": [
@@ -9826,6 +10219,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 87,
     "sourceNumber": 87,
     "content": "Đứng trước một cuộc bãi công bùng phát tại một khu công nghiệp do người lao động bất đồng với chủ doanh nghiệp về mức tiền lương và ca làm việc, vai trò chuẩn xác nhất của Nhà nước và các tổ chức xã hội là gì? – Cấp độ: 3",
     "options": [
@@ -9851,6 +10245,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 88,
     "sourceNumber": 88,
     "content": "Để khuyến khích các nhà đầu tư bỏ vốn kinh doanh dài hạn vào các ngành công nghệ cao rủi ro lớn nhưng có lợi cho quốc gia, chính sách can thiệp nào của Nhà nước về mặt lợi ích là phù hợp nhất? – Cấp độ: 4",
     "options": [
@@ -9876,6 +10271,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 89,
     "sourceNumber": 89,
     "content": "Phân tích giải pháp \"xây dựng bộ máy nhà nước liêm chính và thực hiện kiểm soát thu nhập của cán bộ, công chức\" đối với việc bảo đảm hài hòa các quan hệ lợi ích ở Việt Nam hiện nay? – Cấp độ: 4",
     "options": [
@@ -9901,6 +10297,7 @@
   },
   {
     "chapter": 5,
+    "practicePosition": 90,
     "sourceNumber": 90,
     "content": "Trong điều kiện hội nhập kinh tế quốc tế sâu rộng, để bảo vệ lợi ích kinh tế quốc gia - dân tộc khi xảy ra tranh chấp thương mại quốc tế (như các vụ kiện chống bán phá giá từ nước ngoài), Nhà nước Việt Nam cần làm gì? – Cấp độ: 4",
     "options": [
@@ -9926,6 +10323,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 1,
     "sourceNumber": 1,
     "content": "Theo quy luật lịch sử được C. Mác khái quát, cách mạng công nghiệp phát triển tuần tự qua những giai đoạn nào? – cấp độ: 1",
     "options": [
@@ -9951,6 +10349,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 2,
     "sourceNumber": 2,
     "content": "Cuộc cách mạng công nghiệp lần thứ nhất được đánh mốc khởi đầu bằng phát minh cốt lõi nào trong ngành động lực? – cấp độ: 1",
     "options": [
@@ -9976,6 +10375,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 3,
     "sourceNumber": 3,
     "content": "Nội dung cơ bản của cuộc cách mạng công nghiệp lần thứ hai là chuyển nền sản xuất cơ khí sang nền sản xuất nào? – cấp độ: 1",
     "options": [
@@ -10001,6 +10401,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 4,
     "sourceNumber": 4,
     "content": "Thuật ngữ “cách mạng công nghiệp lần thứ tư” lần đầu tiên được đề cập tại sự kiện nào và vào năm nào? – cấp độ: 1",
     "options": [
@@ -10026,6 +10427,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 5,
     "sourceNumber": 5,
     "content": "Tiến trình công nghiệp hóa cổ điển trên thế giới, tiêu biểu là nước anh, được bắt đầu từ ngành công nghiệp nào? – cấp độ: 1",
     "options": [
@@ -10051,6 +10453,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 6,
     "sourceNumber": 6,
     "content": "Mô hình công nghiệp hóa kiểu Liên Xô được bắt đầu triển khai từ thời gian nào và có đặc trưng ưu tiên phát triển ngành nào? – cấp độ: 1",
     "options": [
@@ -10076,6 +10479,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 7,
     "sourceNumber": 7,
     "content": "Từ góc độ kinh tế chính trị, khái niệm công nghiệp hóa được hiểu là quá trình chuyển đổi nền sản xuất xã hội từ dựa trên lao động thủ công là chính sang lao động bằng phương thức nào? – cấp độ: 1",
     "options": [
@@ -10101,6 +10505,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 8,
     "sourceNumber": 8,
     "content": "Theo định nghĩa của tổ chức hợp tác và phát triển kinh tế (OECD) năm 1995, yếu tố nào giữ vai trò quyết định nhất đối với sự phát triển kinh tế trong \"nền kinh tế tri thức\"? – cấp độ: 1",
     "options": [
@@ -10126,6 +10531,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 9,
     "sourceNumber": 9,
     "content": "Trong hệ thống cơ cấu kinh tế, cơ cấu nào giữ vị trí quan trọng nhất phản ánh trình độ phát triển của nền kinh tế? – cấp độ: 1",
     "options": [
@@ -10151,6 +10557,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 10,
     "sourceNumber": 10,
     "content": "Để thích ứng với cách mạng công nghiệp lần thứ tư ở Việt Nam, yếu tố nào được xác định là khâu đột phá? – cấp độ: 1",
     "options": [
@@ -10176,6 +10583,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 11,
     "sourceNumber": 11,
     "content": "Tại sao cách mạng công nghiệp lần thứ nhất lại dẫn đến mâu thuẫn đối kháng giữa giai cấp tư sản và giai cấp vô sản ngày càng gay gắt? – cấp độ: 2",
     "options": [
@@ -10201,6 +10609,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 12,
     "sourceNumber": 12,
     "content": "Biểu hiện đặc trưng mang tính chất bước ngoặt về lực lượng sản xuất trong cách mạng công nghiệp lần thứ tư là gì? – cấp độ: 2",
     "options": [
@@ -10226,6 +10635,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 13,
     "sourceNumber": 13,
     "content": "Luận điểm của C. Mác: \"việc tạo ra của cải thực tế trở nên ít phụ thuộc vào thời gian lao động... Mà phụ thuộc vào trình độ chung của khoa học\" phản ánh xu hướng tất yếu nào dưới tác động của đại công nghiệp? – cấp độ: 2",
     "options": [
@@ -10251,6 +10661,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 14,
     "sourceNumber": 14,
     "content": "Dưới tác động của cách mạng khoa học và công nghệ, hình thức liên kết tư bản dưới dạng công ty cổ phần phát triển nhằm mục đích gì về mặt quan hệ sở hữu? – cấp độ: 2",
     "options": [
@@ -10276,6 +10687,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 15,
     "sourceNumber": 15,
     "content": "Tác động tiêu cực trực tiếp của cách mạng công nghiệp lần thứ tư đối với lĩnh vực phân phối trong nền kinh tế thị trường là gì? – cấp độ: 2",
     "options": [
@@ -10301,6 +10713,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 16,
     "sourceNumber": 16,
     "content": "Sự sụp đổ của mô hình công nghiệp hóa kiểu liên xô và đông âu có một nguyên nhân sâu xa từ việc duy trì quá lâu cơ chế nào? – cấp độ: 2",
     "options": [
@@ -10326,6 +10739,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 17,
     "sourceNumber": 17,
     "content": "Chiến lược công nghiệp hóa của Nhật Bản và các nước công nghiệp mới (NICS) thực chất là mô hình công nghiệp hóa kiểu gì? – cấp độ: 2",
     "options": [
@@ -10351,6 +10765,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 18,
     "sourceNumber": 18,
     "content": "Bản chất của mô hình chiến lược phát triển khoa học - công nghệ nhiều tầng mà Nhật Bản và các nước NICS áp dụng là gì? – cấp độ: 2",
     "options": [
@@ -10376,6 +10791,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 19,
     "sourceNumber": 19,
     "content": "V.I. Lênin đã rút ra quy luật nào về mặt lý luận tái sản xuất để xây dựng một nền kinh tế có tính độc lập, tự chủ cao? – cấp độ: 2",
     "options": [
@@ -10401,6 +10817,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 20,
     "sourceNumber": 20,
     "content": "Chuyển dịch cơ cấu ngành kinh tế theo hướng hiện đại, hiệu quả trong quá trình công nghiệp hóa, hiện đại hóa được biểu hiện ở xu hướng nào? – cấp độ: 2",
     "options": [
@@ -10426,6 +10843,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 21,
     "sourceNumber": 21,
     "content": "Trong nền kinh tế tri thức, sự thay đổi căn bản về hao phí lao động của con người trong sản phẩm được thể hiện như thế nào? – cấp độ: 2",
     "options": [
@@ -10451,6 +10869,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 22,
     "sourceNumber": 22,
     "content": "Đâu là đặc điểm cốt lõi của công nghiệp hóa, hiện đại hóa ở Việt Nam xét về mặt định hướng chính trị xã hội? – cấp độ: 2",
     "options": [
@@ -10476,6 +10895,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 23,
     "sourceNumber": 23,
     "content": "Nội dung nào sau đây phản ánh đúng đặc điểm của nguồn lực thông tin trong nền kinh tế tri thức? – cấp độ: 2",
     "options": [
@@ -10501,6 +10921,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 24,
     "sourceNumber": 24,
     "content": "Đối với các nước có nền kinh tế kém phát triển quá độ lên chủ nghĩa xã hội như Việt Nam, việc xây dựng cơ sở vật chất - kỹ thuật phải được thực hiện như thế nào? – cấp độ: 2",
     "options": [
@@ -10526,6 +10947,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 25,
     "sourceNumber": 25,
     "content": "Việc hoàn thiện thể chế trong bối cảnh cách mạng công nghiệp lần thứ tư tại việt nam nhằm mục đích cốt lõi nào? – cấp độ: 2",
     "options": [
@@ -10551,6 +10973,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 26,
     "sourceNumber": 26,
     "content": "Một xí nghiệp cơ khí tại việt nam đầu tư thay thế toàn bộ hệ thống máy tiện, phay vận hành bằng tay sang hệ thống máy cắt cnc tự động điều khiển bằng phần mềm máy tính. Hành động này phản ánh nội dung kỹ thuật nào của công nghiệp hóa? – cấp độ: 3",
     "options": [
@@ -10576,6 +10999,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 27,
     "sourceNumber": 27,
     "content": "Khi Việt Nam tận dụng các công nghệ sẵn có của cuộc cách mạng công nghiệp lần thứ ba (như mạng internet, máy tính số) kết hợp đi thẳng vào ứng dụng trí tuệ nhân tạo (AI) của cách mạng lần thứ tư trong quản lý y tế, phương thức này phản ánh lợi thế nào của nước đi sau? – cấp độ: 3",
     "options": [
@@ -10601,6 +11025,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 28,
     "sourceNumber": 28,
     "content": "Một tập đoàn bán lẻ tại việt nam tiến hành xây dựng ứng dụng trên điện thoại di động để kết nối trực tiếp kho hàng với khách hàng, tự động phân tích hành vi mua sắm bằng big data và tối ưu hóa tuyến đường giao hàng. Đây là minh chứng rõ nét cho xu hướng nào của quản trị doanh nghiệp hiện đại? – cấp độ: 3",
     "options": [
@@ -10626,6 +11051,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 29,
     "sourceNumber": 29,
     "content": "Trước thực trạng cách mạng công nghiệp lần thứ tư có thể làm mất đi lợi thế về nguồn nhân công giá rẻ dồi dào trong ngành dệt may, Việt Nam cần định hướng chiến lược nào đối với nguồn nhân lực theo tài liệu? – cấp độ: 3",
     "options": [
@@ -10651,6 +11077,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 30,
     "sourceNumber": 30,
     "content": "Để đẩy mạnh công nghiệp hóa, hiện đại hóa nông nghiệp, nông thôn tại các tỉnh đồng bằng sông Cửu Long, giải pháp nào sau đây phù hợp với nội dung được nêu trong tài liệu? – cấp độ: 3",
     "options": [
@@ -10676,6 +11103,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 31,
     "sourceNumber": 31,
     "content": "Việc chính phủ việt nam đẩy mạnh xây dựng cổng dịch vụ công quốc gia trực tuyến, thực hiện khai báo thuế, đăng ký doanh nghiệp qua mạng internet là biểu hiện của nội dung nào dưới tác động của cách mạng công nghiệp lần thứ tư? – cấp độ: 3",
     "options": [
@@ -10701,6 +11129,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 32,
     "sourceNumber": 32,
     "content": "Một doanh nghiệp Việt Nam lựa chọn phương thức kết hợp vừa nhập khẩu dây chuyền sản xuất hiện đại của Đức, vừa tự thành lập trung tâm R&D để cải tiến công nghệ cho phù hợp với nguyên liệu trong nước. Doanh nghiệp này đang đi theo con đường phát triển khoa học - công nghệ nào? – cấp độ: 3",
     "options": [
@@ -10726,6 +11155,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 33,
     "sourceNumber": 33,
     "content": "Khi tỷ trọng đóng góp của ngành nông nghiệp trong GDP của Việt Nam giảm từ 20% xuống còn 12%, đồng thời tỷ trọng của ngành công nghiệp và dịch vụ tăng lên mạnh mẽ, hiện tượng này phản ánh đúng bản chất của quá trình nào? – cấp độ: 3",
     "options": [
@@ -10751,6 +11181,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 34,
     "sourceNumber": 34,
     "content": "Xu hướng \"vẽ lại bản đồ kinh tế thế giới\" trong cách mạng công nghiệp lần thứ tư được hiểu là sự thay đổi tương quan sức mạnh giữa các quốc gia như thế nào? – cấp độ: 3",
     "options": [
@@ -10776,6 +11207,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 35,
     "sourceNumber": 35,
     "content": "Việc một số trường đại học lớn tại Việt Nam hợp tác với các tập đoàn công nghệ thành lập các phòng thí nghiệm trọng điểm, cùng nghiên cứu và đưa phần mềm ứng dụng vào thực tế sản xuất phản ánh giải pháp nào về phát triển nhân lực? – cấp độ: 3",
     "options": [
@@ -10801,6 +11233,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 36,
     "sourceNumber": 36,
     "content": "Phân tích luận điểm của C. Mác và Ph. Ăngghen: “giai cấp tư sản... Đã tạo ra những lực lượng sản xuất nhiều hơn và đồ sộ hơn lực lượng sản xuất của tất cả các thế hệ trước kia gộp lại”, vai trò lịch sử có tính bước ngoặt ở đây cần được khẳng định là gì? – cấp độ: 4",
     "options": [
@@ -10826,6 +11259,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 37,
     "sourceNumber": 37,
     "content": "Xem xét bối cảnh cách mạng công nghiệp lần thứ hai làm gia tăng mâu thuẫn về kinh tế giữa các cường quốc tư bản (Anh, Pháp, Mỹ với Đức, Ý, Nhật), hệ quả chính trị lịch sử nghiêm trọng nhất dẫn đến sự thay đổi bản đồ địa chính trị thế giới là gì? – cấp độ: 4",
     "options": [
@@ -10851,6 +11285,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 38,
     "sourceNumber": 38,
     "content": "Phân tích mối quan hệ biện chứng giữa lực lượng sản xuất và quan hệ sản xuất trong các cuộc cách mạng công nghiệp, sự phát triển nhảy vọt về chất của tư liệu lao động đòi hỏi sự biến đổi tất yếu nào trong quan hệ sở hữu? – cấp độ: 4",
     "options": [
@@ -10876,6 +11311,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 39,
     "sourceNumber": 39,
     "content": "Tại sao trong quá trình công nghiệp hóa, hiện đại hóa, Việt Nam không thể thực hiện chiến lược chờ đợi chuẩn bị đầy đủ các điều kiện cần thiết rồi mới tiến hành chuyển đổi nền sản xuất xã hội? – cấp độ: 4",
     "options": [
@@ -10901,6 +11337,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 40,
     "sourceNumber": 40,
     "content": "Đánh giá tính quy luật của luận điểm: \"cơ sở vật chất - kỹ thuật được xem là tiêu chuẩn để đánh giá mức độ hiện đại của một nền kinh tế\", nhiệm vụ xây dựng cơ sở vật chất - kỹ thuật cho chủ nghĩa xã hội ở Việt Nam phải đạt yêu cầu cốt lõi nào? – cấp độ: 4",
     "options": [
@@ -10926,6 +11363,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 41,
     "sourceNumber": 41,
     "content": "Dưới góc độ kinh tế chính trị Mác - Lênin, việc điều chỉnh chính sách phân phối thu nhập và an sinh xã hội ở các nước thực hiện cách mạng công nghiệp lần thứ tư nhằm mục đích sâu xa nào? – cấp độ: 4",
     "options": [
@@ -10951,6 +11389,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 42,
     "sourceNumber": 42,
     "content": "Phân tích bản chất của quan điểm \"hiền tài là nguyên khí quốc gia, là điều kiện tiên quyết để phát triển đất nước trong thời đại khoa học - công nghệ mới\", chính sách trọng dụng nhân tài ở Việt Nam cần gắn liền với giải pháp đột phá nào về phương thức hoạt động khoa học? – cấp độ: 4",
     "options": [
@@ -10976,6 +11415,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 43,
     "sourceNumber": 43,
     "content": "Đứng trước xu thế \"toàn cầu hóa kinh tế và hội nhập quốc tế sâu rộng\", việc Việt Nam tham gia vào chuỗi giá trị toàn cầu thông qua công nghiệp hóa, hiện đại hóa mang ý nghĩa chiến lược gì đối với nền kinh tế quốc dân? – cấp độ: 4",
     "options": [
@@ -11001,6 +11441,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 44,
     "sourceNumber": 44,
     "content": "Biện chứng giữa việc \"ưu tiên phát triển sản xuất tư liệu sản xuất để chế tạo ra tư liệu sản xuất\" với việc \"xây dựng nền nông nghiệp xanh, sạch\" trong nội dung công nghiệp hóa ở Việt Nam được thể hiện như thế nào? – cấp độ: 4",
     "options": [
@@ -11026,6 +11467,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 45,
     "sourceNumber": 45,
     "content": "Sự khác biệt bản chất về mặt động lực tăng trưởng giữa nền kinh tế công nghiệp truyền thống và \"nền kinh tế tri thức\" dưới góc độ lực lượng sản xuất là gì? – cấp độ: 4",
     "options": [
@@ -11051,6 +11493,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 46,
     "sourceNumber": 46,
     "content": "Tại một tỉnh miền núi, chính quyền địa phương triển khai dự án lắp đặt hệ thống cảm biến IOT để theo dõi độ ẩm đất, kết hợp dùng thiết bị bay không người lái để phun thuốc bảo vệ thực vật cho vùng trồng cây ăn quả xuất khẩu. Hoạt động này phản ánh chính xác xu hướng phối hợp nào trong nội dung công nghiệp hóa? – cấp độ: 3",
     "options": [
@@ -11076,6 +11519,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 47,
     "sourceNumber": 47,
     "content": "Một công ty may mặc quy mô lớn ở Việt Nam nhận thấy chi phí đầu tư robot cắt vải tự động rất cao, trong khi nguồn lao động tại chỗ đang dồi dào. Để áp dụng nội dung \"ứng dụng khoa học - công nghệ phù hợp với điều kiện thực tiễn\", doanh nghiệp nên quyết định như thế nào theo tinh thần tài liệu? – cấp độ: 3",
     "options": [
@@ -11101,6 +11545,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 48,
     "sourceNumber": 48,
     "content": "Việc các doanh nghiệp viễn thông Việt Nam chủ động triển khai thử nghiệm mạng 5G và xây dựng các trung tâm dữ liệu lớn (big data) trước khi toàn bộ người dân thành thạo máy tính cá nhân phản ánh phương thức bứt phá nào? – cấp độ: 4",
     "options": [
@@ -11126,6 +11571,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 49,
     "sourceNumber": 49,
     "content": "Khi phân tích về các con đường tiếp thu khoa học - công nghệ của các nước đi sau, tài liệu khẳng định con đường \"thông qua đầu tư nghiên cứu, chế tạo và hoàn thiện dần trình độ công nghệ từ thấp đến cao\" có nhược điểm cốt lõi nào? – cấp độ: 2",
     "options": [
@@ -11151,6 +11597,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 50,
     "sourceNumber": 50,
     "content": "Yếu tố nào dưới đây vừa là lực lượng quyết định sự thành công, vừa là mục tiêu trung tâm của xã hội trong nền kinh tế tri thức và quá trình công nghiệp hóa, hiện đại hóa ở Việt Nam? – cấp độ: 4",
     "options": [
@@ -11176,6 +11623,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 51,
     "sourceNumber": 1,
     "content": "theo tài liệu, hội nhập kinh tế quốc tế của một quốc gia là quá trình quốc gia đó thực hiện gắn kết nền kinh tế của mình với nền kinh tế thế giới dựa trên cơ sở nào? – cấp độ: 1",
     "options": [
@@ -11201,6 +11649,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 52,
     "sourceNumber": 2,
     "content": "trong các phương diện của toàn cầu hóa, phương diện nào được xác định là xu thế nổi trội nhất, đóng vai trò là trung tâm, cơ sở và động lực thúc đẩy các lĩnh vực khác? – cấp độ: 1",
     "options": [
@@ -11226,6 +11675,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 53,
     "sourceNumber": 3,
     "content": "theo tài liệu, mức độ tiến trình hội nhập kinh tế quốc tế được phân loại từ thấp đến cao như thế nào? – cấp độ: 1",
     "options": [
@@ -11251,6 +11701,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 54,
     "sourceNumber": 4,
     "content": "hoạt động nào sau đây không thuộc về các hình thức kinh tế đối ngoại biểu hiện của hội nhập kinh tế quốc tế xét về mặt hình thức? – cấp độ: 1",
     "options": [
@@ -11276,6 +11727,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 55,
     "sourceNumber": 5,
     "content": "nhờ đâu mà hội nhập kinh tế quốc tế giúp nâng cao trình độ của nguồn nhân lực và tiềm lực khoa học - công nghệ quốc gia? – cấp độ: 1",
     "options": [
@@ -11301,6 +11753,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 56,
     "sourceNumber": 6,
     "content": "việt nam chính thức trở thành thành viên của tổ chức thương mại thế giới (wto) vào năm nào? – cấp độ: 1",
     "options": [
@@ -11326,6 +11779,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 57,
     "sourceNumber": 7,
     "content": "theo tài liệu, nền kinh tế độc lập, tự chủ là nền kinh tế không bị lệ thuộc, phụ thuộc vào nước khác, người khác, hoặc vào một tổ chức kinh tế nào đó về mặt nào? – cấp độ: 1",
     "options": [
@@ -11351,6 +11805,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 58,
     "sourceNumber": 8,
     "content": "văn kiện nào nhấn mạnh: \"xây dựng nền kinh tế tự chủ phải trên cơ sở làm chủ công nghệ và chủ động, tích cực hội nhập, đa dạng hóa thị trường, nâng cao khả năng thích ứng của nền kinh tế\"? – cấp độ: 1",
     "options": [
@@ -11376,6 +11831,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 59,
     "sourceNumber": 9,
     "content": "việt nam gia nhập hiệp hội các quốc gia đông nam á (asean) vào mốc thời gian nào? – cấp độ: 1",
     "options": [
@@ -11401,6 +11857,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 60,
     "sourceNumber": 10,
     "content": "theo tài liệu, hiệu quả của hội nhập quốc tế được đo lường một cách trực tiếp bằng thước đo nào? – cấp độ: 1",
     "options": [
@@ -11426,6 +11883,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 61,
     "sourceNumber": 11,
     "content": "tại sao trong bối cảnh toàn cầu hóa kinh tế, nếu không hội nhập kinh tế quốc tế thì các nước không thể tự đảm bảo được các điều kiện cần thiết cho sản xuất trong nước? – cấp độ: 2",
     "options": [
@@ -11451,6 +11909,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 62,
     "sourceNumber": 12,
     "content": "nhận định nào sau đây giải thích đúng nhất lý do hội nhập kinh tế quốc tế là phương thức phát triển phổ biến của các nước đang và kém phát triển trong điều kiện hiện nay? – cấp độ: 2",
     "options": [
@@ -11476,6 +11935,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 63,
     "sourceNumber": 13,
     "content": "ý đồ chiến lược của chủ nghĩa tư bản hiện đại khi ráo riết thúc đẩy quá trình toàn cầu hóa kinh tế hiện nay là gì? – cấp độ: 2",
     "options": [
@@ -11501,6 +11961,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 64,
     "sourceNumber": 14,
     "content": "đối với các nước đang và kém phát triển, rủi ro lớn nhất về mặt mậu dịch - thương mại khi tham gia vào tiến trình toàn cầu hóa dưới sự tác động của chủ nghĩa tư bản hiện đại là gì? – cấp độ: 2",
     "options": [
@@ -11526,6 +11987,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 65,
     "sourceNumber": 15,
     "content": "tại sao tài liệu khẳng định đối với việt nam, quá trình hội nhập quốc tế \"không phải bằng mọi giá\"? – cấp độ: 2",
     "options": [
@@ -11551,6 +12013,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 66,
     "sourceNumber": 16,
     "content": "điều kiện chủ yếu mang tính quyết định trong nội bộ nền kinh tế để thực hiện hội nhập kinh tế quốc tế thành công tại việt nam bao gồm những yếu tố nào? – cấp độ: 2",
     "options": [
@@ -11576,6 +12039,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 67,
     "sourceNumber": 17,
     "content": "bản chất của tác động thúc đẩy thương mại phát triển trong quá trình hội nhập kinh tế quốc tế của việt nam là gì? – cấp độ: 2",
     "options": [
@@ -11601,6 +12065,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 68,
     "sourceNumber": 18,
     "content": "hội nhập kinh tế quốc tế tạo động lực thúc đẩy chuyển dịch cơ cấu kinh tế trong nước theo hướng nào? – cấp độ: 2",
     "options": [
@@ -11626,6 +12091,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 69,
     "sourceNumber": 19,
     "content": "xét về góc độ tiêu dùng, hội nhập kinh tế quốc tế mang lại cơ hội và lợi ích trực tiếp nào cho người dân việt nam? – cấp độ: 2",
     "options": [
@@ -11651,6 +12117,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 70,
     "sourceNumber": 20,
     "content": "tác động tích cực của hội nhập kinh tế quốc tế đối với việc hoạch định chính sách của nước ta là gì? – cấp độ: 2",
     "options": [
@@ -11676,6 +12143,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 71,
     "sourceNumber": 21,
     "content": "hội nhập kinh tế quốc tế đóng vai trò làm tiền đề phát triển cho lĩnh vực văn hóa - xã hội của việt nam như thế nào? – cấp độ: 2",
     "options": [
@@ -11701,6 +12169,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 72,
     "sourceNumber": 22,
     "content": "trên phương diện an ninh quốc phòng, hội nhập kinh tế quốc tế giúp mở ra khả năng phối hợp nguồn lực giữa việt nam và các nước để giải quyết những vấn đề chung nào? – cấp độ: 2",
     "options": [
@@ -11726,6 +12195,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 73,
     "sourceNumber": 23,
     "content": "một trong những thách thức lớn về mặt xã hội do hội nhập kinh tế quốc tế có thể gây ra cho các nước đang phát triển là gì? – cấp độ: 2",
     "options": [
@@ -11751,6 +12221,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 74,
     "sourceNumber": 24,
     "content": "tại sao trong quá trình hội nhập, các nước đang phát triển như việt nam lại đối mặt với nguy cơ trở thành \"bãi thải công nghiệp\" và công nghệ thấp? – cấp độ: 2",
     "options": [
@@ -11776,6 +12247,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 75,
     "sourceNumber": 25,
     "content": "nhận thức nào sau đây thể hiện đúng đắn bản chất về \"phương thức tồn tại và phát triển\" của việt nam trong bối cảnh hiện nay? – cấp độ: 2",
     "options": [
@@ -11801,6 +12273,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 76,
     "sourceNumber": 26,
     "content": "theo tài liệu, lực lượng nào được xác định là lực lượng nòng cốt, đi đầu trong tiến trình hội nhập quốc tế toàn diện của toàn xã hội? – cấp độ: 2",
     "options": [
@@ -11826,6 +12299,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 77,
     "sourceNumber": 27,
     "content": "nhược điểm lớn nhất trong nhận thức và chuẩn bị bên trong của hầu hết các doanh nghiệp việt nam hiện nay trước tiến trình hội nhập kinh tế quốc tế là gì? – cấp độ: 2",
     "options": [
@@ -11851,6 +12325,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 78,
     "sourceNumber": 28,
     "content": "việc việt nam tích cực tham gia các liên kết kinh tế quốc tế và thực hiện nghiêm túc các cam kết mang lại ý nghĩa chiến lược gì cho quốc gia? – cấp độ: 2",
     "options": [
@@ -11876,6 +12351,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 79,
     "sourceNumber": 29,
     "content": "để nâng cao hiệu quả hội nhập kinh tế quốc tế, việt nam cần hoàn thiện cơ chế thị trường dựa trên những định hướng cốt lõi nào về mặt sở hữu? – cấp độ: 2",
     "options": [
@@ -11901,6 +12377,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 80,
     "sourceNumber": 30,
     "content": "để đứng vững trong môi trường cạnh tranh gay gắt của thời kỳ hội nhập, các doanh nghiệp việt nam cần phải học những cách thức kinh doanh nào trong bối cảnh mới? – cấp độ: 2",
     "options": [
@@ -11926,6 +12403,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 81,
     "sourceNumber": 31,
     "content": "một quốc gia quyết định mở cửa kinh tế nhưng lại duy trì một hệ thống pháp luật nội địa mâu thuẫn, thiếu minh bạch và không tương đồng với các chuẩn mực chung của wto. Dựa trên nội dung chuẩn bị các điều kiện hội nhập, quốc gia này sẽ đối mặt với hệ quả trực tiếp nào? – cấp độ: 3",
     "options": [
@@ -11951,6 +12429,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 82,
     "sourceNumber": 32,
     "content": "doanh nghiệp x tại việt nam chuyên sản xuất đồ gỗ xuất khẩu sang thị trường eu. Khi eu áp dụng các tiêu chuẩn mới nghiêm ngặt về phát triển bền vững và nguồn gốc gỗ, doanh nghiệp x bị sụt giảm đơn hàng nghiêm trọng do không kịp đổi mới công nghệ. Tình huống này minh chứng cho tác động tiêu cực nào của hội nhập? – cấp độ: 3",
     "options": [
@@ -11976,6 +12455,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 83,
     "sourceNumber": 33,
     "content": "một địa phương tại việt nam chỉ tập trung thu hút các dự án fdi có công nghệ lạc hậu, tiêu tốn nhiều năng lượng để đạt mục tiêu tăng trưởng gdp ngắn hạn, dẫn đến tình trạng ô nhiễm nguồn nước nghiêm trọng. Hành vi này đã rơi vào nguy cơ nào được cảnh báo trong tài liệu? – cấp độ: 3",
     "options": [
@@ -12001,6 +12481,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 84,
     "sourceNumber": 34,
     "content": "giả sử một quốc gia thiết lập chiến lược hội nhập kinh tế nhưng lại bỏ qua việc xác định lộ trình hợp lý, tiến hành mở cửa ồ ạt tất cả các ngành sản xuất trong nước cùng một lúc. Dựa vào lý luận về xây dựng chiến lược hội nhập, quốc gia này dễ gặp phải tổn hại nào? – cấp độ: 3",
     "options": [
@@ -12026,6 +12507,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 85,
     "sourceNumber": 35,
     "content": "khi việt nam thực hiện cắt giảm thuế nhập khẩu theo đúng lộ trình cam kết của wto và các fta, các doanh nghiệp chăn nuôi trong nước phải cạnh tranh trực tiếp với sản phẩm thịt giá rẻ từ nước ngoài. Để giải quyết thách thức này theo phương hướng nâng cao hiệu quả hội nhập, cơ quan nhà nước cần làm gì? – cấp độ: 3",
     "options": [
@@ -12051,6 +12533,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 86,
     "sourceNumber": 36,
     "content": "một nước lớn sử dụng các khoản viện trợ tài chính và ưu đãi thương mại làm điều kiện ép buộc việt nam phải thay đổi đường lối phát triển kinh tế theo định hướng của họ. Để giữ vững nền kinh tế độc lập, tự chủ, việt nam cần áp dụng nguyên tắc cốt lõi nào? – cấp độ: 3",
     "options": [
@@ -12076,6 +12559,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 87,
     "sourceNumber": 37,
     "content": "trong chiến lược phát triển thị trường xuất khẩu nông sản, việt nam chủ trương đẩy mạnh mở rộng sang các thị trường mới như trung đông, châu phi, nam mỹ bên cạnh các thị trường truyền thống. Biện pháp này phản ánh đúng đắn nội dung nào của việc xây dựng nền kinh tế tự chủ? – cấp độ: 3",
     "options": [
@@ -12101,6 +12585,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 88,
     "sourceNumber": 38,
     "content": "nhóm lợi ích x tại một quốc gia liên kết với các tập đoàn tài chính nước ngoài để vận động chính sách nhằm trục lợi từ việc khai thác tài nguyên thiên nhiên, gây tổn hại đến lợi ích chung của cộng đồng. Hiện tượng này phản ánh thách thức nào trong mối quan hệ giữa hội nhập và độc lập tự chủ? – cấp độ: 3",
     "options": [
@@ -12126,6 +12611,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 89,
     "sourceNumber": 39,
     "content": "quốc gia a có năng lực tự chủ kinh tế còn rất yếu kém, hệ thống doanh nghiệp nội địa nhỏ bé nhưng lại thực hiện hội nhập kinh tế với tốc độ quá nhanh và phạm vi quá rộng. Dựa trên nguyên lý về mối quan hệ biện chứng giữa độc lập tự chủ và hội nhập, quá trình hội nhập của quốc gia a sẽ dẫn đến hệ quả gì? – cấp độ: 3",
     "options": [
@@ -12151,6 +12637,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 90,
     "sourceNumber": 40,
     "content": "một nhà quản lý lập luận rằng: \"để bảo đảm tính bất biến và tuyệt đối của độc lập, tự chủ kinh tế, việt nam cần hạn chế tối đa việc ký kết các hiệp định thương mại tự do thế hệ mới như cptpp\". Dựa vào tài liệu, lập luận của nhà quản lý này sai ở chỗ nào? – cấp độ: 3",
     "options": [
@@ -12176,6 +12663,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 91,
     "sourceNumber": 41,
     "content": "phân tích mối quan hệ biện chứng giữa toàn cầu hóa kinh tế và tiến trình hội nhập kinh tế quốc tế của các nước đang phát triển, nội dung nào sau đây thể hiện tư duy lý luận đúng đắn nhất? – cấp độ: 4",
     "options": [
@@ -12201,6 +12689,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 92,
     "sourceNumber": 42,
     "content": "đánh giá tính hai mặt (tích cực và tiêu cực) của hội nhập kinh tế quốc tế đối với sự phát triển bền vững của việt nam, nhận định nào sau đây là toàn diện và sâu sắc nhất? – cấp độ: 4",
     "options": [
@@ -12226,6 +12715,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 93,
     "sourceNumber": 43,
     "content": "dựa trên nguyên tắc \"hội nhập quốc tế toàn diện là sự nghiệp của toàn dân, trong đó doanh nghiệp và đội ngũ doanh nhân là lực lượng nòng cốt\", hãy xác định mô hình phối hợp tối ưu giữa nhà nước và doanh nghiệp trong tiến trình hội nhập? – cấp độ: 4",
     "options": [
@@ -12251,6 +12741,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 94,
     "sourceNumber": 44,
     "content": "từ thực trạng \"nút thắt\" về năng lực thể chế, khung khổ pháp lý và chất lượng nguồn nhân lực của việt nam được đề cập trong tài liệu, giải pháp chiến lược nào có tính đột phá nhất để nâng cao hiệu quả hội nhập trong giai đoạn hiện nay? – cấp độ: 4",
     "options": [
@@ -12276,6 +12767,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 95,
     "sourceNumber": 45,
     "content": "một nhà nghiên cứu đề xuất: \"để xây dựng nền kinh tế độc lập, tự chủ, việt nam cần hạn chế tối đa việc thu hút vốn fdi và không nên tham gia vào chuỗi cung ứng toàn cầu của các công ty xuyên quốc gia\". Dưới góc độ lý luận của tài liệu, đề xuất này sai lầm vì lý do nào? – cấp độ: 4",
     "options": [
@@ -12301,6 +12793,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 96,
     "sourceNumber": 46,
     "content": "giải thích mối quan hệ biện chứng giữa việc \"giữ vững độc lập, tự chủ\" và \"chủ động, tích cực hội nhập quốc tế\" ở việt nam, luận điểm nào sau đây là đúng đắn? – cấp độ: 4",
     "options": [
@@ -12326,6 +12819,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 97,
     "sourceNumber": 47,
     "content": "phân tích nguy cơ \"lợi ích nhóm nổi trội hơn và liên kết với các yếu tố nước ngoài làm phức tạp quá trình quyết sách\" trong hội nhập, nhà nước cần có giải pháp quản lý vĩ mô nào để phòng ngừa hiệu quả? – cấp độ: 4",
     "options": [
@@ -12351,6 +12845,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 98,
     "sourceNumber": 48,
     "content": "để xử lý thành công mối quan hệ giữa độc lập, tự chủ và hội nhập quốc tế trong lĩnh vực giữ gìn bản sắc văn hóa dân tộc trước sự \"xâm lăng\" của văn hóa nước ngoài, tư duy hành động nào sau đây là phù hợp? – cấp độ: 4",
     "options": [
@@ -12376,6 +12871,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 99,
     "sourceNumber": 49,
     "content": "đánh giá về chặng đường 35 năm đổi mới của việt nam dưới góc độ phối hợp giữa độc lập tự chủ và hội nhập quốc tế, kết luận nào sau đây phản ánh đúng tinh thần của tài liệu? – cấp độ: 4",
     "options": [
@@ -12401,6 +12897,7 @@
   },
   {
     "chapter": 6,
+    "practicePosition": 100,
     "sourceNumber": 50,
     "content": "nhìn từ góc độ cách mạng công nghiệp lần thứ tư, xu hướng liên kết đa tầng nấc (các fta thế hệ mới) đặt ra yêu cầu cấp bách nào cho sự điều chỉnh chiến lược của chính phủ việt nam? – cấp độ: 4",
     "options": [

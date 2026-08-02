@@ -14,6 +14,7 @@ export const EXPECTED_COUNTS = [49, 87, 111, 60, 90, 100] as const;
 
 export type KtctSeedQuestion = ParsedQuestion & {
   chapter: number;
+  practicePosition: number;
 };
 
 export type KtctSeedIssue = ParseIssue & {
@@ -57,7 +58,7 @@ export function buildKtctSeed(projectRoot: string): KtctSeedBuild {
       );
     }
 
-    for (const question of result.questions) {
+    for (const [questionIndex, question] of result.questions.entries()) {
       const questionIssues = validateQuestion(question);
 
       if (questionIssues.length > 0) {
@@ -66,7 +67,11 @@ export function buildKtctSeed(projectRoot: string): KtctSeedBuild {
         );
       }
 
-      questions.push({ chapter, ...question });
+      questions.push({
+        chapter,
+        practicePosition: questionIndex + 1,
+        ...question,
+      });
     }
 
     issues.push(

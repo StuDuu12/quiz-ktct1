@@ -343,6 +343,23 @@ describe("verified KTCT sources", () => {
     ]);
   });
 
+  it("preserves Markdown occurrence order independently of source numbering", () => {
+    const seed = buildKtctSeed(process.cwd()).questions;
+    const chapter3 = seed.filter((question) => question.chapter === 3);
+    const chapter6 = seed.filter((question) => question.chapter === 6);
+
+    expect(chapter3.map((question) => question.practicePosition)).toEqual(
+      Array.from({ length: 111 }, (_, index) => index + 1),
+    );
+    expect(chapter3[6]?.sourceNumber).toBe(8);
+    expect(chapter6.map((question) => question.practicePosition)).toEqual(
+      Array.from({ length: 100 }, (_, index) => index + 1),
+    );
+    expect(
+      chapter6.slice(48, 52).map((question) => question.sourceNumber),
+    ).toEqual([49, 50, 1, 2]);
+  });
+
   it("never includes a Markdown answer table in seed question fields", () => {
     const result = buildKtctSeed(process.cwd());
     const serializedFields = result.questions.flatMap((question) => [
