@@ -267,6 +267,27 @@ function appendCourseContent(
 }
 
 describe("production mock exam provisioning", () => {
+  it("persists every Markdown practice position and repairs position drift", async () => {
+    const client = new MemoryProductionClient();
+
+    await seedProduction(asSupabase(client), projectRoot, adminId);
+
+    const chapters = client.tables.get("chapters")!;
+    const questions = client.tables.get("questions")!;
+    for (const chapter of chapters) {
+      const chapterPositions = questions
+        .filter((question) => question.chapter_id === chapter.id)
+        .map((question) => question.practice_position);
+      expect(chapterPositions).toEqual(
+        Array.from({ length: chapterPositions.length }, (_, index) => index + 1),
+      );
+    }
+
+    questions[0]!.practice_position = null;
+    await seedProduction(asSupabase(client), projectRoot, adminId);
+    expect(questions[0]!.practice_position).toBe(1);
+  });
+
   it("seeds exactly one deterministic active 40-question, 60-minute config on repeated setup", async () => {
     const client = new MemoryProductionClient();
 

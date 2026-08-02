@@ -173,6 +173,7 @@ export type Database = {
           difficulty: number;
           status: string;
           source_number: number | null;
+          practice_position: number | null;
           created_by: string;
           created_at: string;
           updated_at: string;
@@ -185,6 +186,7 @@ export type Database = {
           difficulty?: number;
           status?: string;
           source_number?: number | null;
+          practice_position?: number | null;
           created_by: string;
           created_at?: string;
           updated_at?: string;
@@ -197,6 +199,7 @@ export type Database = {
           difficulty?: number;
           status?: string;
           source_number?: number | null;
+          practice_position?: number | null;
           created_by?: string;
           created_at?: string;
           updated_at?: string;

@@ -283,6 +283,7 @@ function buildQuestionRows(
       difficulty: 2,
       status: "draft",
       source_number: question.sourceNumber,
+      practice_position: question.practicePosition,
       created_by: adminId,
       options: question.options.map((option) => ({
         id: stableUuid(`${id}:${option.label}`),
@@ -477,7 +478,7 @@ export async function seedProduction(
       ? await fetchAllRows(
           client,
           "questions",
-          "id,chapter_id,content,explanation,difficulty,source_number,created_by",
+          "id,chapter_id,content,explanation,difficulty,source_number,practice_position,created_by",
         )
       : [];
   const actualOptionRows =
@@ -502,6 +503,7 @@ export async function seedProduction(
         Number(question.source_number),
         question.created_by,
       ]),
+      metadataFingerprint: fingerprint([Number(question.practice_position)]),
     })),
     expectedQuestions: rows.map((question) => ({
       id: question.id,
@@ -513,6 +515,7 @@ export async function seedProduction(
         question.source_number,
         question.created_by,
       ]),
+      metadataFingerprint: fingerprint([question.practice_position]),
     })),
     actualOptions: actualOptionRows.map((option) => ({
       id: String(option.id),
@@ -548,6 +551,7 @@ export async function seedProduction(
       difficulty: question.difficulty,
       status: question.status,
       source_number: question.source_number,
+      practice_position: question.practice_position,
       created_by: question.created_by,
     }));
     const result = await client

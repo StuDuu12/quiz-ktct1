@@ -140,6 +140,7 @@ export function discoverMigrationFiles(projectRoot: string): MigrationFile[] {
 export type DeterministicSeedRow = {
   id: string;
   fingerprint: string;
+  metadataFingerprint?: string;
 };
 
 type ExistingSeedState = {
@@ -206,9 +207,20 @@ export function classifyExistingSeedState({
   const identitiesComplete =
     actualQuestions.length === expectedQuestions.length &&
     actualOptions.length === expectedOptions.length;
+  const expectedQuestionMetadata = new Map(
+    expectedQuestions.map(({ id, metadataFingerprint }) => [
+      id,
+      metadataFingerprint,
+    ]),
+  );
+  const metadataComplete = actualQuestions.every(
+    ({ id, metadataFingerprint }) =>
+      metadataFingerprint === expectedQuestionMetadata.get(id),
+  );
 
   return rawCountsComplete &&
     identitiesComplete &&
+    metadataComplete &&
     publishedQuestionOptions ===
       EXPECTED_PRODUCTION_COUNTS.publishedQuestionOptions
     ? "complete"
