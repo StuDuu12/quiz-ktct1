@@ -1,7 +1,7 @@
 # Student Course Layout, Review Actions, and Back Navigation Design
 
 **Date:** 2026-08-02
-**Status:** Proposed for final user review
+**Status:** Approved
 **Selected direction:** A
 
 ## Objective
@@ -112,7 +112,7 @@ Parent-route rules:
 | Submitted result review | `/history` | Về lịch sử |
 | Student history | `/dashboard` | Về tổng quan |
 | Admin child page | `/admin` | Về trang quản trị |
-| Lecturer child page | `/lecturer` | Về trang giảng viên |
+| Instructor child page | `/instructor` | Về trang giảng viên |
 
 Portal roots, dashboard, authentication pages, and the landing page do not show an extra back link.
 
