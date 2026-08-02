@@ -414,7 +414,7 @@ export async function finishPractice(
   // authenticated users in the resilient_mock_exam_sessions migration).
   const { data, error } = await supabase.rpc("finish_practice_attempt", {
     target_attempt_id: attemptId,
-    answers_to_save: JSON.stringify(answersToSave),
+    answers_to_save: answersToSave,
   });
 
   if (error || !data) {

@@ -2,12 +2,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const {
   createServerSupabaseClient,
+  revalidatePath,
   requireViewer,
 } = vi.hoisted(() => ({
   createServerSupabaseClient: vi.fn(),
+  revalidatePath: vi.fn(),
   requireViewer: vi.fn(),
 }));
 
+vi.mock("next/cache", () => ({ revalidatePath }));
 vi.mock("@/src/features/auth/session", () => ({ requireViewer }));
 vi.mock("@/src/lib/supabase/server", () => ({
   createServerSupabaseClient,
@@ -193,5 +196,37 @@ describe("practice start actions", () => {
       "load_practice_attempt_questions",
       "load_practice_answer_feedback",
     ]);
+  });
+});
+
+describe("practice finish action", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    requireViewer.mockResolvedValue(viewer);
+  });
+
+  it("sends answers to the JSONB RPC as an array instead of a scalar string", async () => {
+    const attemptId = "60000000-0000-0000-0000-000000000023";
+    const answers = [
+      {
+        attemptQuestionId: "70000000-0000-0000-0000-000000000023",
+        optionId: "40000000-0000-0000-0000-000000000023",
+        flagged: false,
+      },
+    ];
+    const rpc = vi.fn().mockResolvedValue({
+      data: { status: "submitted", score: 100 },
+      error: null,
+    });
+    createServerSupabaseClient.mockResolvedValue({ rpc });
+
+    await expect(
+      practiceActions.finishPractice(attemptId, 100, answers),
+    ).resolves.toEqual({ status: "submitted", score: 100 });
+
+    expect(rpc).toHaveBeenCalledWith("finish_practice_attempt", {
+      target_attempt_id: attemptId,
+      answers_to_save: answers,
+    });
   });
 });
