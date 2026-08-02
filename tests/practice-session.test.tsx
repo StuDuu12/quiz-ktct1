@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import "@testing-library/jest-dom/vitest";
 
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { PracticeSession } from "@/src/features/practice/components/practice-session";
@@ -25,7 +25,8 @@ const initialState: PracticeState = {
       id: "q1",
       attemptQuestionId: "aq1",
       content: "Câu hỏi 1?",
-      explanation: "",
+      explanation: "Đáp án A mới đúng.",
+      correctOptionId: "a1",
       options: [
         { id: "a1", label: "A", content: "Đáp án A" },
         { id: "b1", label: "B", content: "Đáp án B" },
@@ -37,7 +38,8 @@ const initialState: PracticeState = {
       id: "q2",
       attemptQuestionId: "aq2",
       content: "Câu hỏi 2?",
-      explanation: "",
+      explanation: "Đáp án A2 mới đúng.",
+      correctOptionId: "a2",
       options: [
         { id: "a2", label: "A", content: "Đáp án A2" },
         { id: "b2", label: "B", content: "Đáp án B2" },
@@ -51,12 +53,18 @@ const initialState: PracticeState = {
 
 describe("PracticeSession", () => {
   it("submits keyboard answers once and shows immediate feedback", async () => {
-    const saveAnswer = vi.fn().mockResolvedValue({
-      optionId: "b1",
-      isCorrect: false,
-      explanation: "Đáp án A mới đúng.",
-      reconciled: false,
-    });
+    let resolveSave!: (feedback: {
+      optionId: string;
+      isCorrect: boolean;
+      explanation: string;
+      reconciled: boolean;
+      correctOptionId: string;
+    }) => void;
+    const saveAnswer = vi.fn(
+      () => new Promise((resolve) => {
+        resolveSave = resolve;
+      }),
+    );
 
     render(
       <PracticeSession
@@ -69,15 +77,43 @@ describe("PracticeSession", () => {
 
     fireEvent.keyDown(window, { key: "2" });
 
-    await waitFor(() =>
-      expect(screen.getByText("Chưa chính xác")).toBeInTheDocument(),
-    );
+    expect(screen.getByText("Chưa chính xác")).toBeInTheDocument();
     expect(screen.getByText("Đáp án A mới đúng.")).toBeInTheDocument();
     expect(saveAnswer).toHaveBeenCalledOnce();
     expect(screen.getByRole("radio", { name: /Đáp án C/ })).toBeDisabled();
 
     fireEvent.keyDown(window, { key: "3" });
     expect(saveAnswer).toHaveBeenCalledOnce();
+
+    await act(async () => {
+      resolveSave({
+        optionId: "b1",
+        isCorrect: false,
+        explanation: "Đáp án A mới đúng.",
+        reconciled: false,
+        correctOptionId: "a1",
+      });
+    });
+  });
+
+  it("keeps instant feedback visible when background saving fails", async () => {
+    const saveAnswer = vi.fn().mockRejectedValue(new Error("Mất kết nối"));
+
+    render(
+      <PracticeSession
+        initialState={initialState}
+        saveAnswer={saveAnswer}
+        saveFlag={vi.fn().mockResolvedValue(undefined)}
+        finish={vi.fn().mockResolvedValue({ status: "submitted", score: 0 })}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("radio", { name: /Đáp án B/ }));
+
+    expect(screen.getByText("Chưa chính xác")).toBeInTheDocument();
+    expect(screen.getByText("Đáp án A mới đúng.")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole("button", { name: "Thử lại" })).toBeInTheDocument());
+    expect(screen.getByText("Chưa chính xác")).toBeInTheDocument();
   });
 
   it("shows every question in the navigator and persists F-key flags", async () => {

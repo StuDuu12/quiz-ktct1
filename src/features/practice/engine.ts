@@ -30,6 +30,9 @@ export function answerPracticeQuestion(
   if (!question.options.some((option) => option.id === optionId)) {
     throw new Error("OPTION_NOT_FOUND");
   }
+  if (!question.correctOptionId) {
+    throw new Error("PRACTICE_FEEDBACK_UNAVAILABLE");
+  }
 
   return {
     ...state,
@@ -38,6 +41,9 @@ export function answerPracticeQuestion(
       [questionId]: {
         ...current,
         optionId,
+        isCorrect: optionId === question.correctOptionId,
+        correctOptionId: question.correctOptionId,
+        explanation: question.explanation,
         locked: true,
         showFeedback: true,
       },

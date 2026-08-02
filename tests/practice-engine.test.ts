@@ -20,7 +20,8 @@ const state: PracticeState = {
       id: "q1",
       attemptQuestionId: "attempt-question-1",
       content: "Câu hỏi thứ nhất?",
-      explanation: "",
+      explanation: "Phương án A mới đúng.",
+      correctOptionId: "option-a",
       options: [
         { id: "option-a", label: "A", content: "Phương án A" },
         { id: "option-b", label: "B", content: "Phương án B" },
@@ -32,7 +33,8 @@ const state: PracticeState = {
       id: "q2",
       attemptQuestionId: "attempt-question-2",
       content: "Câu hỏi thứ hai?",
-      explanation: "",
+      explanation: "Phương án A là đáp án đúng.",
+      correctOptionId: "option-e",
       options: [
         { id: "option-e", label: "A", content: "Phương án A" },
         { id: "option-f", label: "B", content: "Phương án B" },
@@ -50,6 +52,9 @@ describe("practice engine", () => {
 
     expect(next.answers.q1).toMatchObject({
       optionId: "option-b",
+      isCorrect: false,
+      correctOptionId: "option-a",
+      explanation: "Phương án A mới đúng.",
       locked: true,
       showFeedback: true,
     });
