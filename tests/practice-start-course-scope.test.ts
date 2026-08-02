@@ -8,7 +8,6 @@ const ids = {
   student: "00000000-0000-0000-0000-000000000201",
   course: "10000000-0000-0000-0000-000000000201",
   chapter: "20000000-0000-0000-0000-000000000201",
-  question: "30000000-0000-0000-0000-000000000201",
 };
 
 const brokenMigration = path.resolve(
@@ -19,6 +18,9 @@ const repairMigration = path.resolve(
 );
 const nullablePracticeExpiryMigration = path.resolve(
   "supabase/migrations/202608020006_allow_unlimited_practice_attempts.sql",
+);
+const fixedPracticeOrderMigration = path.resolve(
+  "supabase/migrations/202608020007_fixed_practice_order.sql",
 );
 
 async function applyIfPresent(database: PGlite, migrationPath: string) {
@@ -59,7 +61,10 @@ describe("practice attempt question scope", () => {
           id uuid primary key,
           chapter_id uuid not null references public.chapters(id),
           content text not null,
-          status text not null
+          status text not null,
+          source_number integer,
+          practice_position integer,
+          created_at timestamptz not null default now()
         );
         create table public.question_options (
           id uuid primary key,
@@ -101,17 +106,26 @@ describe("practice attempt question scope", () => {
       await database.exec(await readFile(brokenMigration, "utf8"));
       await applyIfPresent(database, repairMigration);
       await applyIfPresent(database, nullablePracticeExpiryMigration);
+      await applyIfPresent(database, fixedPracticeOrderMigration);
       await database.exec(`
         insert into public.courses (id) values ('${ids.course}');
         insert into public.chapters (id, course_id)
         values ('${ids.chapter}', '${ids.course}');
-        insert into public.questions (id, chapter_id, content, status)
-        values ('${ids.question}', '${ids.chapter}', 'Question', 'published');
+        insert into public.questions (
+          id, chapter_id, content, status, source_number, practice_position
+        ) values
+          ('30000000-0000-0000-0000-000000000203', '${ids.chapter}', 'Question 1', 'published', 1, 1),
+          ('30000000-0000-0000-0000-000000000201', '${ids.chapter}', 'Question 2', 'published', 2, 2),
+          ('30000000-0000-0000-0000-000000000202', '${ids.chapter}', 'Question 3', 'published', 3, 3);
         insert into public.question_options (
           id, question_id, label, content
         ) values
-          ('40000000-0000-0000-0000-000000000201', '${ids.question}', 'A', 'A'),
-          ('40000000-0000-0000-0000-000000000202', '${ids.question}', 'B', 'B');
+          ('40000000-0000-0000-0000-000000000201', '30000000-0000-0000-0000-000000000203', 'A', 'A'),
+          ('40000000-0000-0000-0000-000000000202', '30000000-0000-0000-0000-000000000203', 'B', 'B'),
+          ('40000000-0000-0000-0000-000000000203', '30000000-0000-0000-0000-000000000201', 'A', 'A'),
+          ('40000000-0000-0000-0000-000000000204', '30000000-0000-0000-0000-000000000201', 'B', 'B'),
+          ('40000000-0000-0000-0000-000000000205', '30000000-0000-0000-0000-000000000202', 'A', 'A'),
+          ('40000000-0000-0000-0000-000000000206', '30000000-0000-0000-0000-000000000202', 'B', 'B');
 
         set role authenticated;
         select set_config('request.jwt.claim.sub', '${ids.student}', false);
@@ -126,13 +140,15 @@ describe("practice attempt question scope", () => {
         reset role;
         select set_config('request.jwt.claim.sub', '', false);
       `);
-      const questions = await database.query<{ question_id: string }>(`
-        select question_id
-        from public.attempt_questions
-        where attempt_id = '${started.rows[0]!.id}'
+      const questions = await database.query<{ source_number: number }>(`
+        select question.source_number
+        from public.attempt_questions attempt_question
+        join public.questions question on question.id = attempt_question.question_id
+        where attempt_question.attempt_id = '${started.rows[0]!.id}'
+        order by attempt_question.position
       `);
 
-      expect(questions.rows).toEqual([{ question_id: ids.question }]);
+      expect(questions.rows.map((row) => row.source_number)).toEqual([1, 2, 3]);
     } finally {
       await database.close();
     }
