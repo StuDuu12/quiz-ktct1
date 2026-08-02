@@ -63,29 +63,38 @@ export function CourseOverview({
         </div>
       </section>
 
-      <section className="dashboard-grid" aria-label="Kế hoạch ôn tập">
+      <section className="study-plan" aria-label="Kế hoạch ôn tập">
+        <section className="mock-banner" aria-labelledby="mock-title">
+          <div className="mock-icon"><Target size={26} weight="fill" /></div>
+          <div className="mock-banner-copy">
+            <p className="eyebrow">THI THỬ TỔNG HỢP</p>
+            <h2 id="mock-title">Sẵn sàng kiểm tra kiến thức?</h2>
+            <p>Đề gồm 40 câu, phân bổ giữa các chương. Đồng hồ sẽ bắt đầu khi bạn vào đề.</p>
+          </div>
+          <div className="mock-banner-meta exam-meta">
+            <span><ClipboardText size={17} /> 40 câu</span>
+            <span><Clock size={17} /> 60 phút</span>
+          </div>
+          <div className="mock-banner-action">
+            {mockExamAvailable ? (
+              <Link className="primary-action" href={`/courses/${course.slug}/mock-exam`}>Bắt đầu thi thử <ArrowRight size={17} /></Link>
+            ) : (
+              <p className="primary-action" aria-disabled="true">Thi thử chưa được cấu hình</p>
+            )}
+          </div>
+        </section>
+
+        <section className="study-tip-strip">
+          <TrendUp size={22} weight="duotone" aria-hidden="true" />
+          <div><strong>Mẹo ôn tập</strong><p>Làm lại chương có độ chính xác thấp trước khi vào đề thi thử.</p></div>
+        </section>
+
         <div className="chapter-panel">
           <div className="section-heading"><div><p className="eyebrow">LỘ TRÌNH</p><h2>Luyện theo chương</h2></div><span>{chapters.length} chương</span></div>
           <div className="chapter-list">
             {chapters.map((chapter) => <ChapterRow key={chapter.id} chapter={chapter} courseSlug={course.slug} />)}
           </div>
         </div>
-
-        <aside className="study-aside">
-          <section className="mock-card" aria-labelledby="mock-title">
-            <div className="mock-icon"><Target size={26} weight="fill" /></div>
-            <p className="eyebrow">THI THỬ TỔNG HỢP</p>
-            <h2 id="mock-title">Sẵn sàng kiểm tra kiến thức?</h2>
-            <p>Đề gồm 40 câu, phân bổ giữa các chương. Đồng hồ sẽ bắt đầu khi bạn vào đề.</p>
-            <div className="exam-meta"><span><ClipboardText size={17} /> 40 câu</span><span><Clock size={17} /> 60 phút</span></div>
-            {mockExamAvailable ? (
-              <Link className="primary-action" href={`/courses/${course.slug}/mock-exam`}>Bắt đầu thi thử <ArrowRight size={17} /></Link>
-            ) : (
-              <p className="primary-action" aria-disabled="true">Thi thử chưa được cấu hình</p>
-            )}
-          </section>
-          <section className="tip-card"><TrendUp size={22} weight="duotone" /><div><strong>Mẹo ôn tập</strong><p>Làm lại chương có độ chính xác thấp trước khi vào đề thi thử.</p></div></section>
-        </aside>
       </section>
 
       <section className="history-section" id="history" aria-labelledby="history-title">

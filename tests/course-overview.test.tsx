@@ -75,4 +75,25 @@ describe("CourseOverview", () => {
       "/courses/kinh-te-chinh-tri-mac-lenin/mock-exam",
     );
   });
+
+  it("places the mock exam and study tip before the full-width chapter plan", () => {
+    render(<CourseOverview dashboard={dashboard} viewerRole="student" />);
+
+    const mockTitle = screen.getByRole("heading", {
+      name: /sẵn sàng kiểm tra kiến thức/i,
+    });
+    const tip = screen.getByText("Mẹo ôn tập");
+    const chapterTitle = screen.getByRole("heading", {
+      name: "Luyện theo chương",
+    });
+
+    expect(
+      mockTitle.compareDocumentPosition(chapterTitle) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      tip.compareDocumentPosition(chapterTitle) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
 });
