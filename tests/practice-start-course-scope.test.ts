@@ -20,7 +20,7 @@ const nullablePracticeExpiryMigration = path.resolve(
   "supabase/migrations/202608020006_allow_unlimited_practice_attempts.sql",
 );
 const fixedPracticeOrderMigration = path.resolve(
-  "supabase/migrations/202608020007_fixed_practice_order.sql",
+  "supabase/migrations/202608020008_fixed_practice_order.sql",
 );
 
 async function applyIfPresent(database: PGlite, migrationPath: string) {
