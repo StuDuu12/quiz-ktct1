@@ -120,15 +120,15 @@ export async function getMockExamLaunch(courseSlug: string) {
   };
 }
 
-export async function startMockExamForCourse(courseSlug: string) {
+export async function startMockExamForCourse(courseSlug: string): Promise<string> {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
   if (isE2EEnabled()) {
     const attempt = startE2EExam(viewer.id);
-    redirect(`/exam/${attempt.id}`);
+    return `/exam/${attempt.id}`;
   }
   const launch = await getMockExamLaunch(courseSlug);
   const attempt = await startMockExam(viewer.id, launch.config.id);
-  redirect(`/exam/${attempt.id}`);
+  return `/exam/${attempt.id}`;
 }
 
 export async function loadExamSession(

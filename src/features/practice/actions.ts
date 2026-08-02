@@ -190,23 +190,19 @@ export async function startPractice(chapterId: string, forceNew = false) {
 export async function startOrResumePracticeForRoute(
   courseSlug: string,
   position: number,
-): Promise<never> {
+): Promise<string> {
   const chapter = await getPracticeChapterByRoute(courseSlug, position);
   const started = await startPractice(chapter.id, false);
-  redirect(
-    `/courses/${chapter.course.slug}/chapters/${chapter.position}/practice?attempt=${started.attemptId}`,
-  );
+  return `/courses/${chapter.course.slug}/chapters/${chapter.position}/practice?attempt=${started.attemptId}`;
 }
 
 export async function startNewPracticeForRoute(
   courseSlug: string,
   position: number,
-): Promise<never> {
+): Promise<string> {
   const chapter = await getPracticeChapterByRoute(courseSlug, position);
   const started = await startPractice(chapter.id, true);
-  redirect(
-    `/courses/${chapter.course.slug}/chapters/${chapter.position}/practice?attempt=${started.attemptId}`,
-  );
+  return `/courses/${chapter.course.slug}/chapters/${chapter.position}/practice?attempt=${started.attemptId}`;
 }
 
 export async function loadOrStartPracticeE2E(

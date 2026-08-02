@@ -898,7 +898,8 @@ export type Database = {
           attempt_id: string;
           user_id: string;
           course_id: string;
-          course_title: string;
+          course_title: string
+          course_slug: string;
           kind: Database["public"]["Enums"]["attempt_kind"];
           status: Database["public"]["Enums"]["attempt_status"];
           started_at: string;
@@ -906,7 +907,8 @@ export type Database = {
           score: number | null;
           duration_seconds: number | null;
           chapter_id: string | null;
-          chapter_title: string | null;
+          chapter_title: string
+          chapter_position: number | null;
           question_count: number;
           total_count: number;
         }[];

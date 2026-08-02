@@ -32,6 +32,7 @@ export type AttemptSummary = {
   userId: string;
   courseId: string;
   courseTitle: string;
+  courseSlug: string;
   kind: AttemptKind;
   status: AttemptStatus;
   startedAt: string;
@@ -40,6 +41,7 @@ export type AttemptSummary = {
   durationSeconds: number | null;
   chapterId: string | null;
   chapterTitle: string | null;
+  chapterPosition: number | null;
   questionCount: number;
   totalCount: number;
 };
@@ -179,6 +181,7 @@ export async function getAttemptHistory(
     userId: row.user_id,
     courseId: row.course_id,
     courseTitle: row.course_title,
+    courseSlug: row.course_slug,
     kind: row.kind,
     status: row.status,
     startedAt: row.started_at,
@@ -187,6 +190,7 @@ export async function getAttemptHistory(
     durationSeconds: row.duration_seconds,
     chapterId: row.chapter_id,
     chapterTitle: row.chapter_title,
+    chapterPosition: row.chapter_position,
     questionCount: row.question_count,
     totalCount: Number(row.total_count),
   }));

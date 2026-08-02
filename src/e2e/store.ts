@@ -452,6 +452,7 @@ export function getE2EAttemptHistory(userId: string) {
       userId,
       courseId: "e2e-course-ktct",
       courseTitle: "Kinh tế chính trị Mác – Lênin",
+      courseSlug: "ktct",
       kind: "practice" as const,
       status: attempt.state.status,
       startedAt: attempt.startedAt,
@@ -461,6 +462,7 @@ export function getE2EAttemptHistory(userId: string) {
       durationSeconds: attempt.state.status === "submitted" ? 0 : null,
       chapterId: attempt.chapterId,
       chapterTitle: attempt.state.chapterTitle,
+      chapterPosition: attempt.state.chapterPosition,
       questionCount: attempt.state.questions.length,
       totalCount: 0,
     }));
@@ -471,6 +473,7 @@ export function getE2EAttemptHistory(userId: string) {
       userId,
       courseId: attempt.state.courseId,
       courseTitle: attempt.state.courseTitle,
+      courseSlug: "ktct",
       kind: "mock_exam" as const,
       status: attempt.state.status,
       startedAt: attempt.state.startedAt,
@@ -479,6 +482,7 @@ export function getE2EAttemptHistory(userId: string) {
       durationSeconds: attempt.state.durationSeconds,
       chapterId: null,
       chapterTitle: null,
+      chapterPosition: null,
       questionCount: attempt.state.questions.length,
       totalCount: 0,
     }));

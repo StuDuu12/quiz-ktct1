@@ -122,6 +122,20 @@ export function HistoryList({
                 >
                   Xem kết quả <ArrowRight size={17} aria-hidden="true" />
                 </Link>
+              ) : attempt.status === "in_progress" && attempt.kind === "practice" && attempt.chapterPosition !== null ? (
+                <Link
+                  className="history-result-link"
+                  href={`/courses/${attempt.courseSlug}/chapters/${attempt.chapterPosition}/practice?attempt=${attempt.id}`}
+                >
+                  Tiếp tục <ArrowRight size={17} aria-hidden="true" />
+                </Link>
+              ) : attempt.status === "in_progress" && attempt.kind === "mock_exam" ? (
+                <Link
+                  className="history-result-link"
+                  href={`/courses/${attempt.courseSlug}/mock-exam?attempt=${attempt.id}`}
+                >
+                  Tiếp tục <ArrowRight size={17} aria-hidden="true" />
+                </Link>
               ) : null}
               <DeleteAttemptButton attemptId={attempt.id} />
             </div>
