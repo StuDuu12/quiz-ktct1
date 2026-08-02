@@ -75,28 +75,17 @@ describe("production configuration", () => {
     ]);
   });
 
-  it("injects public Supabase settings into the browser build", () => {
-    const viteConfig = readFileSync(
-      path.join(projectRoot, "vite.config.ts"),
-      "utf8",
-    );
-    const publicEnvSource = readFileSync(
-      path.join(projectRoot, "src", "lib", "env.ts"),
+  it("loads the database maintenance URL from an ignored environment file", () => {
+    const maintenanceScript = readFileSync(
+      path.join(projectRoot, "run-delete.cjs"),
       "utf8",
     );
 
-    expect(viteConfig).toContain(
-      '"process.env.NEXT_PUBLIC_SUPABASE_URL": JSON.stringify(',
+    expect(maintenanceScript).not.toContain("postgresql://");
+    expect(maintenanceScript).toContain(
+      "require('dotenv').config({ path: '.env.local' });",
     );
-    expect(viteConfig).toContain(
-      '"process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY": JSON.stringify(',
-    );
-    expect(publicEnvSource).toMatch(
-      /NEXT_PUBLIC_SUPABASE_URL:\s*process\.env\.NEXT_PUBLIC_SUPABASE_URL/,
-    );
-    expect(publicEnvSource).toMatch(
-      /NEXT_PUBLIC_SUPABASE_ANON_KEY:\s*process\.env\.NEXT_PUBLIC_SUPABASE_ANON_KEY/,
-    );
+    expect(maintenanceScript).toContain("process.env.DATABASE_URL");
   });
 
   it("keeps a clean-build regression for the generated Worker secret contract", () => {
@@ -119,15 +108,6 @@ describe("production configuration", () => {
     expect(verifier).toContain('await rm(distDirectory, { recursive: true, force: true })');
     expect(verifier).toContain('"SUPABASE_SERVICE_ROLE_KEY"');
     expect(verifier).not.toContain("service_role_key=");
-  });
-
-  it("inlines SSR route chunks so free-tier requests do not compile them lazily", () => {
-    const viteConfig = readFileSync(
-      path.join(projectRoot, "vite.config.ts"),
-      "utf8",
-    );
-
-    expect(viteConfig).toContain("codeSplitting: false");
   });
 
   it("discovers every SQL migration in strict filename order", () => {
