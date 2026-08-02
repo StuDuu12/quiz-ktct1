@@ -325,7 +325,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["attempt_kind"];
           status: Database["public"]["Enums"]["attempt_status"];
           started_at: string;
-          expires_at: string;
+          expires_at: string | null;
           submitted_at: string | null;
           score: number | null;
           duration_seconds: number | null;
@@ -341,7 +341,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["attempt_kind"];
           status?: Database["public"]["Enums"]["attempt_status"];
           started_at?: string;
-          expires_at: string;
+          expires_at: string | null;
           submitted_at?: string | null;
           score?: number | null;
           duration_seconds?: number | null;
@@ -357,7 +357,7 @@ export type Database = {
           kind?: Database["public"]["Enums"]["attempt_kind"];
           status?: Database["public"]["Enums"]["attempt_status"];
           started_at?: string;
-          expires_at?: string;
+          expires_at?: string | null;
           submitted_at?: string | null;
           score?: number | null;
           duration_seconds?: number | null;

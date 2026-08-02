@@ -2,11 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const {
   createServerSupabaseClient,
-  redirect,
   requireViewer,
 } = vi.hoisted(() => ({
   createServerSupabaseClient: vi.fn(),
-  redirect: vi.fn(),
   requireViewer: vi.fn(),
 }));
 
@@ -15,7 +13,6 @@ vi.mock("@/src/lib/supabase/server", () => ({
   createServerSupabaseClient,
 }));
 vi.mock("@/src/e2e/guard", () => ({ isE2EEnabled: () => false }));
-vi.mock("next/navigation", () => ({ redirect }));
 
 import * as practiceActions from "@/src/features/practice/actions";
 
@@ -99,26 +96,16 @@ describe("practice start actions", () => {
     });
   });
 
-  it("starts or resumes once and redirects the explicit route action to that attempt", async () => {
+  it("starts or resumes once and returns the explicit attempt route", async () => {
     const client = practiceClient();
     createServerSupabaseClient.mockResolvedValue(client);
-    redirect.mockImplementation((destination: string) => {
-      throw new Error(`NEXT_REDIRECT:${destination}`);
-    });
 
-    const action = (
-      practiceActions as typeof practiceActions & {
-        startOrResumePracticeForRoute: (
-          courseSlug: string,
-          position: number,
-        ) => Promise<never>;
-      }
-    ).startOrResumePracticeForRoute;
+    const action = practiceActions.startOrResumePracticeForRoute;
 
     await expect(
       Promise.resolve().then(() => action(course.slug, chapter.position)),
-    ).rejects.toThrow(
-      `NEXT_REDIRECT:/courses/${course.slug}/chapters/${chapter.position}/practice?attempt=60000000-0000-0000-0000-000000000021`,
+    ).resolves.toBe(
+      `/courses/${course.slug}/chapters/${chapter.position}/practice?attempt=60000000-0000-0000-0000-000000000021`,
     );
     expect(client.rpc).toHaveBeenCalledOnce();
   });

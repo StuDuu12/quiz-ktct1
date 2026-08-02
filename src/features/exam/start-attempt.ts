@@ -117,7 +117,8 @@ export async function startMockExam(
     attempt.user_id !== viewer.id ||
     attempt.course_id !== course.id ||
     attempt.exam_config_id !== config.id ||
-    attempt.kind !== "mock_exam"
+    attempt.kind !== "mock_exam" ||
+    !attempt.expires_at
   ) {
     throw new Error("MOCK_EXAM_START_FAILED");
   }

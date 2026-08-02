@@ -12,6 +12,7 @@ const {
   loadPracticeSession,
   savePracticeAnswer,
   savePracticeFlag,
+  startNewPracticeForRoute,
   startOrResumePracticeForRoute,
   startPractice,
 } = vi.hoisted(() => ({
@@ -21,6 +22,7 @@ const {
   loadPracticeSession: vi.fn(),
   savePracticeAnswer: vi.fn(),
   savePracticeFlag: vi.fn(),
+  startNewPracticeForRoute: vi.fn(),
   startOrResumePracticeForRoute: vi.fn(),
   startPractice: vi.fn(),
 }));
@@ -34,6 +36,7 @@ vi.mock("@/src/features/practice/actions", () => ({
   loadOrStartPracticeE2E: vi.fn(),
   savePracticeAnswer,
   savePracticeFlag,
+  startNewPracticeForRoute,
   startOrResumePracticeForRoute,
   startPractice,
 }));
@@ -42,6 +45,7 @@ vi.mock("next/navigation", () => ({
     throw new Error("NEXT_NOT_FOUND");
   },
   redirect: vi.fn(),
+  useRouter: () => ({ push: vi.fn() }),
 }));
 vi.mock("@/src/features/practice/components/practice-session", () => ({
   PracticeSession: () => <div>Practice session loaded</div>,
