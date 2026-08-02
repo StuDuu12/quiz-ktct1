@@ -271,7 +271,7 @@ describe("exam actions", () => {
     );
 
     expect(markup).toContain("Thi thử chưa được cấu hình");
-    expect(markup).toContain("Quay lại tổng quan");
+    expect(markup).toContain("Về học phần");
     expect(markup).toContain('href="/courses/kinh-te-chinh-tri-mac-lenin"');
   });
 });

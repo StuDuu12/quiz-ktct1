@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpenText, List, SignOut } from "@phosphor-icons/react";
+import { BookOpenText, List } from "@phosphor-icons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
