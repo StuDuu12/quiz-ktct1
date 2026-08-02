@@ -6,21 +6,23 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    // This project uses the App Router only. The Pages Router rule resolves
-    // `pages` relative to the current working directory and emits a false
-    // configuration error when ESLint is launched from a feature folder.
+    settings: {
+      next: {
+        rootDir: ".",
+      },
+    },
     rules: {
       "@next/next/no-html-link-for-pages": "off",
     },
   },
-  // Override default ignores of eslint-config-next.
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
     ".worktrees/**",
     "next-env.d.ts",
+    "*.cjs",
+    "test*.js",
   ]),
 ]);
 
