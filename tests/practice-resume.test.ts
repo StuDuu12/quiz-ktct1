@@ -63,6 +63,19 @@ function limitedQuery(data: unknown[]) {
   return query;
 }
 
+function recentAttemptsQuery(data: unknown[]) {
+  const query = {
+    select: vi.fn(),
+    eq: vi.fn(),
+    order: vi.fn(),
+    limit: vi.fn().mockResolvedValue({ data, error: null }),
+  };
+  query.select.mockReturnValue(query);
+  query.eq.mockReturnValue(query);
+  query.order.mockReturnValue(query);
+  return query;
+}
+
 describe("practice resume dashboard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -114,7 +127,7 @@ describe("practice resume dashboard", () => {
       from: (table: string) => {
         if (table === "courses") return singleQuery(course);
         if (table === "chapters") return orderedQuery(chapters);
-        if (table === "attempts") return orderedQuery(attempts);
+        if (table === "attempts") return recentAttemptsQuery(attempts);
         if (table === "exam_configs") {
           return limitedQuery([
             {
@@ -126,7 +139,25 @@ describe("practice resume dashboard", () => {
         }
         throw new Error(`Unexpected table: ${table}`);
       },
-      rpc: vi.fn().mockResolvedValue({ data: [], error: null }),
+      rpc: vi.fn((name: string) =>
+        Promise.resolve({
+          data:
+            name === "get_dashboard_chapter_summaries"
+              ? [
+                  {
+                    chapter_id: ids.chapter,
+                    active_attempt_id: activeAttemptId,
+                    attempt_id: activeAttemptId,
+                    attempt_score: null,
+                    attempt_status: "in_progress",
+                    attempt_submitted_at: null,
+                    attempt_started_at: "2099-01-01T00:00:00.000Z",
+                  },
+                ]
+              : [],
+          error: null,
+        }),
+      ),
     });
 
     const result = await getCourseDashboard(

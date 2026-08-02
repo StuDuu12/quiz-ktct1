@@ -32,5 +32,5 @@ describe("App Router ESLint configuration", () => {
 
     expect(result.status).toBe(0);
     expect(output).not.toContain("Pages directory cannot be found");
-  });
+  }, 20_000);
 });

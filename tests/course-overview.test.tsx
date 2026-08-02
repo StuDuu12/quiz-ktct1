@@ -2,7 +2,13 @@
 
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+  usePathname: () => "/courses/kinh-te-chinh-tri-mac-lenin",
+  useSearchParams: () => new URLSearchParams(),
+}));
 
 import { CourseOverview } from "@/src/features/catalog/components/course-overview";
 import type { CourseDashboard } from "@/src/features/catalog/queries";

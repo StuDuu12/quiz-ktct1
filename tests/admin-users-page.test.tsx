@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const { getAdminCatalog, getAdminUsers, requireViewer } = vi.hoisted(() => ({
@@ -48,10 +48,11 @@ describe("AdminUsersPage", () => {
 
     render(await AdminUsersPage());
 
-    expect(screen.getByLabelText("Vai trò cho Role target")).toHaveValue("student");
-    expect(screen.getByRole("option", { name: "Học viên" })).toHaveValue("student");
-    expect(screen.getByRole("option", { name: "Giảng viên" })).toHaveValue("instructor");
-    expect(screen.getByRole("option", { name: "Quản trị viên" })).toHaveValue("admin");
+    const roleSelect = screen.getByLabelText("Vai trò cho Role target");
+    expect(roleSelect).toHaveValue("student");
+    expect(within(roleSelect).getByRole("option", { name: "Học viên" })).toHaveValue("student");
+    expect(within(roleSelect).getByRole("option", { name: "Giảng viên" })).toHaveValue("instructor");
+    expect(within(roleSelect).getByRole("option", { name: "Quản trị viên" })).toHaveValue("admin");
     expect(screen.getByRole("button", { name: "Cập nhật vai trò" })).toBeInTheDocument();
   });
 });

@@ -4,7 +4,16 @@ import path from "node:path";
 import { chromium, type Browser } from "playwright";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+
+vi.mock("@/src/components/auth/auth-watcher", () => ({
+  AuthWatcher: () => null,
+}));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ back: vi.fn(), push: vi.fn(), refresh: vi.fn() }),
+  usePathname: () => "/",
+  useSearchParams: () => new URLSearchParams(),
+}));
 
 import RootLayout from "@/app/layout";
 
