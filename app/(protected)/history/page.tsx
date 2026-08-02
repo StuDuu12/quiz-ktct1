@@ -9,6 +9,7 @@ import {
   parseHistoryFilters,
   type HistorySearchParams,
 } from "@/src/features/history/queries";
+import { ContextBackLink } from "@/src/components/context-back-link";
 
 type PageProps = {
   searchParams: Promise<HistorySearchParams>;
@@ -39,7 +40,7 @@ export default async function HistoryPage({ searchParams }: PageProps) {
           Ôn thi KTCT
         </Link>
         <nav aria-label="Điều hướng học viên">
-          <Link href="/dashboard">Tổng quan</Link>
+          <ContextBackLink href="/dashboard" label="Về tổng quan" />
           <Link href="/history" aria-current="page">
             Lịch sử
           </Link>

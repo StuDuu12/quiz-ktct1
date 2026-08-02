@@ -3,7 +3,6 @@
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpen,
   CheckCircle,
   Flag,
   ListNumbers,
@@ -21,6 +20,7 @@ import {
 } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
 
+import { ContextBackLink } from "@/src/components/context-back-link";
 import { isE2EBrowserMode } from "@/src/e2e/browser";
 import {
   answerPracticeQuestion,
@@ -449,23 +449,11 @@ export function PracticeSession({
           />
         ) : null}
         <header className="practice-header">
-        <Link
+        <ContextBackLink
           href={mode === "review" ? "/history" : `/courses/${state.courseSlug}`}
           className="practice-brand"
-          aria-label={mode === "review" ? "Trở về lịch sử" : "Trở về học phần"}
-        >
-          {mode === "review" ? (
-            <>
-              <ArrowLeft size={22} weight="bold" />
-              <span>Trở về lịch sử</span>
-            </>
-          ) : (
-            <>
-              <BookOpen size={23} weight="fill" />
-              <span>Ôn thi KTCT</span>
-            </>
-          )}
-        </Link>
+          label={mode === "review" ? "Về lịch sử" : "Về học phần"}
+        />
         <div className="practice-chapter">
           <span>Chương {state.chapterPosition}</span>
           <strong>{state.chapterTitle}</strong>

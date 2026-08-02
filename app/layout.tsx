@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { buildSiteMetadata } from "@/src/lib/site-metadata";
-import { GlobalBackButton } from "@/src/components/global-back-button";
 import { AuthWatcher } from "@/src/components/auth/auth-watcher";
 
 import "./globals.css";
@@ -23,7 +22,6 @@ export default function RootLayout({
     <html lang="vi" data-e2e-mode={e2eMode ? "true" : undefined}>
       <body>
         <AuthWatcher />
-        <GlobalBackButton />
         {children}
       </body>
     </html>

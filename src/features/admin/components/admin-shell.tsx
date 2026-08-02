@@ -8,6 +8,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { AdminNavigation } from "@/src/features/admin/components/admin-navigation";
 import { AccessDeniedNotice } from "@/src/features/auth/components/access-denied-notice";
 import { SignOutButton } from "@/src/features/auth/components/sign-out-button";
+import { ContextBackLink } from "@/src/components/context-back-link";
 
 const subscribeToHydration = () => () => {};
 
@@ -81,6 +82,9 @@ export function AdminShell({
           <span>Admin</span>
         </header>
         <main id="admin-main" className="admin-main">
+          {pathname !== "/admin" ? (
+            <ContextBackLink href="/admin" label="Về trang quản trị" />
+          ) : null}
           {children}
         </main>
       </div>

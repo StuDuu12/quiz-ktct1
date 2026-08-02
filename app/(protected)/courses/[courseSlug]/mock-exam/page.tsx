@@ -1,16 +1,14 @@
 import {
-  ArrowLeft,
   ClipboardText,
   Clock,
   ShieldCheck,
 } from "@phosphor-icons/react/dist/ssr";
-import Link from "next/link";
-
 import {
   getMockExamLaunch,
   startMockExamForCourse,
 } from "@/src/features/exam/actions";
 import { ExamLaunchForm } from "@/src/features/exam/components/exam-launch-form";
+import { ContextBackLink } from "@/src/components/context-back-link";
 
 type PageProps = {
   params: Promise<{ courseSlug: string }>;
@@ -23,15 +21,17 @@ export default async function MockExamLaunchPage({ params }: PageProps) {
     return (
       <main className="exam-launch-shell">
         <section aria-labelledby="exam-unavailable-title">
+          <ContextBackLink
+            href={`/courses/${courseSlug}`}
+            label="Về học phần"
+            className="exam-launch-back"
+          />
           <p className="exam-kicker">THI THỬ TỔNG HỢP</p>
           <h1 id="exam-unavailable-title">Thi thử chưa được cấu hình</h1>
           <p>
             Đề thi thử hiện chưa sẵn sàng. Vui lòng quay lại sau khi quản trị
             viên hoàn tất cấu hình.
           </p>
-          <Link href={`/courses/${courseSlug}`} className="primary-action">
-            <ArrowLeft size={18} /> Quay lại tổng quan
-          </Link>
         </section>
       </main>
     );
@@ -41,9 +41,11 @@ export default async function MockExamLaunchPage({ params }: PageProps) {
   return (
     <main className="exam-launch-shell">
       <section aria-labelledby="exam-launch-title">
-        <Link href={`/courses/${courseSlug}`} className="exam-launch-back">
-          <ArrowLeft size={18} /> Trở về học phần
-        </Link>
+        <ContextBackLink
+          href={`/courses/${courseSlug}`}
+          label="Về học phần"
+          className="exam-launch-back"
+        />
         <p className="exam-kicker">THI THỬ TỔNG HỢP</p>
         <h1 id="exam-launch-title">{launch.config.title}</h1>
         <p>

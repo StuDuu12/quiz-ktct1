@@ -7,6 +7,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { InstructorNavigation } from "@/src/features/instructor/components/instructor-navigation";
 import { AccessDeniedNotice } from "@/src/features/auth/components/access-denied-notice";
+import { ContextBackLink } from "@/src/components/context-back-link";
 
 const subscribeToHydration = () => () => {};
 
@@ -78,6 +79,9 @@ export function InstructorShell({
           <span>Giảng viên</span>
         </header>
         <main id="instructor-main" className="admin-main">
+          {pathname !== "/instructor" ? (
+            <ContextBackLink href="/instructor" label="Về trang giảng viên" />
+          ) : null}
           {children}
         </main>
       </div>

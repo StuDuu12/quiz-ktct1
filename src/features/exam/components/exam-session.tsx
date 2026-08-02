@@ -3,7 +3,6 @@
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpen,
   CheckCircle,
   Clock,
   Flag,
@@ -20,6 +19,7 @@ import {
 } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
 
+import { ContextBackLink } from "@/src/components/context-back-link";
 import { isE2EBrowserMode } from "@/src/e2e/browser";
 import { QuestionNavigator } from "@/src/features/exam/components/question-navigator";
 import { ReviewDialog } from "@/src/features/exam/components/review-dialog";
@@ -516,14 +516,11 @@ export function ExamSession({
           />
         ) : null}
         <header className="exam-header">
-          <Link
+          <ContextBackLink
             href={`/courses/${state.courseSlug}`}
             className="exam-brand"
-            aria-label="Trở về học phần"
-          >
-            <BookOpen size={23} weight="fill" />
-            <span>Ôn thi KTCT</span>
-          </Link>
+            label="Về học phần"
+          />
           <div className="exam-course">
             <span>THI THỬ TỔNG HỢP</span>
             <strong>{state.courseTitle}</strong>

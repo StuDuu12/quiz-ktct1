@@ -2724,36 +2724,28 @@ body {
   }
 }
 
-.global-back-button {
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  z-index: 9999;
-  background: var(--bg-surface, #ffffff);
-  border: 1px solid var(--border, #e5e7eb);
-  padding: 12px;
-  border-radius: 50%;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  cursor: pointer;
-  display: flex;
+.context-back-link {
+  display: inline-flex;
+  min-height: 44px;
   align-items: center;
   justify-content: center;
-  color: var(--fg, #111827);
-  transition: all 0.2s ease;
+  gap: .45rem;
+  width: fit-content;
+  padding: .55rem .72rem;
+  border: 1px solid #d3e4e5;
+  border-radius: .7rem;
+  color: var(--color-primary-strong);
+  background: rgb(255 255 255 / 78%);
+  font-size: .82rem;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
 }
 
-.global-back-button:hover {
-  background: var(--bg-hover, #f3f4f6);
-  transform: scale(1.05);
-}
-
-@media (max-width: 768px) {
-  .global-back-button {
-    bottom: 1rem;
-    left: 1rem;
-    padding: 10px;
-  }
-}
+.context-back-link:hover { background: #fff; border-color: #aacfd1; }
+.context-back-link:focus-visible { outline: 3px solid rgb(31 123 132 / 30%); outline-offset: 2px; }
+.learner-context-back { margin-bottom: 1rem; }
+.admin-main > .context-back-link { margin-bottom: 1rem; }
 
 /* Chapter Accordion History */
 .chapter-accordion {

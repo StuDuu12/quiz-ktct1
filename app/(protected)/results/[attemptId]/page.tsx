@@ -1,4 +1,4 @@
-import { ArrowLeft, BookOpen } from "@phosphor-icons/react/dist/ssr";
+import { BookOpen } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -6,6 +6,7 @@ import { ResultReview } from "@/src/features/history/components/result-review";
 import { getAttemptResult } from "@/src/features/history/queries";
 import { PracticeSession } from "@/src/features/practice/components/practice-session";
 import type { PracticeState } from "@/src/features/practice/types";
+import { ContextBackLink } from "@/src/components/context-back-link";
 
 type PageProps = {
   params: Promise<{ attemptId: string }>;
@@ -63,10 +64,7 @@ export default async function ResultPage({ params }: PageProps) {
           Ôn thi KTCT
         </Link>
         <nav aria-label="Điều hướng kết quả">
-          <Link href="/history">
-            <ArrowLeft size={17} aria-hidden="true" />
-            Lịch sử
-          </Link>
+          <ContextBackLink href="/history" label="Về lịch sử" />
         </nav>
       </header>
       <ResultReview result={result} />

@@ -6,6 +6,7 @@ import { ChapterRow } from "@/src/features/catalog/components/chapter-row";
 import type { AppRole } from "@/src/features/auth/roles";
 import type { CourseDashboard } from "@/src/features/catalog/queries";
 import { AccessDeniedNotice } from "@/src/features/auth/components/access-denied-notice";
+import { ContextBackLink } from "@/src/components/context-back-link";
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(
@@ -40,6 +41,12 @@ export function CourseOverview({
           <SignOutButton className="primary-action" showIcon={false} />
         </nav>
       </header>
+
+      <ContextBackLink
+        href="/dashboard"
+        label="Về tổng quan"
+        className="learner-context-back"
+      />
 
       <section className="course-hero" aria-labelledby="course-title">
         <div>
