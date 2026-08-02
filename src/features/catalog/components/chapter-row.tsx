@@ -49,28 +49,33 @@ export function ChapterRow({ chapter, courseSlug }: { chapter: ChapterSummary; c
           </div>
         ) : (
           <div className="attempt-list">
-            {chapter.history.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()).map(attempt => (
+            {[...chapter.history].sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()).map(attempt => (
               <article key={attempt.id} className="attempt-row" style={{ borderBottom: '1px solid #e8f0f0' }}>
                 <div className="attempt-icon"><ClipboardText size={19} weight="duotone" /></div>
-                <div>
+                <div className="attempt-identity">
                   <strong>Luyện tập</strong>
                   <p>{formatDate(attempt.submittedAt)}</p>
                 </div>
                 <span className={`status-pill status-${attempt.status}`}>
                   {attempt.status === "submitted" ? "Đã nộp" : attempt.status === "expired" ? "Hết giờ" : "Đang làm"}
                 </span>
-                {attempt.status === "submitted" ? (
-                  <Link className="attempt-score" href={`/results/${attempt.id}`}>
-                    {Math.round(attempt.score ?? 0)}%
-                  </Link>
-                ) : attempt.status === "in_progress" ? (
-                  <Link className="attempt-score" href={`/courses/${courseSlug}/chapters/${chapter.position}/practice?attempt=${attempt.id}`} style={{ fontWeight: 600, color: 'var(--color-primary-dark)' }}>
-                    Tiếp tục
-                  </Link>
-                ) : (
-                  <strong className="attempt-score">—</strong>
-                )}
-                <DeleteAttemptButton attemptId={attempt.id} />
+                <strong className="attempt-score">
+                  {attempt.score === null ? "—" : `${Math.round(attempt.score)}%`}
+                </strong>
+                <div className="attempt-actions">
+                  {attempt.status === "submitted" ? (
+                    <Link className="attempt-action" href={`/results/${attempt.id}`}>
+                      Xem lại <ArrowRight size={16} aria-hidden="true" />
+                    </Link>
+                  ) : attempt.status === "in_progress" ? (
+                    <Link className="attempt-action" href={`${practiceHref}?attempt=${attempt.id}`}>
+                      Tiếp tục <ArrowRight size={16} aria-hidden="true" />
+                    </Link>
+                  ) : null}
+                </div>
+                <div className="attempt-delete">
+                  <DeleteAttemptButton attemptId={attempt.id} />
+                </div>
               </article>
             ))}
           </div>

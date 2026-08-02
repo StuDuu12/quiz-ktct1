@@ -96,4 +96,43 @@ describe("CourseOverview", () => {
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });
+
+  it("shows explicit review and resume actions in recent attempts", () => {
+    render(
+      <CourseOverview
+        dashboard={{
+          ...dashboard,
+          recentAttempts: [
+            {
+              id: "submitted-1",
+              kind: "practice",
+              status: "submitted",
+              score: 95,
+              submittedAt: "2026-08-02T08:00:00.000Z",
+              startedAt: "2026-08-02T07:30:00.000Z",
+            },
+            {
+              id: "active-1",
+              kind: "mock_exam",
+              status: "in_progress",
+              score: null,
+              submittedAt: null,
+              startedAt: "2026-08-02T09:00:00.000Z",
+            },
+          ],
+        }}
+        viewerRole="student"
+      />,
+    );
+
+    expect(screen.getByText("95%")).not.toHaveAttribute("href");
+    expect(screen.getByRole("link", { name: "Xem lại" })).toHaveAttribute(
+      "href",
+      "/results/submitted-1",
+    );
+    expect(screen.getByRole("link", { name: "Tiếp tục" })).toHaveAttribute(
+      "href",
+      "/courses/kinh-te-chinh-tri-mac-lenin/mock-exam?attempt=active-1",
+    );
+  });
 });

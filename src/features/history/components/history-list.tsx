@@ -114,13 +114,13 @@ export function HistoryList({
                   : `${Math.round(attempt.score * 100) / 100}%`}
               </strong>
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginLeft: 'auto' }}>
+            <div className="history-card-actions">
               {attempt.status === "submitted" ? (
                 <Link
                   className="history-result-link"
                   href={`/results/${attempt.id}`}
                 >
-                  Xem kết quả <ArrowRight size={17} aria-hidden="true" />
+                  Xem lại <ArrowRight size={17} aria-hidden="true" />
                 </Link>
               ) : attempt.status === "in_progress" && attempt.kind === "practice" && attempt.chapterPosition !== null ? (
                 <Link

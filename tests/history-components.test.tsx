@@ -48,7 +48,7 @@ describe("HistoryList", () => {
     );
 
     expect(
-      screen.getByRole("link", { name: /xem kết quả/i }),
+      screen.getByRole("link", { name: "Xem lại" }),
     ).toHaveAttribute("href", "/results/attempt-1");
     expect(screen.getByText("Đang làm")).toBeInTheDocument();
     expect(screen.getByText("Chưa có điểm")).toBeInTheDocument();
