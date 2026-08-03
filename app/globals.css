@@ -1719,6 +1719,56 @@ body {
 .exam-launch-note { padding: .9rem 1rem; border-left: 4px solid var(--color-accent); border-radius: .45rem; color: #765139; background: #fff5ec; font-size: .84rem; line-height: 1.5; }
 .exam-launch-shell form { display: flex; justify-content: flex-end; margin-top: 1.4rem; }
 .exam-launch-shell form button { display: inline-flex; min-height: 48px; align-items: center; gap: .45rem; padding: .75rem 1.05rem; border: 0; border-radius: .75rem; color: white; background: var(--color-primary-strong); font: inherit; font-weight: 800; cursor: pointer; }
+.exam-launch-form { flex-wrap: wrap; align-items: center; gap: .75rem; }
+.exam-launch-form button:disabled { cursor: wait; opacity: .78; }
+.exam-launch-error {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: .55rem;
+  padding: .75rem .85rem;
+  border: 1px solid #efb8b8;
+  border-radius: .7rem;
+  color: #873f3f;
+  background: #fff3f3;
+  font-size: .8rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.exam-launch-error svg { flex: 0 0 auto; margin-top: .08rem; }
+.exam-launch-status { color: var(--color-muted); font-size: .78rem; font-weight: 700; }
+.exam-launch-spin { animation: exam-loading-spin .8s linear infinite; }
+.exam-loading-shell {
+  display: grid;
+  min-height: 100dvh;
+  padding: 1.25rem;
+  place-items: center;
+}
+.exam-loading-shell > section {
+  width: min(100%, 36rem);
+  padding: clamp(1.5rem, 5vw, 2.8rem);
+  border: 1px solid #cee3e1;
+  border-radius: 1.3rem;
+  background: white;
+  box-shadow: 0 18px 50px rgb(22 80 83 / 11%);
+}
+.exam-loading-icon {
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin-bottom: 1.15rem;
+  border-radius: 1rem;
+  place-items: center;
+  color: var(--color-primary-strong);
+  background: #e6f3f3;
+}
+.exam-loading-icon svg { animation: exam-loading-spin .8s linear infinite; }
+.exam-loading-shell h1 { margin: .35rem 0 .6rem; color: #173f46; font-size: clamp(1.6rem, 5vw, 2.25rem); }
+.exam-loading-shell section > p:last-of-type { margin: 0; color: var(--color-muted); line-height: 1.6; }
+.exam-loading-progress { height: .42rem; margin-top: 1.45rem; overflow: hidden; border-radius: 999px; background: #dfeded; }
+.exam-loading-progress span { display: block; width: 42%; height: 100%; border-radius: inherit; background: var(--color-primary); animation: exam-loading-slide 1.15s ease-in-out infinite alternate; }
+@keyframes exam-loading-spin { to { transform: rotate(360deg); } }
+@keyframes exam-loading-slide { from { transform: translateX(-12%); } to { transform: translateX(150%); } }
 .exam-shell button:focus-visible,
 .exam-shell a:focus-visible,
 .exam-review-dialog button:focus-visible,
@@ -1807,6 +1857,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .practice-option, .exam-option { transition: none; }
+  .exam-launch-spin, .exam-loading-icon svg, .exam-loading-progress span { animation: none; }
 }
 
 /* Immutable results and attempt history */
