@@ -44,4 +44,6 @@ Server action trả kết quả phân biệt `{ ok: true, url }` hoặc `{ ok: f
 
 ## Phạm vi triển khai
 
-Chỉ sửa luồng thi thử và migration liên quan. Không thay đổi dữ liệu câu hỏi Markdown, luồng luyện tập hoặc các thay đổi cục bộ chưa commit của người dùng.
+Ngoài luồng thi thử và migration liên quan, trang kết quả đã nộp có thêm thanh điều hướng xem lại. Thanh này hiển thị `Câu X / tổng số câu`, có nút `Câu trước` và `Câu tiếp`, đồng thời hỗ trợ phím `←`/`→`. Mỗi lần chuyển sẽ cuộn và đưa focus đến thẻ câu tương ứng; nút biên bị khóa ở câu đầu/cuối. Phím tắt không hoạt động khi focus nằm trong phần tử nhập liệu.
+
+Không thay đổi dữ liệu câu hỏi Markdown, logic chấm điểm, modal rà soát trước khi nộp, luồng luyện tập hoặc các thay đổi cục bộ chưa commit của người dùng.

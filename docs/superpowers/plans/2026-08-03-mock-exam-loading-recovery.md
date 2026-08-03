@@ -30,6 +30,8 @@
 - Modify `app/globals.css`: spinner, alert và responsive/reduced-motion cho các trạng thái mới.
 - Create `tests/exam-launch-form.test.tsx`: kiểm tra hành vi component ở pending/success/failure.
 - Create `tests/exam-loading.test.tsx`: kiểm tra status semantics và nội dung hai route loading.
+- Modify `src/features/history/components/result-review.tsx`: thêm điều hướng xem lại bằng nút và phím mũi tên.
+- Modify `tests/history-components.test.tsx`: kiểm tra chuyển câu, focus và trạng thái khóa ở biên.
 
 ---
 
@@ -303,13 +305,77 @@ git add -- 'src/features/exam/components/exam-launch-form.tsx' 'src/features/exa
 git commit -m "feat: add resilient mock exam loading"
 ```
 
-### Task 4: Xác minh, áp dụng migration và deploy
+### Task 4: Điều hướng câu hỏi trên trang kết quả
+
+**Files:**
+- Modify: `src/features/history/components/result-review.tsx`
+- Modify: `tests/history-components.test.tsx`
+- Modify: `app/globals.css`
+
+**Interfaces:**
+- Consumes: `AttemptResult.questions` đã sắp xếp theo `position`.
+- Produces: điều hướng nút/phím đến từng `article` kết quả mà không thay đổi dữ liệu chấm điểm.
+
+- [ ] **Step 1: Viết test điều hướng xem lại**
+
+Render kết quả ba câu, mock `HTMLElement.prototype.scrollIntoView`, rồi xác nhận bộ đếm khởi đầu `Câu 1 / 3`, nút trước bị khóa. Bấm `Câu tiếp` phải cập nhật `Câu 2 / 3`, gọi scroll và focus `article` câu 2. Nhấn `ArrowLeft` quay về câu 1; tại câu cuối, nút tiếp bị khóa. Một input thử nghiệm có focus phải nhận phím mũi tên mà không làm thay đổi bộ đếm.
+
+```ts
+expect(screen.getByText("Câu 1 / 3")).toBeInTheDocument();
+expect(screen.getByRole("button", { name: "Câu trước" })).toBeDisabled();
+fireEvent.click(screen.getByRole("button", { name: "Câu tiếp" }));
+expect(screen.getByText("Câu 2 / 3")).toBeInTheDocument();
+expect(document.activeElement).toHaveAttribute("data-result-question", "2");
+```
+
+- [ ] **Step 2: Chạy test để xác nhận RED**
+
+Run: `npm test -- tests/history-components.test.tsx`
+
+Expected: FAIL vì chưa có bộ đếm hoặc nút điều hướng.
+
+- [ ] **Step 3: Cài đặt client navigation tối thiểu**
+
+Đổi `ResultReview` thành client component, giữ `currentIndex`, refs cho từng article và helper bỏ qua editable target. Hàm chuyển câu chặn ngoài biên, cập nhật state rồi chạy focus/scroll sau render:
+
+```tsx
+const goToQuestion = useCallback((index: number) => {
+  if (index < 0 || index >= result.questions.length) return;
+  setCurrentIndex(index);
+  requestAnimationFrame(() => {
+    const target = questionRefs.current[index];
+    target?.scrollIntoView({ behavior: "smooth", block: "center" });
+    target?.focus({ preventScroll: true });
+  });
+}, [result.questions.length]);
+```
+
+Mỗi article có `tabIndex={-1}`, `data-result-question={question.position}` và `aria-current={index === currentIndex ? "step" : undefined}`. Window keydown xử lý `ArrowLeft`/`ArrowRight` chỉ khi target không phải `input`, `textarea`, `select` hoặc `contenteditable`.
+
+- [ ] **Step 4: Thêm thanh điều hướng responsive**
+
+Đặt `.result-review-navigation` giữa thống kê và danh sách câu, gồm hai button 44px và `<strong>Câu {currentIndex + 1} / {total}</strong>`. Trên mobile, thanh sticky ở dưới vùng nhìn; với reduced motion, `scrollIntoView` dùng `behavior: "auto"` thông qua `matchMedia("(prefers-reduced-motion: reduce)")`.
+
+- [ ] **Step 5: Chạy test để xác nhận GREEN**
+
+Run: `npm test -- tests/history-components.test.tsx`
+
+Expected: PASS.
+
+- [ ] **Step 6: Commit task điều hướng xem lại**
+
+```powershell
+git add -- 'src/features/history/components/result-review.tsx' 'tests/history-components.test.tsx' 'app/globals.css'
+git commit -m "feat: navigate submitted review questions"
+```
+
+### Task 5: Xác minh, áp dụng migration và deploy
 
 **Files:**
 - Verify only: toàn bộ files đã đổi trong Task 1–3.
 
 **Interfaces:**
-- Consumes: các commit hoàn chỉnh từ Task 1–3.
+- Consumes: các commit hoàn chỉnh từ Task 1–4.
 - Produces: `main` đã push, migration production đã áp dụng và Vercel deployment thành công.
 
 - [ ] **Step 1: Kiểm tra diff chỉ chứa phạm vi đã duyệt**
@@ -324,7 +390,7 @@ Run: `npm test`
 
 Run: `npm run typecheck`
 
-Run: `npx eslint 'src/features/exam/actions.ts' 'src/features/exam/components/exam-launch-form.tsx' 'src/features/exam/components/exam-loading.tsx' 'app/(protected)/courses/[courseSlug]/mock-exam/loading.tsx' 'app/(protected)/exam/[attemptId]/loading.tsx' 'tests/exam-actions.test.ts' 'tests/exam-launch-form.test.tsx' 'tests/exam-loading.test.tsx' 'tests/mock-exam-start-regression.test.ts'`
+Run: `npx eslint 'src/features/exam/actions.ts' 'src/features/exam/components/exam-launch-form.tsx' 'src/features/exam/components/exam-loading.tsx' 'src/features/history/components/result-review.tsx' 'app/(protected)/courses/[courseSlug]/mock-exam/loading.tsx' 'app/(protected)/exam/[attemptId]/loading.tsx' 'tests/exam-actions.test.ts' 'tests/exam-launch-form.test.tsx' 'tests/exam-loading.test.tsx' 'tests/mock-exam-start-regression.test.ts' 'tests/history-components.test.tsx'`
 
 Run: `npm run build`
 
