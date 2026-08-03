@@ -120,15 +120,28 @@ export async function getMockExamLaunch(courseSlug: string) {
   };
 }
 
-export async function startMockExamForCourse(courseSlug: string): Promise<string> {
+export type StartMockExamResult =
+  | { ok: true; url: string }
+  | { ok: false; message: string };
+
+export async function startMockExamForCourse(
+  courseSlug: string,
+): Promise<StartMockExamResult> {
   const viewer = await requireViewer(["student", "instructor", "admin"]);
-  if (isE2EEnabled()) {
-    const attempt = startE2EExam(viewer.id);
-    return `/exam/${attempt.id}`;
+  try {
+    if (isE2EEnabled()) {
+      const attempt = startE2EExam(viewer.id);
+      return { ok: true, url: `/exam/${attempt.id}` };
+    }
+    const launch = await getMockExamLaunch(courseSlug);
+    const attempt = await startMockExam(viewer.id, launch.config.id);
+    return { ok: true, url: `/exam/${attempt.id}` };
+  } catch {
+    return {
+      ok: false,
+      message: "Không thể tạo đề thi lúc này. Vui lòng thử lại.",
+    };
   }
-  const launch = await getMockExamLaunch(courseSlug);
-  const attempt = await startMockExam(viewer.id, launch.config.id);
-  return `/exam/${attempt.id}`;
 }
 
 export async function loadExamSession(

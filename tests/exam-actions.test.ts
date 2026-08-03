@@ -1,14 +1,27 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-const { createServerSupabaseClient, requireViewer, revalidatePath } =
+const {
+  createServerSupabaseClient,
+  isE2EEnabled,
+  requireViewer,
+  revalidatePath,
+  startE2EExam,
+} =
   vi.hoisted(() => ({
     createServerSupabaseClient: vi.fn(),
+    isE2EEnabled: vi.fn(),
     requireViewer: vi.fn(),
     revalidatePath: vi.fn(),
+    startE2EExam: vi.fn(),
   }));
 
 vi.mock("@/src/features/auth/session", () => ({ requireViewer }));
+vi.mock("@/src/e2e/guard", () => ({ isE2EEnabled }));
+vi.mock("@/src/e2e/store", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/src/e2e/store")>()),
+  startE2EExam,
+}));
 vi.mock("@/src/lib/supabase/server", () => ({
   createServerSupabaseClient,
 }));
@@ -18,6 +31,7 @@ import {
   loadExamSession,
   loadExamReviewSnapshot,
   saveExamAnswer,
+  startMockExamForCourse,
   submitAttempt,
   toggleFlag,
 } from "@/src/features/exam/actions";
@@ -32,7 +46,44 @@ const viewer = {
 describe("exam actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    isE2EEnabled.mockReturnValue(false);
     requireViewer.mockResolvedValue(viewer);
+  });
+
+  it("returns a safe URL result after creating a mock exam", async () => {
+    isE2EEnabled.mockReturnValue(true);
+    startE2EExam.mockReturnValue({ id: "attempt-1" });
+
+    await expect(
+      startMockExamForCourse("kinh-te-chinh-tri-mac-lenin"),
+    ).resolves.toEqual({
+      ok: true,
+      url: "/exam/attempt-1",
+    });
+  });
+
+  it("contains expected launch failures without exposing server details", async () => {
+    isE2EEnabled.mockReturnValue(true);
+    startE2EExam.mockImplementation(() => {
+      throw new Error("private database detail");
+    });
+
+    await expect(
+      startMockExamForCourse("kinh-te-chinh-tri-mac-lenin"),
+    ).resolves.toEqual({
+      ok: false,
+      message: "Không thể tạo đề thi lúc này. Vui lòng thử lại.",
+    });
+  });
+
+  it("keeps authentication failures outside the recoverable launch boundary", async () => {
+    isE2EEnabled.mockReturnValue(true);
+    requireViewer.mockRejectedValue(new Error("AUTH_REQUIRED"));
+
+    await expect(
+      startMockExamForCourse("kinh-te-chinh-tri-mac-lenin"),
+    ).rejects.toThrow("AUTH_REQUIRED");
+    expect(startE2EExam).not.toHaveBeenCalled();
   });
 
   it("loads server clock, immutable snapshots, and saved answers for the owner", async () => {
