@@ -1,11 +1,16 @@
 // @vitest-environment jsdom
 import "@testing-library/jest-dom/vitest";
 
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { HistoryList } from "@/src/features/history/components/history-list";
 import { ResultReview } from "@/src/features/history/components/result-review";
+
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 const submittedAttempt = {
   id: "attempt-1",
@@ -130,5 +135,69 @@ describe("ResultReview", () => {
         "Đáp án đúng dựa trên thời gian lao động xã hội.",
       ),
     ).toBeInTheDocument();
+  });
+
+  it("moves through reviewed questions with buttons and arrow keys", async () => {
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+      configurable: true,
+      value: scrollIntoView,
+    });
+
+    render(
+      <>
+        <ResultReview
+          result={{
+            attemptId: "attempt-navigation",
+            kind: "mock_exam",
+            score: 66.67,
+            startedAt: "2026-08-03T08:00:00.000Z",
+            submittedAt: "2026-08-03T08:30:00.000Z",
+            durationSeconds: 1800,
+            questions: Array.from({ length: 3 }, (_, index) => ({
+              attemptQuestionId: `aq-${index + 1}`,
+              position: index + 1,
+              content: `Nội dung câu ${index + 1}`,
+              options: [
+                { id: `q${index + 1}-a`, label: "A", content: "Phương án A" },
+                { id: `q${index + 1}-b`, label: "B", content: "Phương án B" },
+              ],
+              selectedOptionId: `q${index + 1}-a`,
+              correctOptionId: `q${index + 1}-a`,
+              isCorrect: true,
+              isFlagged: false,
+              isUnanswered: false,
+              explanation: `Giải thích câu ${index + 1}`,
+            })),
+          }}
+        />
+        <input aria-label="Ghi chú thử" />
+      </>,
+    );
+
+    const previous = screen.getByRole("button", { name: "Câu trước" });
+    const next = screen.getByRole("button", { name: "Câu tiếp" });
+    expect(screen.getByText("Câu 1 / 3")).toBeInTheDocument();
+    expect(previous).toBeDisabled();
+
+    fireEvent.click(next);
+    await waitFor(() => expect(screen.getByText("Câu 2 / 3")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(document.activeElement).toHaveAttribute("data-result-question", "2"),
+    );
+    expect(scrollIntoView).toHaveBeenCalled();
+
+    fireEvent.keyDown(window, { key: "ArrowLeft" });
+    await waitFor(() => expect(screen.getByText("Câu 1 / 3")).toBeInTheDocument());
+
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    await waitFor(() => expect(screen.getByText("Câu 3 / 3")).toBeInTheDocument());
+    expect(next).toBeDisabled();
+
+    const editor = screen.getByRole("textbox", { name: "Ghi chú thử" });
+    editor.focus();
+    fireEvent.keyDown(window, { key: "ArrowLeft" });
+    expect(screen.getByText("Câu 3 / 3")).toBeInTheDocument();
   });
 });

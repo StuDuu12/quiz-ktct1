@@ -1,9 +1,14 @@
+"use client";
+
 import {
+  ArrowLeft,
+  ArrowRight,
   CheckCircle,
   Flag,
   MinusCircle,
   XCircle,
-} from "@phosphor-icons/react/ssr";
+} from "@phosphor-icons/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type {
   AttemptResult,
@@ -25,13 +30,69 @@ function optionText(
   return option ? `${option.label}. ${option.content}` : fallback;
 }
 
+function isEditableTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false;
+  return (
+    target.matches("input, textarea, select, [contenteditable='true']") ||
+    Boolean(target.closest("input, textarea, select, [contenteditable='true']"))
+  );
+}
+
 export function ResultReview({ result }: { result: AttemptResult }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const currentIndexRef = useRef(0);
+  const questionRefs = useRef<Array<HTMLElement | null>>([]);
+  const totalQuestions = result.questions.length;
   const correct = result.questions.filter((question) => question.isCorrect)
     .length;
   const unanswered = result.questions.filter(
     (question) => question.isUnanswered,
   ).length;
   const incorrect = result.questions.length - correct - unanswered;
+
+  const goToQuestion = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= totalQuestions) return;
+      currentIndexRef.current = index;
+      setCurrentIndex(index);
+
+      const schedule = window.requestAnimationFrame
+        ? window.requestAnimationFrame.bind(window)
+        : (callback: FrameRequestCallback) => window.setTimeout(callback, 0);
+      schedule(() => {
+        const target = questionRefs.current[index];
+        const reducedMotion = window.matchMedia?.(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+        target?.scrollIntoView({
+          behavior: reducedMotion ? "auto" : "smooth",
+          block: "center",
+        });
+        target?.focus({ preventScroll: true });
+      });
+    },
+    [totalQuestions],
+  );
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        isEditableTarget(event.target) ||
+        isEditableTarget(document.activeElement)
+      ) {
+        return;
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        goToQuestion(currentIndexRef.current - 1);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        goToQuestion(currentIndexRef.current + 1);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [goToQuestion]);
 
   return (
     <div className="result-review">
@@ -73,8 +134,35 @@ export function ResultReview({ result }: { result: AttemptResult }) {
         </div>
       </section>
 
+      <nav
+        className="result-review-navigation"
+        aria-label="Điều hướng câu hỏi xem lại"
+      >
+        <button
+          type="button"
+          aria-keyshortcuts="ArrowLeft"
+          disabled={currentIndex === 0}
+          onClick={() => goToQuestion(currentIndex - 1)}
+        >
+          <ArrowLeft size={18} weight="bold" aria-hidden="true" />
+          Câu trước
+        </button>
+        <strong aria-live="polite">
+          Câu {currentIndex + 1} / {totalQuestions}
+        </strong>
+        <button
+          type="button"
+          aria-keyshortcuts="ArrowRight"
+          disabled={currentIndex >= totalQuestions - 1}
+          onClick={() => goToQuestion(currentIndex + 1)}
+        >
+          Câu tiếp
+          <ArrowRight size={18} weight="bold" aria-hidden="true" />
+        </button>
+      </nav>
+
       <ol className="result-questions" aria-label="Chi tiết từng câu">
-        {result.questions.map((question) => {
+        {result.questions.map((question, index) => {
           const state = question.isUnanswered
             ? "unanswered"
             : question.isCorrect
@@ -98,7 +186,15 @@ export function ResultReview({ result }: { result: AttemptResult }) {
               className={`result-question result-question-${state}`}
               key={question.attemptQuestionId}
             >
-              <article aria-labelledby={`result-question-${question.position}`}>
+              <article
+                ref={(node) => {
+                  questionRefs.current[index] = node;
+                }}
+                aria-current={index === currentIndex ? "step" : undefined}
+                aria-labelledby={`result-question-${question.position}`}
+                data-result-question={question.position}
+                tabIndex={-1}
+              >
                 <header>
                   <span className="result-question-number">
                     Câu {question.position}
