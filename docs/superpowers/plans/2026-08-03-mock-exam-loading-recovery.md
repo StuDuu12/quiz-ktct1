@@ -107,7 +107,7 @@ jsonb_build_object(
 )
 ```
 
-Nhánh practice giữ truy vấn `order by question.practice_position asc nulls last, question.created_at asc, question.id asc`, `selected_duration_seconds := null`, và snapshot có thêm `explanation` theo contract luyện tập hiện hành. Giữ `SECURITY DEFINER`, `set search_path = ''`, revoke `public, anon` và grant `authenticated`.
+Nhánh practice giữ truy vấn `order by question.practice_position asc nulls last, question.created_at asc, question.id asc`, `selected_duration_seconds := null`; trigger bảo mật hiện hành tiếp tục loại `explanation` khỏi snapshot công khai và RPC luyện tập ghép lời giải từ bảng secrets khi cần. Giữ `SECURITY DEFINER`, `set search_path = ''`, revoke `public, anon` và grant `authenticated`.
 
 - [ ] **Step 4: Chạy test để xác nhận GREEN**
 
